@@ -1,0 +1,40 @@
+name: CsvAnnotationToolTestSuite
+
+tests:
+
+  - name: DbSetup
+    classes:
+      - org.imagopole.omero.tools.DbUnitInitializerTest
+
+  - name: Util
+    classes:
+      - org.imagopole.omero.tools.util.AnnotationsUtilTest
+      - org.imagopole.omero.tools.util.DatasetsUtilTest
+      - org.imagopole.omero.tools.util.FunctionsUtilTest
+      - org.imagopole.omero.tools.util.ParseUtilTest
+
+  - name: DTO
+    classes:
+      - org.imagopole.omero.tools.impl.dto.AnnotationLinksDataTest
+      - org.imagopole.omero.tools.impl.dto.DefaultCsvDataTest
+
+  - name: CSV
+    classes:
+      - org.imagopole.omero.tools.impl.csv.CommonsCsvStringReaderTest
+      - org.imagopole.omero.tools.impl.csv.CsvAnnotationsReaderTest
+      - org.imagopole.omero.tools.impl.csv.SimpleAnnotationLineTest
+
+  - name: Blitz
+    classes:
+      - org.imagopole.omero.tools.impl.blitz.AnnotationBlitzServiceTest
+      - org.imagopole.omero.tools.impl.blitz.ContainerServiceBlitzTest
+      - org.imagopole.omero.tools.impl.blitz.FileBlitzServiceTest
+      - org.imagopole.omero.tools.impl.blitz.UpdateBlitzServiceTest
+      - org.imagopole.omero.tools.impl.blitz.UpdateNoOpBlitzServiceTest
+
+  - name: Logic
+    classes:
+      - org.imagopole.omero.tools.impl.logic.DefaultCsvAnnotationServiceTest
+      - org.imagopole.omero.tools.impl.logic.DefaultCsvReaderServiceTest
+      - org.imagopole.omero.tools.impl.logic.DefaultFileReaderServiceTest
+

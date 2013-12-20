@@ -1,0 +1,255 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'findbugs'
+apply plugin: 'pmd'
+apply plugin: 'checkstyle'
+apply plugin: 'project-report' // gradle-1.9 feature
+apply plugin: 'jacoco'         // gradle-1.9 incubating
+apply plugin: 'asciidoctor'
+apply plugin: 'fatjar'
+
+/********************************/
+/**** Project configuration ****/
+
+group = 'org.imagopole.omero'
+version = '0.1-SNAPSHOT'
+description = """OMERO CSV Annotation Tool"""
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+ext.sharedManifest = manifest {
+    attributes 'Implementation-Title': 'OMERO CSV Annotation Tool',
+               'Implementation-Version': version,
+               'Main-Class': 'org.imagopole.omero.tools.CsvAnnotatorCliMain'
+}
+
+jar {
+    manifest = sharedManifest
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    // unpublished artifacts kept under source control for lack of a better way
+    // (eg. OMERO language bindings and other dependencies not published
+    // in a central repo like Apache Commons CSV)
+    flatDir (
+        name: "thirdPartyUnpublishedLibs",
+        dirs: "$projectDir/lib"
+    )
+}
+
+/**
+ * Reminder: all dependencies should remain in line with OMERO's runtime classpath
+ **/
+dependencies {
+
+    compile 'org.slf4j:slf4j-api:1.7.5'                                                  //--OMERO: n/a (logback-core + logback-classic 1.0.9)
+
+    // OMERO 5 Java bindings
+    // see http://www.openmicroscopy.org/site/support/omero5/developers/Java.html
+    //     http://downloads.openmicroscopy.org/omero/5.0.0-beta1/OMERO.java-5.0.0-beta1-ice34-b3470.zip
+    compile ':omero_client:5.0.0-beta1-ice34'
+
+    // Apache Commons CSV uses a custom snapshot build from trunk at rev. r1534206
+    // see http://svn.apache.org/repos/asf/commons/proper/csv/trunk/
+    compile 'org.apache.commons:commons-csv:1.0-r1534206'                                //--OMERO: n/a
+    compile 'gnu.getopt:java-getopt:1.0.13'                                              //--OMERO: 1.0.13
+    compile 'com.google.guava:guava:13.0'                                                //--OMERO: jdk5-13.0
+    compile 'com.google.code.findbugs:jsr305:1.3.7'                                      //--OMERO: n/a
+
+    // required OMERO transitive dependencies
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final'          //--OMERO: 1.0.0.Final
+    compile(group: 'org.hibernate',
+            name: 'hibernate-core', version: '3.5.6-Final') {                            //--OMERO: 3.5.6-4510
+        transitive = false
+    }
+    compile(group: 'org.hibernate',
+            name: 'hibernate-annotations', version: '3.5.6-Final') {                     //--OMERO: "n/a" (hibernate-3.5.6-4510)
+        transitive = false
+    }
+    compile(group: 'org.hibernate',
+            name: 'hibernate-search', version: '3.1.1.GA') {                             //--OMERO: 3.1.1.GA
+        transitive = false
+    }
+
+    // logback slf4j binding
+    runtime 'ch.qos.logback:logback-classic:1.0.9'                                       //--OMERO: 1.0.9
+    // slf4j bound to logback-classic + redirection of ACL to slf4j
+    // (ie. slf4j replaces commons-logging - see http://www.slf4j.org/legacy.html)
+    runtime 'org.slf4j:jcl-over-slf4j:1.7.5'
+
+    testCompile 'org.testng:testng:6.8'                                                  //--OMERO: n/p (5.14.10)
+    testCompile 'org.unitils:unitils-core:3.3'                                           //--OMERO: n/a
+    compile(group: 'org.unitils',
+            name: 'unitils-testng', version: '3.3') {                                    //--OMERO: n/a
+        transitive = false
+    }
+    testCompile 'org.unitils:unitils-inject:3.3'                                         //--OMERO: n/a
+    testCompile 'org.unitils:unitils-mock:3.3'                                           //--OMERO: n/a
+    testCompile 'org.unitils:unitils-io:3.3'                                             //--OMERO: n/a
+    testCompile(group: 'org.unitils',
+                name: 'unitils-database', version: '3.3') {                              //--OMERO: n/a
+        exclude group: 'org.slf4j'
+        exclude group: 'ch.qos.logback'
+    }
+    testCompile(group: 'org.unitils',
+                name: 'unitils-dbunit', version: '3.3') {                                //--OMERO: n/a
+        exclude group: 'org.slf4j'
+        exclude group: 'ch.qos.logback'
+    }
+    testRuntime 'postgresql:postgresql:8.4-702.jdbc4'                                    //--OMERO: 9.1-901.jdbc3
+
+    //scriptsRuntime 'org.python:jython-standalone:2.5.3'
+}
+
+/** Note: integration tests can be run only after database has been populated with the right
+ *  users/credentials by task "integrationTestDbSetup" */
+test {
+    useTestNG()
+
+    //testLogging.showStandardStreams = true
+
+    // for integration tests only
+    // either one or the other:
+    // - ICE_CONFIG has priority
+    // - if not set, then fallback on a default 'ice.config.location' in $HOME/ice-local.config
+    systemProperty 'ICE_CONFIG',          System.getenv("ICE_CONFIG")
+    systemProperty 'ice.config.location', System.getProperty("user.home") + '/ice-local.config'
+}
+
+artifacts {
+// archives distributionZip
+}
+
+/********************************/
+/**** Plugins configuration ****/
+
+findbugs {
+    sourceSets     = [sourceSets.main]
+    effort         = 'max'
+    reportLevel    = 'high'
+    ignoreFailures = true
+}
+
+findbugsMain {
+    reports {
+      xml.enabled  = false
+      html.enabled = true
+    }
+}
+
+pmd {
+    sourceSets     = [sourceSets.main]
+    ignoreFailures = true
+}
+
+checkstyle {
+    sourceSets     = [sourceSets.main]
+    ignoreFailures = true
+    showViolations = false
+}
+
+/** Generate the checkstyle html report */
+task checkstyleHtmlReport(dependsOn: checkstyleMain) {
+   if (file("$reporting.baseDir/checkstyle/main.xml").exists()) {
+
+       ant.xslt(
+            in:    "$reporting.baseDir/checkstyle/main.xml",
+            style: "$projectDir/config/checkstyle/checkstyle-noframes-severity-sorted.xsl",
+            out:   "$reporting.baseDir/checkstyle/main.html"
+       )
+
+   }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
+    }
+
+    // workaround for source code highlighting in coverage report
+    // see http://www.eclemma.org/jacoco/trunk/doc/faq.html
+    //     http://forums.gradle.org/gradle/topics/_1_6_rc_1_jacoco_plugin_does_not_show_line_numbers
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+}
+
+asciidoctor {
+    backend = "html5"
+}
+
+fatJar {
+    classifier "standalone"
+    manifest = sharedManifest
+    exclude (
+        'META-INF/*.txt', 'META-INF/*.RSA', 'META-INF/*.SF'
+    )
+}
+
+/*********************************************/
+/**** Custom tasks/project configuration ****/
+
+/** Refresh database state prior to integration tests */
+task integrationTestDbSetup(type: Test) {
+    useTestNG()
+
+    include 'org/imagopole/omero/tools/DbUnitInitializerTest*'
+}
+// make sure database is initialized when running 'gradle test'
+test.dependsOn integrationTestDbSetup
+
+/** Create a distribution bundle with runtime dependencies + shell scripts included */
+task withDepsDistZip(type: Zip) { zipTask ->
+    dependsOn asciidoctor
+
+    classifier = 'dist-with-dependencies'
+
+    from configurations.runtime.allArtifacts.files
+    from configurations.runtime
+    from "$buildDir/asciidoc"
+    from "$projectDir/src/main/scripts/cli"
+    from "$projectDir/src/main/scripts/omero"
+    from fileTree("$projectDir").include("*.md")
+}
+
+/** Create a distribution bundle with a standalone fat jar + shell scripts included */
+task standaloneDistZip(type: Zip) { zipTask ->
+    dependsOn asciidoctor, fatJar
+
+    classifier = 'dist-standalone'
+
+    from "$buildDir/libs"
+    from "$buildDir/asciidoc"
+    from "$projectDir/src/main/scripts/cli"
+    from "$projectDir/src/main/scripts/omero"
+    from fileTree("$projectDir").include("*.md")
+}
+
+/** Create all distribution bundles */
+task distributionZip {
+    dependsOn standaloneDistZip, withDepsDistZip
+}
+
+/**************************************/
+/**** Build plugins configuration ****/
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven {
+            name 'Bintray Asciidoctor repo'
+            url  'http://dl.bintray.com/content/aalmiray/asciidoctor'
+        }
+    }
+
+    dependencies {
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:0.7.0'
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.2-rc1'
+    }
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Load the common user/groups/events/sessions boilerplate
+ -->
+<dataset>
+
+  <experimentergroup id="801" permissions="-120" name="DbUnit-Group" version="0"/>
+
+  <experimenter id="802" permissions="-120" email="dbunit@void.net"
+                firstname="Db" lastname="Unit"
+                omename="dbunit" version="0"/>
+
+  <!-- [omero db password dbunit] -->
+  <password experimenter_id="802" hash="BFFy/27DsZaHRAXWmNnwlw=="/>
+
+  <!--
+       parent = group (801), child = experimenter (802)
+       experimenter is member of groups: "users" (1) and "DbUnit" (801)
+   -->
+  <groupexperimentermap id="800" permissions="-120" owner="false" version="0" child="802" parent="1" child_index="1"/>
+  <groupexperimentermap id="803" permissions="-120" owner="false" version="0" child="802" parent="801" child_index="0"/>
+
+  <session id="888888" defaulteventtype="Test" useragent="DbUnit"
+           permissions="-120" started="2013-01-01 00:00:00.00" timetoidle="0" timetolive="0" uuid="0000" node="0" owner="0"/>
+
+  <!-- Event of type test (6) in group "DbUnit" (801) for experimenter "dbunit" (802) -->
+  <event id="888999" permissions="-820" time="2013-01-01 00:00:00.00"
+         experimenter="802" experimentergroup="801" session="888888" type="6"/>
+
+</dataset>

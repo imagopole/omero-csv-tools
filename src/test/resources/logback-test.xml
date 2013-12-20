@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" debug="false">
+
+  <!-- Target directory for logging output -->
+  <property name="LOGS_DIR" value="build/logs" />
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level [%40.40logger{40}] - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>${LOGS_DIR}/csv-test.log</file>
+    <encoder>
+        <pattern>%d %-5level [%thread] %logger{0}: %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--                      -->
+  <!-- Root logger          -->
+  <!--                      -->
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="FILE"/>
+  </root>
+
+  <!--                      -->
+  <!-- Internal loggers     -->
+  <!--                      -->
+  <logger name="org.imagopole" level="debug"/>
+
+  <!--                      -->
+  <!-- Dependencies loggers -->
+  <!--                      -->
+
+  <!-- Apache HttpComponents loggers   -->
+  <!-- (require jcl-over-slf4j.jar)    -->
+  <!-- Unitils/DbUnit -->
+  <logger name="org.unitils" level="info">
+     <appender-ref ref="FILE"/>
+  </logger>
+  <logger name="org.dbunit" level="info">
+     <appender-ref ref="FILE"/>
+  </logger>
+</configuration>

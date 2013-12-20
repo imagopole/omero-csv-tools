@@ -1,0 +1,39 @@
+TODO items
+------------
+
+- review & harmonize log levels
+- investigate potential simplifications with custom queries
+- improve user error reporting for OMERO script
+- pre-fetch available attachment file names in OMERO script
+- probably remove dry-run mode from OMERO script
+- define policy for database names with trailing/leading whitespace: trim or keep as is (current)
+- more unit & integration tests (executable independently via gradle, split into separate directories)
+- code cleanup, javadoc
+- review distribution zip layout (with bin, docs, lib folders)
+- finalize user manual
+- restrict the set of csv delimiters? (enum)
+
+Test cases
+-----------
+
+- run on unknown project id
+
+- run on project with:
+  - no attached file
+  - file attached with different name
+  - empty file
+
+- run on project with:
+  - no dataset children but datasets names in csv
+  - no csv dataset name matching db
+  - duplicate datasets names in db
+  - duplicate tags names in db
+
+- run on file with:
+  - delimiter mismatch
+  - various content conditions
+    - one column
+    - empty lines
+    - quoted columns values
+
+- run with large csv imports

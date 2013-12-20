@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+  <!--
+       original file is  same as 801803 (same ownership, and same *file name*)
+
+  -->
+  <originalfile id="801804" permissions="-40" mimetype="text/csv" name="dbunit_tag.csv" path="dbunit_tag.csv" size="0"
+                creation_id="888999" update_id="888999" group_id="801" owner_id="802"/>
+
+  <!-- annotation for original file 801804 -->
+  <annotation id="801805" discriminator="/type/OriginalFile/" permissions="-40"
+              creation_id="888999" update_id="888999" group_id="801" owner_id="802" file="801804"/>
+
+  <!-- parent = project (803), child = annotation (801805) -->
+  <projectannotationlink id="801806" permissions="-40" child="801805"
+                         creation_id="888999" update_id="888999" group_id="801" owner_id="802" parent="803"/>
+
+</dataset>

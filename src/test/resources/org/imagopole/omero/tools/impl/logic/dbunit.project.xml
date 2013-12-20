@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+
+  <!--
+       project is in group "DbUnit" (801) for experimenter "dbunit" (802) with event "888999"
+  -->
+  <project id="803" permissions="-40" name="DbUnit-Project"
+           creation_id="888999" update_id="888999" group_id="801" owner_id="802"/>
+
+</dataset>
