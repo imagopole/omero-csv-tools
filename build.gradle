@@ -14,7 +14,7 @@ apply plugin: 'fatjar'
 /**** Project configuration ****/
 
 group = 'org.imagopole.omero'
-version = '0.1-SNAPSHOT'
+version = '0.1-beta1'
 description = """OMERO CSV Annotation Tool"""
 
 sourceCompatibility = 1.6
