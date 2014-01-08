@@ -146,6 +146,7 @@ findbugsMain {
 pmd {
     sourceSets     = [sourceSets.main]
     ignoreFailures = true
+    ruleSetFiles   = files("config/pmd/pmd.xml")
 }
 
 checkstyle {
