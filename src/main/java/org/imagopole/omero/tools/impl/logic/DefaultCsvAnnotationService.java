@@ -342,6 +342,9 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         Multimap<String, String> validLinesByPojoName =
             sieveUnknownPojos(uniqueLines, experimenterPojos);
 
+        // -- none of the requested image/dataset/pojos name are present in the database - no further processing
+        rejectIfValidPojoNamesEmpty(validLinesByPojoName);
+
         // -- replicate results of pojo names validation onto the db images index
         // to keep only a minimal (and consistent) index
         // ie. only retain in the db index the pojos which have actually been requested in the csv file
@@ -517,6 +520,18 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
             throw new IllegalStateException(
                 String.format("Persisted objects list size mismatch - expected %d but got %d",
                                expectedSize, actualSize));
+        }
+    }
+
+    /**
+     * Ensures that CSV pojo names with no counterpart in the database get rejected.
+     *
+     * @param validLinesByPojoName CSV file lines matching the database content
+     */
+    private void rejectIfValidPojoNamesEmpty(Multimap<String, String> validLinesByPojoName) {
+        if (null == validLinesByPojoName || validLinesByPojoName.isEmpty()) {
+            throw new IllegalStateException(
+                String.format("None of the requested CSV target names exist for experimenter"));
         }
     }
 

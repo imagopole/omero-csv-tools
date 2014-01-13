@@ -112,16 +112,14 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
     @DataSet(value= { DataSets.Csv.ORPHANS }, factory = SingleSchemaCsvDataSetFactory.class)
     @UnloadDataSet
     @Test(groups = { Groups.INTEGRATION },
-          expectedExceptions = { IllegalArgumentException.class },
-          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+          expectedExceptions = { IllegalStateException.class },
+          expectedExceptionsMessageRegExp = "None of the requested CSV target names exist for experimenter")
     public void saveTagsAndLinkNestedDatasetsShouldRejectOrphanedDatasets() throws ServerError, IOException {
         Multimap<String, String> lines = HashMultimap.create();
         lines.put(Csv.Orphans.DATASET_NAME, "DbUnit.Tag");
 
         // the specified dataset is not nested within a project, therefore will be ignored from the
         // tagging
-        // TODO: have a more useful error message to indicate this rather than an IAE further
-        // down the line
         csvAnnotationService.saveTagsAndLinkNestedDatasets(DbUnit.EXPERIMENTER_ID, DbUnit.PROJECT_ID, lines);
     }
 
