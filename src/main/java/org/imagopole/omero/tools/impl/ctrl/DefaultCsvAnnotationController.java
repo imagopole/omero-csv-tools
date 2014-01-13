@@ -13,6 +13,7 @@ import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.ctrl.CsvAnnotationController;
 import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
@@ -56,6 +57,9 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
 
         LinksData result = null;
 
+        // TODO: also take the ContainerType into account to allow annotations of data spanning more
+        // than one container hierarchy (eg. tag images within project or dataset, or tag datasets
+        // either within project or across group)
         switch(annotationType) {
 
             case tag:
@@ -98,14 +102,14 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
         switch(annotatedType) {
 
             case dataset:
-                result = linkTagToDatasetsWithinProject(experimenterId, containerId, csvData);
+                result = linkTagsToDatasetsWithinProject(experimenterId, containerId, csvData);
                 break;
 
             case image:
-                // also check for the container type? this would allow
-                // to tag images both within project and dataset
-                throw new UnsupportedOperationException(
-                    "Tagging other containers than datasets not implemented");
+                // also check for the container type? this would allow to tag images both within
+                // project and dataset. For now, assume tagging happens per dataset.
+                result = linkTagsToImagesWithinDataset(experimenterId, containerId, csvData);
+                break;
 
             default:
                 throw new UnsupportedOperationException(
@@ -116,7 +120,7 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
         return result;
     }
 
-    private LinksData linkTagToDatasetsWithinProject(
+    private LinksData linkTagsToDatasetsWithinProject(
             Long experimenterId,
             Long projectId,
             CsvData csvData) throws ServerError {
@@ -126,7 +130,7 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
         Check.notNull(csvData, "csvData");
 
         final String csvContent = csvData.getFileContent();
-        rejectIfEmptyFile(projectId, csvContent);
+        rejectIfEmptyFile(ContainerType.project, projectId, csvContent);
 
         // massage input csv file into shape:
         // - merge duplicate line keys (ie. datasets names)
@@ -142,13 +146,37 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
         return linksData;
     }
 
-    private void rejectIfEmptyFile(Long projectId, String csvContent) {
+    private LinksData linkTagsToImagesWithinDataset(
+                    Long experimenterId,
+                    Long datasetId,
+                    CsvData csvData) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(datasetId, "datasetId");
+        Check.notNull(csvData, "csvData");
+
+        final String csvContent = csvData.getFileContent();
+        rejectIfEmptyFile(ContainerType.dataset, datasetId, csvContent);
+
+        // massage input csv file into shape:
+        // - merge duplicate line keys (ie. datasets names)
+        // - merge duplicate column values (ie. tags names)
+        Multimap<String, String> uniqueLines = getCsvReaderService().readUniqueRecords(csvContent);
+
+        // convert csv file into bulk annotations
+        LinksData linksData = getCsvAnnotationService().saveTagsAndLinkNestedImages(
+                        experimenterId, datasetId, uniqueLines);
+
+        return linksData;
+    }
+
+    private void rejectIfEmptyFile(ContainerType containerType, Long containerId, String csvContent) {
         if (null == csvContent || csvContent.isEmpty()) {
 
-            log.warn("No csv data for project {}", projectId);
+            log.warn("No csv data for container {} of type {}", containerId, containerType);
 
             throw new IllegalStateException(String.format(
-                "Empty csv content for project: %d", projectId));
+                "Empty csv content for container: %d of type %s", containerId, containerType));
 
         }
     }

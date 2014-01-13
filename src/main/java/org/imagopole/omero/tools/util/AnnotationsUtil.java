@@ -3,8 +3,11 @@
  */
 package org.imagopole.omero.tools.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -12,6 +15,8 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
+import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.slf4j.Logger;
@@ -129,6 +134,26 @@ public final class AnnotationsUtil {
         }
 
         return Multimaps.unmodifiableMultimap(result);
+    }
+
+    /**
+     * Builds a list of transient model entities from a list of tag names.
+     *
+     * @param tagNames the tags to be created
+     * @return list of tags as model entities, or an empty list
+     */
+    public static List<IObject> toTagEntities(Set<String> tagNames) {
+        List<IObject> result = new ArrayList<IObject>();
+
+        if (null != tagNames) {
+
+            for (String tagName : tagNames) {
+                TagAnnotationData transientTag = new TagAnnotationData(tagName);
+                result.add(transientTag.asIObject());
+            }
+        }
+
+        return result;
     }
 
 }

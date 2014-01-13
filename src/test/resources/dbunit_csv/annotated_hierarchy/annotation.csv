@@ -1,0 +1,4 @@
+id,discriminator,permissions,textvalue,creation_id,update_id,group_id,owner_id
+810,/basic/text/tag/,-40,DbUnit.hierarchy-Tag.Linked-1,888999,888999,801,802
+811,/basic/text/tag/,-40,DbUnit.hierarchy-Tag.Linked-2,888999,888999,801,802
+812,/basic/text/tag/,-40,DbUnit.hierarchy-Tag.Unlinked,888999,888999,801,802

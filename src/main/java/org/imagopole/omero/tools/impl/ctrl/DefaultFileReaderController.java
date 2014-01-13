@@ -97,16 +97,13 @@ public class DefaultFileReaderController implements FileReaderController {
         switch (fileContainerType) {
 
             case project:
+            case dataset:
                 result = getFileReaderService().readFromRemoteFileAnnotation(
                                 experimenterId,
                                 containerId,
                                 fileContainerType,
                                 fileName);
                 break;
-
-            case dataset:
-                throw new UnsupportedOperationException(
-                    "FileAttachment lookup on datasets not implemented");
 
             default:
                 throw new UnsupportedOperationException(

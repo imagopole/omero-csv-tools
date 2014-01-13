@@ -5,12 +5,12 @@ import static org.testng.Assert.assertNull;
 
 import java.io.File;
 
+import org.imagopole.omero.tools.api.dto.PojoData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.unitils.mock.Mock;
 import org.unitils.mock.core.MockObject;
 
-import pojos.DatasetData;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
 
@@ -26,32 +26,36 @@ public class FunctionsUtilTest {
     }
 
     @Test
-    public void toDatasetNameTests() {
-        Mock<DatasetData> mock = new MockObject<DatasetData>(DatasetData.class, null);
-        mock.returns(null).getName();
+    public void toPojoNameTests() {
+        Mock<PojoData> nullMock = new MockObject<PojoData>(PojoData.class, null);
+        nullMock.returns(null).getName();
 
-        assertNull(FunctionsUtil.toDatasetName.apply(mock.getMock()));
+        assertNull(FunctionsUtil.toPojoName.apply(nullMock.getMock()));
+        nullMock.assertInvoked().getName();
+
+        Mock<PojoData> mock = new MockObject<PojoData>(PojoData.class, null);
+        mock.returns("dataset.name").getName();
+        assertEquals("dataset.name", FunctionsUtil.toPojoName.apply(mock.getMock()));
         mock.assertInvoked().getName();
 
-        DatasetData input = new DatasetData();
-        input.setName("dataset.name");
-        assertEquals("dataset.name", FunctionsUtil.toDatasetName.apply(input));
-
-        input.setName("    ");
-        assertEquals("    ", FunctionsUtil.toDatasetName.apply(input));
+        Mock<PojoData> emptyMock = new MockObject<PojoData>(PojoData.class, null);
+        emptyMock.returns("    ").getName();
+        assertEquals("    ", FunctionsUtil.toPojoName.apply(emptyMock.getMock()));
+        emptyMock.assertInvoked().getName();
     }
 
     @Test
-    public void toDatasetIdTests() {
-        Mock<DatasetData> mock = new MockObject<DatasetData>(DatasetData.class, null);
-        mock.returns(null).getId();
+    public void toPojoIdTests() {
+        Mock<PojoData> nullMock = new MockObject<PojoData>(PojoData.class, null);
+        nullMock.returns(null).getId();
 
-        assertEquals(Long.valueOf(0), FunctionsUtil.toDatasetId.apply(mock.getMock()));
+        assertNull(FunctionsUtil.toPojoId.apply(nullMock.getMock()));
+        nullMock.assertInvoked().getId();
+
+        Mock<PojoData> mock = new MockObject<PojoData>(PojoData.class, null);
+        mock.returns(1L).getId();
+        assertEquals(Long.valueOf(1), FunctionsUtil.toPojoId.apply(mock.getMock()));
         mock.assertInvoked().getId();
-
-        DatasetData input = new DatasetData();
-        input.setId(1L);
-        assertEquals(Long.valueOf(1), FunctionsUtil.toDatasetId.apply(input));
     }
 
     @Test

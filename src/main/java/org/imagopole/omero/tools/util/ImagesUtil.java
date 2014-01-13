@@ -12,31 +12,31 @@ import org.imagopole.omero.tools.api.dto.PojoData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pojos.DatasetData;
+import pojos.ImageData;
 
 /**
  * @author seb
  *
  */
-public final class DatasetsUtil {
+public final class ImagesUtil {
 
     /** Application logs */
-    private static final Logger LOG = LoggerFactory.getLogger(DatasetsUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ImagesUtil.class);
 
     /**
      * Private constructor.
      */
-    private DatasetsUtil() {
+    private ImagesUtil() {
         super();
     }
 
-    public static Collection<PojoData> toPojos(Collection<DatasetData> datasets) {
+    public static Collection<PojoData> toPojos(Collection<ImageData> images) {
         Collection<PojoData> result = Collections.emptyList();
 
-        if (null != datasets) {
+        if (null != images) {
 
-            result = Collections2.transform(datasets, FunctionsUtil.datasetToPojo);
-            LOG.trace("datasets: {}", result.size());
+            result = Collections2.transform(images, FunctionsUtil.imageToPojo);
+            LOG.trace("images: {}", result.size());
 
         }
 

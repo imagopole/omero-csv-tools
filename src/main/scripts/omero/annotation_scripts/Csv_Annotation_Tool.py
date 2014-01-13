@@ -28,7 +28,7 @@ COMMAND_NAME = "csv-annotation-tool-script.sh"
 # {1} = OMERO session token
 # {2} = list of additional arguments in SINGLE_ARGUMENT_FORMAT
 ##
-COMMAND_PATH_FORMAT = "{0} --hostname='localhost' --session-key='{1}' {2}"
+COMMAND_PATH_FORMAT = "{0} --hostname='localhost' --session-key='{1}' {2} --annotation-type=tag"
 
 ##
 # Format for a single argument passed to the Java command line tool.
@@ -44,16 +44,17 @@ SINGLE_ARGUMENT_FORMAT = "--{0}='{1}'"
 ##
 ANNOTATED_TYPES_ENUM = [
     rstring("Dataset"),
-    #rstring("Image")
+    rstring("Image")
 ]
 
-ANNOTATION_TYPES_ENUM = [
-    rstring("Tag")
-]
+# Keep UI minimal at this point - to be added later if extra annotation types are introduced
+#ANNOTATION_TYPES_ENUM = [
+#    rstring("Tag")
+#]
 
 CONTAINER_TYPES_ENUM = [
     rstring("Project"),
-    #rstring("Dataset")
+    rstring("Dataset")
 ]
 
 ##
@@ -69,7 +70,7 @@ class Labels:
     DELIMITER       = "CSV_Records_Separator"
     SKIP_HEADER     = "Skip_CSV_Header_Line"
     CHARSET         = "CSV_Text_Encoding"
-    DRY_RUN         = "Simulation_Mode"
+    #DRY_RUN         = "Simulation_Mode"
 
 ##
 # One-to-one mapping for conversion between:
@@ -88,8 +89,8 @@ PARAMETERS_KEYS_MAPPING = {
     Labels.FILE_NAME       : "csv-file-name",
     Labels.DELIMITER       : "csv-delimiter",
     Labels.SKIP_HEADER     : "csv-skip-header",
-    Labels.CHARSET         : "csv-charset",
-    Labels.DRY_RUN         : "dry-run"
+    Labels.CHARSET         : "csv-charset"
+    #Labels.DRY_RUN         : "dry-run" 
 }
 
 
@@ -241,6 +242,9 @@ def run_as_script():
     """
     Bulk annotate your data in an unattended manner using definitions retrieved from a CSV file.
 
+    In order to tag datasets within a project, attach the CSV file to the project.
+    In order to tag images within a dataset, attach the CSV file to the dataset.
+
     A detailed user guide is available in the distributed "csv-annotation-tool-manual".
     """,
 
@@ -260,19 +264,20 @@ def run_as_script():
         description = "Identifier of the data type above (CSV file holder and parent of the data to be annotated). Please input only one ID."
         ),
 
-    scripts.String(
-        Labels.ANNOTATION_TYPE,
-        optional = False,
-        grouping = "2",
-        description = "The type of annotation to use (eg. tag, comment, etc.)",
-        values = ANNOTATION_TYPES_ENUM
-        ),
+    # Keep script UI minimal for now - may reintroduce this later on if additional annotation types are supported
+    #scripts.String(
+    #    Labels.ANNOTATION_TYPE,
+    #    optional = False,
+    #    grouping = "2",
+    #    description = "The type of annotation to use (eg. tag, comment, etc.)",
+    #    values = ANNOTATION_TYPES_ENUM
+    #    ),
 
     scripts.String(
         Labels.ANNOTATED_TYPE,
         optional = False,
-        grouping = "2.1",
-        description = "The data you want to annotate (eg. project, dataset, or image)",
+        grouping = "1.2",
+        description = "The data you want to annotate (eg. dataset or image)",
         values = ANNOTATED_TYPES_ENUM
         ),
 
@@ -281,7 +286,7 @@ def run_as_script():
         Labels.FILE_NAME,
         optional = True,
         grouping = "3",
-        description = "Name of the CSV file, with extension (eg. 'my_project.csv'). If left empty, naming convention is used: {annotated-type}_{annotation-type}.csv"
+        description = "Name of the CSV file, with extension (eg. 'my_project.csv'). If left empty, the following naming convention is used: {annotated-type}_{annotation-type}.csv"
         ),
 
     scripts.String(
@@ -304,19 +309,20 @@ def run_as_script():
     scripts.String(
         Labels.CHARSET,
         optional = True,
-        grouping = "4",
+        grouping = "3.3",
         description = "CSV file charset encoding to use when reading. Default value: UTF-8. Leave blank if unknown."
         ),
 
-    scripts.Bool(
-        Labels.DRY_RUN,
-        optional = True,
-        grouping = "5",
-        description = "Process csv file only (stop before saving results to database). Default value: false",
-        ),
+    # Candidate for removal
+    # scripts.Bool(
+    #    Labels.DRY_RUN,
+    #   optional = True,
+    #    grouping = "5",
+    #    description = "Process csv file only (stop before saving results to database). Default value: false",
+    #    ),
 
     #---- script metadata
-    version      = "0.1 [5.0.0-beta1]",
+    version      = "0.2 [OMERO-5.0.0-beta1-ice34]",
     authors      = [ "S. Simard", "Imagopole" ],
     institutions = [ "Institut Pasteur" ],
     contact      = "ssimard@pasteur.fr"

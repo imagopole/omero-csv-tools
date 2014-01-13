@@ -10,6 +10,7 @@ tests:
     classes:
       - org.imagopole.omero.tools.util.AnnotationsUtilTest
       - org.imagopole.omero.tools.util.DatasetsUtilTest
+      - org.imagopole.omero.tools.util.ImagesUtilTest
       - org.imagopole.omero.tools.util.FunctionsUtilTest
       - org.imagopole.omero.tools.util.ParseUtilTest
 
@@ -17,6 +18,7 @@ tests:
     classes:
       - org.imagopole.omero.tools.impl.dto.AnnotationLinksDataTest
       - org.imagopole.omero.tools.impl.dto.DefaultCsvDataTest
+      - org.imagopole.omero.tools.impl.dto.DefaultPojoDataTest
 
   - name: CSV
     classes:
@@ -26,6 +28,7 @@ tests:
 
   - name: Blitz
     classes:
+      - org.imagopole.omero.tools.impl.blitz.AnnotationLinkersTest
       - org.imagopole.omero.tools.impl.blitz.AnnotationBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.ContainerServiceBlitzTest
       - org.imagopole.omero.tools.impl.blitz.FileBlitzServiceTest

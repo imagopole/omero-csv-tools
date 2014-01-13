@@ -11,7 +11,6 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import ome.model.containers.Dataset;
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
 import omero.model.Annotation;
@@ -20,6 +19,7 @@ import omero.model.IObject;
 import omero.model.TagAnnotation;
 
 import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
+import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.util.BlitzUtil;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
@@ -117,33 +117,33 @@ public class AnnotationBlitzService implements OmeroAnnotationService {
     /**
      * {@inheritDoc}
      */
-    @Override
     @SuppressWarnings("unchecked")
-    public Map<Long, Collection<TagAnnotationData>> listTagsLinkedToDatasets(
-            Long experimenterId,
-            Collection<Long> datasetsIds) throws ServerError {
+    @Override
+    public Map<Long, Collection<TagAnnotationData>> listTagsLinkedToContainers(
+                    Long experimenterId,
+                    Collection<Long> containersIds,
+                    AnnotatedType annotatedType) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
-        Check.notEmpty(datasetsIds, "datasetsIds");
+        Check.notEmpty(containersIds, "containersIds");
+        Check.notNull(annotatedType, "annotatedType");
 
         Map<Long, Collection<TagAnnotationData>> result = Collections.emptyMap();
 
-        Map<Long, List<Annotation>> annotationsAlreadyLinkedToDatasets =
+        Map<Long, List<Annotation>> annotationsAlreadyLinkedToObjects =
             getSession().getMetadataService().loadSpecifiedAnnotationsLinkedTo(
                 TagAnnotation.class.getName(),
                 null,
                 null,
-                Dataset.class.getName(),
-                Lists.newArrayList(datasetsIds),
+                annotatedType.getModelClass().getName(),
+                Lists.newArrayList(containersIds),
                 BlitzUtil.byExperimenter(experimenterId));
 
-        if (null != annotationsAlreadyLinkedToDatasets) {
+        if (null != annotationsAlreadyLinkedToObjects) {
 
-            result=  DataObject.asPojos(annotationsAlreadyLinkedToDatasets);
+            result=  DataObject.asPojos(annotationsAlreadyLinkedToObjects);
 
         }
-
-        log.debug("tagAnnotationPojosAlreadyLinkedToDatasets: {} - {}", result.size(), result);
 
         return result;
     }

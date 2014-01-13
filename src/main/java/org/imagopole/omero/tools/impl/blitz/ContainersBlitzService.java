@@ -13,7 +13,9 @@ import com.google.common.collect.Lists;
 
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
+import omero.model.Dataset;
 import omero.model.IObject;
+import omero.model.Image;
 import omero.model.Project;
 
 import org.imagopole.omero.tools.api.blitz.OmeroContainerService;
@@ -24,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import pojos.DataObject;
 import pojos.DatasetData;
+import pojos.ImageData;
 import pojos.ProjectData;
 
 /**
@@ -62,11 +65,11 @@ public class ContainersBlitzService implements OmeroContainerService {
 
         Set<DatasetData> result = new HashSet<DatasetData>();
 
-         List<IObject> projectsObjects =
-             getSession().getContainerService().loadContainerHierarchy(
-                     Project.class.getName(),
-                     Lists.newArrayList(projectId),
-                     BlitzUtil.byExperimenter(experimenterId));
+        List<IObject> projectsObjects =
+            getSession().getContainerService().loadContainerHierarchy(
+                    Project.class.getName(),
+                    Lists.newArrayList(projectId),
+                    BlitzUtil.byExperimenter(experimenterId));
 
          if (null != projectsObjects) {
 
@@ -83,6 +86,38 @@ public class ContainersBlitzService implements OmeroContainerService {
 
          return result;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     @SuppressWarnings("unchecked")
+     public Collection<ImageData> listImagesByExperimenterAndDataset(
+             Long experimenterId,
+             Long datasetId) throws ServerError {
+
+         Check.notNull(experimenterId, "experimenterId");
+         Check.notNull(datasetId, "datasetId");
+
+         Set<ImageData> result = new HashSet<ImageData>();
+
+        List<Image> imageObjects =
+            getSession().getContainerService().getImages(
+                        Dataset.class.getName(),
+                        Lists.newArrayList(datasetId),
+                        BlitzUtil.byExperimenter(experimenterId));
+
+        if (null != imageObjects) {
+
+            result = DataObject.asPojos(imageObjects);
+
+        }
+
+         log.debug("Found {} nested images for experimenter {} and dataset {}",
+                  result.size(), experimenterId, datasetId);
+
+        return result;
+     }
 
     /**
      * Returns session.

@@ -1,19 +1,14 @@
 package org.imagopole.omero.tools.impl.blitz;
 
-import static com.google.common.collect.Iterables.getOnlyElement;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
 import java.util.Collection;
 import java.util.List;
-
-import com.google.common.collect.Lists;
 
 import omero.ServerError;
 import omero.api.IContainerPrx;
 import omero.api.ServiceFactoryPrx;
+import omero.model.Dataset;
 import omero.model.DatasetI;
+import omero.model.ImageI;
 import omero.model.Project;
 import omero.model.ProjectI;
 
@@ -27,6 +22,15 @@ import org.unitils.UnitilsTestNG;
 import org.unitils.mock.Mock;
 
 import pojos.DatasetData;
+import pojos.ImageData;
+
+import com.google.common.collect.Lists;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
+import static com.google.common.collect.Iterables.getOnlyElement;
 
 public class ContainerServiceBlitzTest extends UnitilsTestNG {
 
@@ -124,7 +128,7 @@ public class ContainerServiceBlitzTest extends UnitilsTestNG {
     public void listDatasetsByExperimenterAndProjectWithDatasets() throws ServerError {
 
         // fixture data: a supposedly existing project,
-        // with one dataset children
+        // with one dataset child
         ProjectI project = new ProjectI(1, true);
 
         DatasetI dataset = new DatasetI(1, true);
@@ -157,6 +161,78 @@ public class ContainerServiceBlitzTest extends UnitilsTestNG {
         containerPrxMock.assertInvoked()
                         .loadContainerHierarchy(
                              Project.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listImagesByExperimenterAndDatasetShouldRejectNullExpParam() throws ServerError {
+        containerService.listImagesByExperimenterAndDataset(null, 1L);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listImagesByExperimenterAndDatasetShouldRejectNullProjParam() throws ServerError {
+        containerService.listImagesByExperimenterAndDataset(1L, null);
+    }
+
+    @Test
+    public void listImagesByExperimenterAndDatasetShouldConvertNullsToEmpty() throws ServerError {
+        // fixture behavior
+        containerPrxMock.returns(null).getImages(
+                             Dataset.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<ImageData> result =
+            containerService.listImagesByExperimenterAndDataset(1L, 1L);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked().getImages(
+                             Dataset.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+    @Test
+    public void listImagesByExperimenterAndDatasetsWithImages() throws ServerError {
+
+        // fixture data: a supposedly existing dataset,
+        // with one image child
+        ImageI image = new ImageI(1, true);
+        image.setName(omero.rtypes.rstring("image.one"));
+
+        List<ImageI> expected = Lists.newArrayList(image);
+
+        // fixture behavior
+        containerPrxMock.returns(expected).getImages(
+                             Dataset.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<ImageData> result =
+            containerService.listImagesByExperimenterAndDataset(1L, 1L);
+        log.debug("{}", result);
+
+        assertNotNull(result, "Non-null results expected");
+        assertEquals(result.size(), 1, "1 result expected");
+
+        ImageData pojo = getOnlyElement(result);
+        assertEquals(pojo.getId(), 1L, "Wrong pojo id");
+        assertEquals(pojo.getName(), "image.one", "Wrong pojo name");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked().getImages(
+                             Dataset.class.getName(),
                              Lists.newArrayList(1L),
                              BlitzUtil.byExperimenter(1L));
     }

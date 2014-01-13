@@ -19,6 +19,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.Sets;
 
+import omero.model.IObject;
+
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,14 @@ public class AnnotationsUtilTest {
 
     /** Application logs */
     private final Logger log = LoggerFactory.getLogger(AnnotationsUtilTest.class);
+
+    @Test
+    public void toTagEntitiesShouldConvertNullEmptyResult() {
+        List<IObject> result = AnnotationsUtil.toTagEntities(null);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+    }
 
     @Test
     public void indexByRowShouldConvertNullEmptyResult() {

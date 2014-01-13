@@ -3,11 +3,19 @@ package org.imagopole.omero.tools.api.blitz;
 import java.util.Collection;
 import java.util.Map;
 
+import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+
 import omero.ServerError;
 import omero.model.IObject;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
 
+/**
+ * Service layer to the underlying metadata related OMERO gateway.
+ *
+ * @author seb
+ *
+ */
 public interface OmeroAnnotationService {
 
     /**
@@ -27,14 +35,9 @@ public interface OmeroAnnotationService {
      */
     Collection<TagAnnotationData> listTagsByExperimenter(Long experimenterId) throws ServerError;
 
-    /**
-     * @param experimenterId
-     * @param datasetsIds
-     * @return
-     * @throws ServerError
-     */
-    Map<Long, Collection<TagAnnotationData>> listTagsLinkedToDatasets(
+    Map<Long, Collection<TagAnnotationData>> listTagsLinkedToContainers(
                     Long experimenterId,
-                    Collection<Long> datasetsIds) throws ServerError;
+                    Collection<Long> containersIds,
+                    AnnotatedType annotatedType) throws ServerError;
 
 }

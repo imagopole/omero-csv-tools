@@ -14,8 +14,12 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import org.imagopole.omero.tools.api.dto.PojoData;
+import org.imagopole.omero.tools.impl.dto.DefaultPojoData;
+
 import pojos.DatasetData;
 import pojos.FileAnnotationData;
+import pojos.ImageData;
 import pojos.TagAnnotationData;
 
 /**
@@ -41,12 +45,46 @@ public final class FunctionsUtil {
 
     };
 
-    public static final Function<DatasetData, String> toDatasetName =
-                    new Function<DatasetData, String>() {
+    public static final Function<DatasetData, PojoData> datasetToPojo =
+                    new Function<DatasetData, PojoData>() {
 
         @Override
         @Nullable
-        public String apply(@Nullable DatasetData input) {
+        public PojoData apply(@Nullable DatasetData input) {
+            PojoData result = null;
+
+            if (null != input) {
+                result = DefaultPojoData.fromDatasetData(input);
+            }
+
+            return result;
+        }
+
+    };
+
+    public static final Function<ImageData, PojoData> imageToPojo =
+                    new Function<ImageData, PojoData>() {
+
+        @Override
+        @Nullable
+        public PojoData apply(@Nullable ImageData input) {
+            PojoData result = null;
+
+            if (null != input) {
+                result = DefaultPojoData.fromImageData(input);
+            }
+
+            return result;
+        }
+
+    };
+
+    public static final Function<PojoData, String> toPojoName =
+                    new Function<PojoData, String>() {
+
+        @Override
+        @Nullable
+        public String apply(@Nullable PojoData input) {
             String result = null;
 
             if (null != input) {
@@ -58,12 +96,12 @@ public final class FunctionsUtil {
 
     };
 
-    public static final Function<DatasetData, Long> toDatasetId =
-                    new Function<DatasetData, Long>() {
+    public static final Function<PojoData, Long> toPojoId =
+                    new Function<PojoData, Long>() {
 
         @Override
         @Nullable
-        public Long apply(@Nullable DatasetData input) {
+        public Long apply(@Nullable PojoData input) {
             Long result = null;
 
             if (null != input) {
