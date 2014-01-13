@@ -8,7 +8,7 @@
 # Distribution unpack directory
 # Assumed to be the current folder for the executed script
 JARS_DIR=`dirname $0`
-CSV_TOOL_VERSION="0.2-SNAPSHOT"
+CSV_TOOL_VERSION="0.2"
 
 ####
 # Dependencies provided by the "with-dependencies" distribution 
