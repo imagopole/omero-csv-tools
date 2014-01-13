@@ -74,9 +74,9 @@ class Labels:
 
 ##
 # One-to-one mapping for conversion between:
-# - the script parameters (following the style guidelines
+# - the script parameters keys(following the style guidelines
 #   and taking advantage of the variables binding magic)
-# - the external command arguments
+# - the external command arguments keys
 #
 # key   = OMERO script input parameter key
 # value = CSV Annotation Tool CLI argument key
@@ -93,6 +93,44 @@ PARAMETERS_KEYS_MAPPING = {
     #Labels.DRY_RUN         : "dry-run" 
 }
 
+##
+# Helper functions and one-to-one mapping for conversion between:
+# - the script parameters values
+# - the external command arguments values
+#
+# key   = OMERO script input parameter key
+# value = single-arg function to be applied for conversion  
+#         between the OMERO script parameter value and its
+#         CSV tool counterpart.
+#         If None, considered pass-through.
+##
+def trim(value):
+    if value is not None:
+        return str(value).strip()
+    return value
+
+def to_lowercase(value):
+    if value is not None:
+        return trim(value).lower()
+    return value
+
+def to_uppercase(value):
+    if value is not None:
+        return trim(value).upper()
+    return value
+
+PARAMETERS_VALUES_MAPPING = {
+    Labels.ANNOTATED_TYPE  : to_lowercase,
+    Labels.ANNOTATION_TYPE : to_lowercase,
+    Labels.DATA_TYPE       : to_lowercase,
+    Labels.IDs             : None,
+    Labels.FILE_NAME       : trim,
+    Labels.DELIMITER       : trim,
+    Labels.SKIP_HEADER     : to_lowercase,
+    Labels.CHARSET         : to_uppercase
+    #Labels.DRY_RUN         : to_lowercase
+}
+
 
 def log(msg):
     """
@@ -106,6 +144,9 @@ def log(msg):
 
 def lookup_external_key(client_key):
     """
+    Gets the CSV tool argument key equivalent to this OMERO script argument.
+
+    @param client_key the OMERO script key
     """
 
     external_key = PARAMETERS_KEYS_MAPPING[client_key]
@@ -114,13 +155,21 @@ def lookup_external_key(client_key):
     return external_key
 
 
-def convert_to_external_value(client_value):
+def convert_to_external_value(client_key, client_value):
     """
+    Converts OMERO script argument value to a format compatible with the CSV tool.
+
+    @param client_key the OMERO script key
+    @param client_value the OMERO script argument value
     """
 
     external_value = client_value
     if client_value is not None:
-        external_value = str(client_value).lower()
+        converter_function = PARAMETERS_VALUES_MAPPING[client_key]
+        if converter_function is not None:
+            external_value = converter_function(client_value)
+        else:
+            external_value = str(client_value)
 
     log("convert_to_external_value: {0}={1}".format(client_value, external_value))
 
@@ -160,7 +209,7 @@ def get_external_parameters_map(client):
     for key in client_parameters:
         client_value = client_parameters[key]
         external_key = lookup_external_key(key)
-        external_params[external_key] = convert_to_external_value(client_value)
+        external_params[external_key] = convert_to_external_value(key, client_value)
 
     log("get_external_parameters_map: {0}".format(external_params))
 
@@ -169,6 +218,8 @@ def get_external_parameters_map(client):
 
 def format_external_parameters(parameters_map):
     """
+    Converts the OMERO script arguments (keys and values) to their command line
+    counterparts as expected by the CSV tool.
 
     @param parameters_map the key-value pairs to be passed to the external command
     """
@@ -182,6 +233,7 @@ def format_external_parameters(parameters_map):
     log("format_external_parameters: {0}".format(formatted_params))
 
     return formatted_params
+
 
 def build_external_command(parameters_map, session_key):
     """
@@ -214,8 +266,10 @@ def run_external_command(cmd):
 
     return ret_val
 
+
 def build_output_message(ret_val):
     """
+    Converts the external process return value to a more user-friendly message for display.
 
     @param ret_val the return value from the external process execution
     """
@@ -239,6 +293,7 @@ def run_as_script():
 
     #---- script name and description
     "Csv_Annotation_Tool.py",
+
     """
     Bulk annotate your data in an unattended manner using definitions retrieved from a CSV file.
 
