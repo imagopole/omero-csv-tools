@@ -11,6 +11,8 @@ import java.util.Map;
 
 
 /**
+ * Utility class for input handling and validation.
+ *
  * @author seb
  *
  */

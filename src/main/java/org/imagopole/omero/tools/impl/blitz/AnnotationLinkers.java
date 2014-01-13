@@ -17,17 +17,27 @@ import pojos.AnnotationData;
 import pojos.DataObject;
 
 /**
+ * Factory and implementations for <code>AnnotationLinker</code> subclasses.
+ *
  * @author seb
  *
  */
 public class AnnotationLinkers {
 
+    /** Singleton. */
     private final static AnnotationLinkers INSTANCE = new AnnotationLinkers();
 
+    /** Private constructor. */
     private AnnotationLinkers() {
         super();
     }
 
+    /**
+     * Static factory method.
+     *
+     * @param annotatedType the type of data to be annotated
+     * @return the implementation specific association builder for the given annotation target
+     */
     public static AnnotationLinker forAnnotatedType(AnnotatedType annotatedType) {
         Check.notNull(annotatedType, "annotatedType");
 
@@ -53,6 +63,8 @@ public class AnnotationLinkers {
     }
 
     /**
+     * Association builder for <code>omero.model.Dataset</code> annotations.
+     *
      * @author seb
      *
      */
@@ -78,6 +90,8 @@ public class AnnotationLinkers {
     }
 
     /**
+     * Association builder for <code>omero.model.Image</code> annotations.
+     *
      * @author seb
      *
      */

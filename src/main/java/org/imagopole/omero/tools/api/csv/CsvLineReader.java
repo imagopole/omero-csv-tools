@@ -15,6 +15,12 @@ import org.imagopole.omero.tools.api.RtException;
  */
 public interface CsvLineReader<T extends CsvLine> {
 
+    /**
+     * Read the underlying CSV data.
+     *
+     * @return the CSV lines
+     * @throws RtException processing or IO failure
+     */
     Collection<T> getLines() throws RtException;
 //
 //    void setMalformedLineHandler(CsvLineHandler<T> lineHandler);

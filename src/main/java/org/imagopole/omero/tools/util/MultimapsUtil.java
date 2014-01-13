@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Utility class for Guava multimaps handling.
+ *
  * @author seb
  *
  */
@@ -31,10 +33,6 @@ public final class MultimapsUtil {
         super();
     }
 
-    /**
-     * @param multimap
-     * @return
-     */
     public static Multimap<String, String> invertKeyValues(Multimap<String, String> multimap) {
         Check.notNull(multimap, "multimap");
 

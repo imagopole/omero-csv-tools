@@ -9,6 +9,12 @@ import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.dto.LinksData;
 
+/**
+ * Service layer to the annotations processing application logic.
+ *
+ * @author seb
+ *
+ */
 public interface CsvAnnotationService {
 
     /**

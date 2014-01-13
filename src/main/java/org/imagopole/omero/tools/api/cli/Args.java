@@ -6,7 +6,6 @@ package org.imagopole.omero.tools.api.cli;
 import com.google.common.base.Charsets;
 
 import omero.model.Annotation;
-import omero.model.CommentAnnotation;
 import omero.model.Dataset;
 import omero.model.IObject;
 import omero.model.Image;
@@ -14,6 +13,8 @@ import omero.model.Project;
 import omero.model.TagAnnotation;
 
 /**
+ * Command line arguments supported by the CSV Annotation Tool.
+ *
  * @author seb
  *
  */
@@ -26,10 +27,24 @@ public class Args {
         super();
     }
 
+    /**
+     * Enumeration for the --annotation-type argument.
+     *
+     * @author seb
+     *
+     */
     public static enum AnnotationType {
-        tag,
-        comment;
 
+        /** Represents a <code>omero.model.TagAnnotation</code>. */
+        tag;
+
+        // to be reintroduced later if needed
+        //comment;
+
+        /**
+         * The OMERO model class for this argument.
+         * @return the implementation class
+         */
         public Class<? extends Annotation> getModelClass() {
             Class<? extends Annotation> clazz = null;
 
@@ -39,9 +54,10 @@ public class Args {
                     clazz = TagAnnotation.class;
                     break;
 
-                case comment:
-                    clazz = CommentAnnotation.class;
-                    break;
+                  // to be reintroduced later if needed
+//                case comment:
+//                    clazz = CommentAnnotation.class;
+//                    break;
 
                 default:
                     throw new IllegalArgumentException("Unknown annotation type");
@@ -52,10 +68,24 @@ public class Args {
         }
     }
 
+    /**
+     * Enumeration for the --annotated-type argument.
+     *
+     * @author seb
+     *
+     */
     public static enum AnnotatedType {
+
+        /** Represents a <code>omero.model.Dataset</code>. */
         dataset,
+
+        /** Represents an <code>omero.model.Image</code>. */
         image;
 
+        /**
+         * The OMERO model class for this argument.
+         * @return the implementation class
+         */
         public Class<? extends IObject> getModelClass() {
             Class<? extends IObject> clazz = null;
 
@@ -79,11 +109,27 @@ public class Args {
 
     }
 
+    /**
+     * Enumeration for the --container-type argument.
+     *
+     * @author seb
+     *
+     */
     public static enum ContainerType {
+
+        /** Represents a local file on the filesystem (no OMERO model counterpart). */
         local,
+
+        /** Represents a <code>omero.model.Project</code>. */
         project,
+
+        /** Represents a <code>omero.model.Dataset</code>. */
         dataset;
 
+        /**
+         * The OMERO model class for this argument.
+         * @return the implementation class
+         */
         public Class<? extends IObject> getModelClass() {
             Class<? extends IObject> clazz = null;
 
@@ -109,6 +155,12 @@ public class Args {
         }
     }
 
+    /**
+     * Default constant values for optional arguments.
+     *
+     * @author seb
+     *
+     */
     public static final class Defaults {
 
         public static final Integer   ICE_SSL_PORT      =  4064;

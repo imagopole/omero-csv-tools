@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import pojos.ImageData;
 
 /**
+ * Utility class for image entities handling.
+ *
  * @author seb
  *
  */

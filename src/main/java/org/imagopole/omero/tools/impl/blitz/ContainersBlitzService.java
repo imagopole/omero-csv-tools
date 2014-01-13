@@ -30,6 +30,8 @@ import pojos.ImageData;
 import pojos.ProjectData;
 
 /**
+ * Service layer to the underlying container related OMERO gateway.
+ *
  * @author seb
  *
  */
@@ -42,7 +44,9 @@ public class ContainersBlitzService implements OmeroContainerService {
     private ServiceFactoryPrx session;
 
     /**
-     * @param session
+     * Parameterized constructor.
+     *
+     * @param session the OMERO Blitz session
      */
     public ContainersBlitzService(ServiceFactoryPrx session) {
         super();

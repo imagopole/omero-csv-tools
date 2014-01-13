@@ -6,6 +6,8 @@ package org.imagopole.omero.tools.util;
 import omero.sys.ParametersI;
 
 /**
+ * Utility class for Blitz parameters handling.
+ *
  * @author seb
  *
  */
@@ -18,6 +20,12 @@ public final class BlitzUtil {
         super();
     }
 
+    /**
+     * Build a Blitz filter for the given experimenter.
+     *
+     * @param experimenterId the experimenter
+     * @return the OMERO Blitz parameters
+     */
     public static ParametersI byExperimenter(Long experimenterId) {
         Check.notNull(experimenterId, "experimenterId");
 

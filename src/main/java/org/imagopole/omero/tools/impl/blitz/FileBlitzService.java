@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Service layer to the underlying file related OMERO gateway.
  *
  * @author seb
  *
@@ -34,7 +35,9 @@ public class FileBlitzService implements OmeroFileService {
     private ServiceFactoryPrx session;
 
     /**
-     * @param session
+     * Parameterized constructor.
+     *
+     * @param session the OMERO Blitz session
      */
     public FileBlitzService(ServiceFactoryPrx session) {
         super();

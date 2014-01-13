@@ -60,6 +60,8 @@ import pojos.ImageData;
 import pojos.TagAnnotationData;
 
 /**
+ * Service layer to the annotations processing application logic.
+ *
  * @author seb
  *
  */
@@ -73,10 +75,13 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
     /** Application logs */
     private final Logger log = LoggerFactory.getLogger(DefaultCsvAnnotationService.class);
 
+    /** Local Blitz client for container handling */
     private OmeroContainerService containerService;
 
+    /** Local Blitz client for AnnotationData handling */
     private OmeroAnnotationService annotationService;
 
+    /** Local Blitz client for persistence handling */
     private OmeroUpdateService updateService;
 
     /**
@@ -472,9 +477,11 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
     }
 
     /**
-     * @param newTagsNames
-     * @return
-     * @throws ServerError
+     * Persists new tags and indexes the result by name.
+     *
+     * @param newTagsNames the tags names to create
+     * @return the persisted tags, indexed by name
+     * @throws ServerError OMERO client or server failure
      */
     @SuppressWarnings("unchecked")
     private Map<String, AnnotationData> saveAndReturnTagObjects(Set<String> newTagsNames) throws ServerError {
@@ -730,11 +737,6 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         return dbTagNameToPojosNames;
     }
 
-    /**
-     * @param uniqueLines
-     * @param experimenterAnnotatedPojos
-     * @return
-     */
     private Multimap<String, String> sieveUnknownPojos(
             Multimap<String, String> uniqueLines,
             Collection<PojoData> experimenterAnnotatedPojos) {

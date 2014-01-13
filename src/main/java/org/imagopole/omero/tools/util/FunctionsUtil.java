@@ -23,6 +23,8 @@ import pojos.ImageData;
 import pojos.TagAnnotationData;
 
 /**
+ * Utility class as holder of misc. Guava functions.
+ *
  * @author seb
  *
  */

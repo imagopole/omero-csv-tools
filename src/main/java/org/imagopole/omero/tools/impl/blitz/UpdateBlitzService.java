@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Service layer to the underlying persistence related OMERO gateway.
+ *
  * @author seb
  *
  */
@@ -29,7 +31,9 @@ public class UpdateBlitzService implements OmeroUpdateService {
     private ServiceFactoryPrx session;
 
     /**
-     * @param session
+     * Parameterized constructor.
+     *
+     * @param session the OMERO Blitz session
      */
     public UpdateBlitzService(ServiceFactoryPrx session) {
         super();

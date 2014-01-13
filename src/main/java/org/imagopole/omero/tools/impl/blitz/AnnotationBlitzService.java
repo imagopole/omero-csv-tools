@@ -29,6 +29,8 @@ import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
 
 /**
+ * Service layer to the underlying metadata related OMERO gateway.
+ *
  * @author seb
  *
  */
@@ -41,7 +43,9 @@ public class AnnotationBlitzService implements OmeroAnnotationService {
     private ServiceFactoryPrx session;
 
     /**
-     * @param session
+     * Parameterized constructor.
+     *
+     * @param session the OMERO Blitz session
      */
     public AnnotationBlitzService(ServiceFactoryPrx session) {
         super();

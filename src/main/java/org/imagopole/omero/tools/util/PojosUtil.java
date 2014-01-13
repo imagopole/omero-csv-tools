@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Utility class for pojo entities handling.
+ *
  * @author seb
  *
  */
@@ -54,8 +56,8 @@ public final class PojosUtil {
      * the returned <code>Multimap<code> implementation allows duplicate values
      * for a given key (otherwise, a BiMap would be fine).
      *
-     * @param pojos
-     * @return
+     * @param pojos the pojos to index
+     * @return the indexed pojos
      */
     public static Multimap<String, PojoData> indexByName(Collection<PojoData> pojos) {
         Multimap<String, PojoData> result = ArrayListMultimap.create();

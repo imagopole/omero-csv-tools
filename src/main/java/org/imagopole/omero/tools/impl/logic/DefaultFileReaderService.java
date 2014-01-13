@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import pojos.FileAnnotationData;
 
 /**
+ * Service layer to the file processing application logic.
+ *
  * @author seb
  *
  */

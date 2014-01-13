@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * No-op mock implementation of the update service.
+ *
  * @author seb
  *
  */
@@ -29,16 +31,21 @@ public class UpdateNoOpBlitzService implements OmeroUpdateService {
     private ServiceFactoryPrx session;
 
     /**
-     * @param session
+     * Parameterized constructor.
+     *
+     * @param session the OMERO Blitz session
      */
     public UpdateNoOpBlitzService(ServiceFactoryPrx session) {
         super();
         this.session = session;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+   /**
+    * No-op mock implementation of the update method.
+    *
+    * @param iObjects the model entities
+    * @return an empty list.
+    */
     @Override
     public Collection<IObject> saveAll(List<IObject> iObjects) throws ServerError {
         Check.notNull(iObjects, "iObjects");

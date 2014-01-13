@@ -3,7 +3,6 @@
  */
 package org.imagopole.omero.tools.impl.ctrl;
 
-import java.io.IOException;
 import java.util.Collection;
 
 import com.google.common.collect.Multimap;
@@ -24,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Dispatcher layer to the annotation/metadata related services (read-write).
+ *
  * @author seb
  *
  */
@@ -47,7 +48,7 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
             Long containerId,
             AnnotationType annotationType,
             AnnotatedType annotatedType,
-            CsvData csvData) throws ServerError, IOException {
+            CsvData csvData) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
@@ -90,7 +91,7 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
                     Long experimenterId,
                     Long containerId,
                     AnnotatedType annotatedType,
-                    CsvData csvData) throws ServerError, IOException {
+                    CsvData csvData) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");

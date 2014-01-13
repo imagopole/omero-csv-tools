@@ -113,7 +113,9 @@ public class CsvAnnotatorCliMain {
     }
 
     /**
-     * @param args
+     * Main entry point for the CLI.
+     *
+     * @param args the CLI arguments
      */
     public static void main(String[] args) {
 

@@ -99,7 +99,9 @@ public class CsvAnnotatorScriptMain {
     }
 
     /**
-     * @param args
+     * Main entry point for the OMERO.script.
+     *
+     * @param args the script arguments
      */
     public static void main(String[] args) {
 

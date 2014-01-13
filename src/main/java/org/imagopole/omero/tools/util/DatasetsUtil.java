@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import pojos.DatasetData;
 
 /**
+ * Utility class for dataset entities handling.
+ *
  * @author seb
  *
  */

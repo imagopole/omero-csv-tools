@@ -12,17 +12,24 @@ import omero.model.IObject;
 import org.imagopole.omero.tools.api.dto.LinksData;
 
 /**
+ * Internal data type for annotations associations representation.
+ *
  * @author seb
  *
  */
 public class AnnotationLinksData implements LinksData {
 
+    /** Associations linked to previously existing tags */
     private List<IObject> knownAnnotationLinks;
+
+    /** Associations linked to newly created tags. */
     private List<IObject> newAnnotationLinks;
 
     /**
-     * @param knownAnnotationLinks
-     * @param newAnnotationLinks
+     * Parameterized constructor.
+     *
+     * @param knownAnnotationLinks the associations linked to previously existing tags
+     * @param newAnnotationLinks  the associations linked to newly created tags
      */
     private AnnotationLinksData(
                     List<IObject> knownAnnotationLinks,
@@ -32,6 +39,13 @@ public class AnnotationLinksData implements LinksData {
         this.newAnnotationLinks = newAnnotationLinks;
     }
 
+    /**
+     * Static factory method.
+     *
+     * @param knownAnnotationLinks the associations linked to previously existing tags
+     * @param newAnnotationLinks  the associations linked to newly created tags
+     * @return the annotations associations
+     */
     public static LinksData forLinks(
                     List<IObject> knownAnnotationLinks,
                     List<IObject> newAnnotationLinks) {
@@ -39,16 +53,25 @@ public class AnnotationLinksData implements LinksData {
         return new AnnotationLinksData(knownAnnotationLinks, newAnnotationLinks);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<IObject> getKnownAnnotationLinks() {
         return this.knownAnnotationLinks;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<IObject> getNewAnnotationLinks() {
         return this.newAnnotationLinks;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<IObject> getAllAnnotationLinks() {
         int knownsSize = 0;

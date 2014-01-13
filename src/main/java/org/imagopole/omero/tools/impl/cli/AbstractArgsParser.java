@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Base class for command line parsers implementations.
+ *
  * @author seb
  *
  */
@@ -27,15 +29,24 @@ public abstract class AbstractArgsParser implements ArgsParser {
     /** Application logs */
     private final Logger log = LoggerFactory.getLogger(AbstractArgsParser.class);
 
+    /** The command name. */
     private String programName;
+
+    /** The GetOpts short options spec. */
     private String shortOptions;
+
+    /** The GetOpts long options. */
     private LongOpt[] longOptions;
+
+    /** Is help requested? */
     private boolean help = false;
 
     /**
-     * @param programName
-     * @param shortOptions
-     * @param longOptions
+     * Parameterized constructor.
+     *
+     * @param programName the application name
+     * @param shortOptions the GetOpts short options spec
+     * @param longOptions the GetOpts long options
      */
     public AbstractArgsParser(String programName, String shortOptions, LongOpt[] longOptions) {
         super();
@@ -49,12 +60,15 @@ public abstract class AbstractArgsParser implements ArgsParser {
         this.longOptions = longOptions;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CsvAnnotationConfig parseArgs(String... args) {
 
         final Getopt g = new Getopt(getProgramName(), args, getShortOptions(), getLongOptions());
 
-        final CsvAnnotationConfig config = new CsvAnnotationConfig();
+        final CsvAnnotationConfig config = CsvAnnotationConfig.defaultConfig();
 
         int c = -2;
         boolean failed = false;
@@ -193,6 +207,9 @@ public abstract class AbstractArgsParser implements ArgsParser {
         return config;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isHelp() {
        return this.help;
@@ -201,9 +218,9 @@ public abstract class AbstractArgsParser implements ArgsParser {
     /**
      * Check whether the config contains all required values.
      *
-     * @param config
-     * @param validationMessages
-     * @return
+     * @param config the configuration to be validated
+     * @param validationMessages the validation errors buffer
+     * @return true if the validation passed, false otherwise
      */
     protected abstract boolean validate(CsvAnnotationConfig config, StringBuffer validationMessages);
 

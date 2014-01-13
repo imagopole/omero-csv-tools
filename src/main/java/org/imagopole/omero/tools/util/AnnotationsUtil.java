@@ -27,6 +27,8 @@ import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
 
 /**
+ * Utility class for annotation entities handling.
+ *
  * @author seb
  *
  */
@@ -42,6 +44,12 @@ public final class AnnotationsUtil {
         super();
     }
 
+    /**
+     * Indexes file attachment entities by name.
+     *
+     * @param fileAnnotations the files to index
+     * @return the indexed <code>ArrayListMultimap</code>
+     */
     public static Multimap<String, FileAnnotationData> indexByName(
                     Collection<FileAnnotationData> fileAnnotations) {
 
@@ -58,6 +66,12 @@ public final class AnnotationsUtil {
         return result;
     }
 
+    /**
+     * Convert a map to a hash multimap.
+     *
+     * @param map the map to convert
+     * @return the converted Guava <code>HashMultimap</code>
+     */
     public static Multimap<Long, TagAnnotationData> fromTagsMap(
                     Map<Long, Collection<TagAnnotationData>> map) {
         Check.notNull(map, "map");

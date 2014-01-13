@@ -11,6 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Command line arguments parser for use as an OMERO.script.
+ *
+ * Requires an OMERO session token for authentication.
+ *
  * @author seb
  *
  */
@@ -19,6 +23,7 @@ public class ScriptArgsParser extends AbstractArgsParser {
     /** Application logs */
     private final Logger log = LoggerFactory.getLogger(ScriptArgsParser.class);
 
+    /** Short usage help. */
     private static final String USAGE_FORMAT =
            "\n"
            + "Example usage: \n"
@@ -28,6 +33,7 @@ public class ScriptArgsParser extends AbstractArgsParser {
            +"\n"
            + "Run: %s -h or --help for extended options";
 
+    /** Long usage help. */
     private static final String HELP_FORMAT =
             "\n"
             + "Usage: %s [OPTIONS]"
@@ -82,8 +88,10 @@ public class ScriptArgsParser extends AbstractArgsParser {
             + "\n"
             ;
 
+    /** The GetOpts short options spec. */
     private static final String SHORT_OPTIONS = "s:p:h:k";
 
+    /** The GetOpts long options. */
     private static final LongOpt[] LONG_OPTIONS = new LongOpt[] {
 
         //-- required args:
@@ -113,23 +121,33 @@ public class ScriptArgsParser extends AbstractArgsParser {
     };
 
     /**
+     * Parameterized constructor.
      *
-     * @param applicationName
+     * @param programCommand the application name
      */
     public ScriptArgsParser(String programCommand) {
         super(programCommand, SHORT_OPTIONS, LONG_OPTIONS);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getUsage() {
         return String.format(USAGE_FORMAT, getProgramName(), getProgramName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getHelp() {
         return String.format(HELP_FORMAT, getProgramName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected boolean validate(CsvAnnotationConfig config, StringBuffer validationMessages) {
         boolean valid = true;

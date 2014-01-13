@@ -36,6 +36,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Main application class for CSV and annotations processing.
+ *
  * @author seb
  *
  */
@@ -50,8 +52,10 @@ public class CsvAnnotator {
     private FileReaderController fileController;
 
     /**
-     * @param config
-     * @param session
+     * Parameterized constructor.
+     *
+     * @param config the CSV tool configuration settings
+     * @param session the OMERO Blitz session
      */
     private CsvAnnotator(CsvAnnotationConfig config, ServiceFactoryPrx session) {
         super();
@@ -62,6 +66,14 @@ public class CsvAnnotator {
         this.session = session;
     }
 
+    /**
+     * Static factory method.
+     *
+     * @param config the CSV tool configuration settings
+     * @param session the OMERO Blitz session
+     * @return an initialized <code>CsvAnnotator</code>
+     * >
+     */
     public static final CsvAnnotator forSession(
             CsvAnnotationConfig config,
             ServiceFactoryPrx session) {
@@ -75,6 +87,13 @@ public class CsvAnnotator {
         return annotator;
     }
 
+    /**
+     * Main entry point to the application logic.
+     *
+     * @param experimenterId the experimenter
+     * @throws ServerError OMERO client or server failure
+     * @throws IOException CSV file read failure
+     */
     public void runFromConfig(final Long experimenterId) throws ServerError, IOException {
         Check.notNull(experimenterId, "experimenterId");
 

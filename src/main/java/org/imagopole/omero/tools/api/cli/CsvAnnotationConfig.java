@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Configuration settings for the CSV Annotation Tool.
+ *
  * @author seb
  *
  */
@@ -43,15 +45,15 @@ public class CsvAnnotationConfig {
     /**
      * Vanilla constructor
      */
-    public CsvAnnotationConfig() {
+    protected CsvAnnotationConfig() {
         super();
     }
 
-   public static final CsvAnnotationConfig defaultConfig(){
+    public static final CsvAnnotationConfig defaultConfig(){
        return new CsvAnnotationConfig();
-   }
+    }
 
-   public String getOrInferCsvFilename() {
+    public String getOrInferCsvFilename() {
         // get CLI argument as configured if available
         String configuredFilename = getCsvFileName();
 
@@ -66,9 +68,9 @@ public class CsvAnnotationConfig {
         log.info("Inferring csv filename from container & annotation types: {}", inferredFileName);
 
         return inferredFileName;
-    }
+     }
 
-    public String dump() {
+     public String dump() {
         return Objects.toStringHelper(this)
             .add("hostname", getHostname())
             .add("username", getUsername())
@@ -85,7 +87,7 @@ public class CsvAnnotationConfig {
             .add("csv-skip-header", getCsvSkipHeader())
             .add("csv-charset", getCsvCharsetName())
             .toString();
-    }
+     }
 
     /**
      * FileAnnotation naming convention to hold tagging requests in CSV files.
