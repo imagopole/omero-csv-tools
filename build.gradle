@@ -85,8 +85,8 @@ dependencies {
 
     testCompile 'org.testng:testng:6.8'                                                  //--OMERO: n/p (5.14.10)
     testCompile 'org.unitils:unitils-core:3.3'                                           //--OMERO: n/a
-    compile(group: 'org.unitils',
-            name: 'unitils-testng', version: '3.3') {                                    //--OMERO: n/a
+    testCompile(group: 'org.unitils',
+                name: 'unitils-testng', version: '3.3') {                                //--OMERO: n/a
         transitive = false
     }
     testCompile 'org.unitils:unitils-inject:3.3'                                         //--OMERO: n/a
