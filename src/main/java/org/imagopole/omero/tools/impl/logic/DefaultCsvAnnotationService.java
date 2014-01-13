@@ -364,7 +364,7 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         Map<Long, Collection<TagAnnotationData>> databasePojosTagsLinks =
             getAnnotationService().listTagsLinkedToContainers(experimenterId,
                                                               requestedPojosIds,
-                                                              annotatedType);
+                                                              annotatedType.getModelClass());
         log.debug("databasePojosTagsLinks: {} - {}",
                   databasePojosTagsLinks.size(), databasePojosTagsLinks);
 

@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import omero.ServerError;
 import omero.api.IMetadataPrx;
 import omero.api.ServiceFactoryPrx;
+import omero.model.Dataset;
 import omero.model.FileAnnotation;
 import omero.model.FileAnnotationI;
 import omero.model.OriginalFileI;
@@ -27,7 +28,6 @@ import omero.model.TagAnnotation;
 import omero.model.TagAnnotationI;
 
 import org.imagopole.omero.tools.TestsUtil;
-import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.util.BlitzUtil;
 import org.testng.annotations.BeforeMethod;
@@ -94,19 +94,19 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listTagsLinkedToDatasetsShouldRejectNullExpParam() throws ServerError {
-        annotationService.listTagsLinkedToContainers(null, Lists.newArrayList(1L), AnnotatedType.dataset);
+        annotationService.listTagsLinkedToContainers(null, Lists.newArrayList(1L), Dataset.class);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listTagsLinkedToDatasetsShouldRejectNullDatasetsParam() throws ServerError {
-        annotationService.listTagsLinkedToContainers(1L, null, AnnotatedType.dataset);
+        annotationService.listTagsLinkedToContainers(1L, null, Dataset.class);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listTagsLinkedToDatasetsShouldRejectEmtyDatasetsParam() throws ServerError {
-        annotationService.listTagsLinkedToContainers(1L, new ArrayList<Long>(), AnnotatedType.dataset);
+        annotationService.listTagsLinkedToContainers(1L, new ArrayList<Long>(), Dataset.class);
     }
 
 
@@ -267,12 +267,12 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
                         TagAnnotation.class.getName(),
                         null,
                         null,
-                        AnnotatedType.dataset.getModelClass().getName(),
+                        Dataset.class.getName(),
                         Lists.newArrayList(1L),
                         BlitzUtil.byExperimenter(1L));
 
         Map<Long, Collection<TagAnnotationData>> result =
-            annotationService.listTagsLinkedToContainers(1L, Lists.newArrayList(1L), AnnotatedType.dataset);
+            annotationService.listTagsLinkedToContainers(1L, Lists.newArrayList(1L), Dataset.class);
 
         assertNotNull(result, "Non-null results expected");
         assertTrue(result.isEmpty(), "Empty results expected");
@@ -282,7 +282,7 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
                         TagAnnotation.class.getName(),
                         null,
                         null,
-                        AnnotatedType.dataset.getModelClass().getName(),
+                        Dataset.class.getName(),
                         Lists.newArrayList(1L),
                         BlitzUtil.byExperimenter(1L));
     }
@@ -299,12 +299,12 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
                         TagAnnotation.class.getName(),
                         null,
                         null,
-                        AnnotatedType.dataset.getModelClass().getName(),
+                        Dataset.class.getName(),
                         Lists.newArrayList(1L),
                         BlitzUtil.byExperimenter(1L));
 
         Map<Long, Collection<TagAnnotationData>> result =
-            annotationService.listTagsLinkedToContainers(1L, Lists.newArrayList(1L), AnnotatedType.dataset);
+            annotationService.listTagsLinkedToContainers(1L, Lists.newArrayList(1L), Dataset.class);
 
         assertNotNull(result, "Non-null results expected");
         assertEquals(result.size(), 1, "1 result expected");
@@ -319,7 +319,7 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
                         TagAnnotation.class.getName(),
                         null,
                         null,
-                        AnnotatedType.dataset.getModelClass().getName(),
+                        Dataset.class.getName(),
                         Lists.newArrayList(1L),
                         BlitzUtil.byExperimenter(1L));
     }

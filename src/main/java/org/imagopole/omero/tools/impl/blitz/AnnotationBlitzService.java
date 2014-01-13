@@ -19,7 +19,6 @@ import omero.model.IObject;
 import omero.model.TagAnnotation;
 
 import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
-import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.util.BlitzUtil;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
@@ -122,11 +121,11 @@ public class AnnotationBlitzService implements OmeroAnnotationService {
     public Map<Long, Collection<TagAnnotationData>> listTagsLinkedToContainers(
                     Long experimenterId,
                     Collection<Long> containersIds,
-                    AnnotatedType annotatedType) throws ServerError {
+                    Class<? extends IObject> containerClass) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notEmpty(containersIds, "containersIds");
-        Check.notNull(annotatedType, "annotatedType");
+        Check.notNull(containerClass, "containerClass");
 
         Map<Long, Collection<TagAnnotationData>> result = Collections.emptyMap();
 
@@ -135,7 +134,7 @@ public class AnnotationBlitzService implements OmeroAnnotationService {
                 TagAnnotation.class.getName(),
                 null,
                 null,
-                annotatedType.getModelClass().getName(),
+                containerClass.getName(),
                 Lists.newArrayList(containersIds),
                 BlitzUtil.byExperimenter(experimenterId));
 
