@@ -1,12 +1,12 @@
 = OMERO CSV Annotation Tool User Documentation
 Imagopole
-
+:toc:
 
 [[introduction]]
-== Overview 
+== Overview
 
 --
-This document is a guide to the OMERO CSV Annotation Tool (CAT) features, as part of the OMERO structured 
+This document is a guide to the OMERO CSV Annotation Tool features, as part of the OMERO structured
 annotations ecosystem.
 --
 
@@ -19,41 +19,57 @@ annotations ecosystem.
 
 Examples of how you can annotate your data as an OMERO user:
 
-* Tag, rate or comment on your projects / datasets / images individually using the graphical user interface in OMERO.insight or OMERO.web.
-* Let the webtagging tool automatically suggest tags from your image names for you to review and apply interactively in OMERO.web.
-* Bulk annotate your datasets (and soon images) in an unattended manner using the CSV tool script in OMERO.insight or OMERO.web.
+* Tag, rate or comment on your projects / datasets / images individually using the graphical user
+  interface in OMERO.insight or OMERO.web.
+* Let the webtagging tool automatically suggest tags from your image names for you to review and
+  apply interactively in OMERO.web.
+* Bulk annotate your datasets and images in an unattended manner using the CSV tool script in
+  OMERO.insight or OMERO.web.
 
 [[overview-omero-annotations]]
-=== OMERO annotations
+=== OMERO clients annotations
 
-For general usage of annotations in OMERO, please see the LOCI tutorial at 
+For general usage of annotations in OMERO, please see the LOCI tutorial at
 http://loci.wisc.edu/applications/omero-usage-tutorials#annotating]
 
 [[overview-omero-webtagging]]
 === OMERO webtagging
 
-For detailed instructions on how to use the webtagging tool, please see the tool's documentation at 
+For detailed instructions on how to use the webtagging tool, please see the tool's documentation at
 http://www.openmicroscopy.org/site/support/partner/omero.webtagging
 
 [[overview-omero-cat]]
 === OMERO CSV annotation tool
 
-Workflow outline (details below): 
+Workflow outline (details below):
 
-. Attach the tag definitions in CSV format to your OMERO project.
-. Run the CSV annotation tool script on the project.
+. Attach the tag definitions in CSV format to your OMERO project or dataset.
+. Run the CSV annotation tool script on the project or dataset.
 
 
 [[main-omero-cat]]
 == CSV annotation tool usage guidelines
+
+[[synopsis-omero-cat]]
+=== Synopsis for the impatient
+
+[format="csv", options="header"]
+|===
+In order to tag, Attach CSV file to, Default file name will be, Default separator will be, CSV header will be expected?
+images, dataset, image_tag.csv, comma, yes
+datasets, project, dataset_tag.csv, comma, yes
+|===
 
 [[supported-omero-cat]]
 === Supported features
 
 The CSV tool currently allows:
 
-* tagging Datasets nested _within_ a Project (ie. ``orphans'' or ``top-level'' datasets are currently not supported, but may be at a later stage)
-* attaching the CSV file to a Project (similarily, Datastets may be supported later on)
+* tagging *datasets* nested _within_ a *project* (ie. ``orphans'' or ``top-level'' datasets are
+  currently not supported, but may be at a later stage)
+* tagging *images* nested _within_ a *dataset* (whether the dataset is nested within a project or not)
+* attaching the CSV file to a *project* or a *dataset* (in order to annotate _datasets_ and _images_,
+  respectively)
 
 [[conventions-omero-cat]]
 === Data management conventions
@@ -62,16 +78,16 @@ The CSV tool currently allows:
 
 If you don't use a specific file name, a default naming scheme is applied.
 
-The default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+annotated-type*+ and *+annotation-type*+
-being the supported script arguments.
+The default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+annotated-type*+ and
+*+annotation-type*+ being the supported script arguments.
 
 Example default file names:
 
 * File containing at list one _tag_  to be applied to at least one _dataset_: *dataset_tag.csv*
 * File containing at list one _tag_  to be applied to at least one _image_: *image_tag.csv*
 
-The file content is consequently expected to be of homogenous nature: you cannot mix tags to be applied to images
-and datasets in the same file (you would need two files for this).
+The file content is consequently expected to be of homogenous nature: you cannot mix tags to be
+applied to images and datasets in the same file (you would need two files for this).
 
 ==== Tags file format
 
@@ -79,12 +95,12 @@ The CSV format is expected to be in the form of:
 
 * An optional column header (ignored by default)
 * A line per tagging request, with:
-  ** The dataset name as the first column
-  ** Any number of tags names as the remaning columns (at least one)
+  ** The annotated name as the first column (ie. dataset name or image name)
+  ** Any number of tags names as the remaining columns (at least one)
 
 Other default file format parameters which you can customise are:
 
-[width="25%"]
+[width="50%"]
 |====================================
 |Parameter            |Default value
 |Ignore columns header|true
@@ -94,7 +110,10 @@ Other default file format parameters which you can customise are:
 
 ==== Example files
 
-* Example CSV file using the default comma delimiter and a column header (link:files/dataset_tag.csv[download])
+* Example CSV file using the default comma delimiter and a column header
+  (link:files/dataset_tag.csv[download])
+
+NOTE: This is the currently the default format in use.
 
 ----
 Dataset Name, Type, Gender
@@ -102,21 +121,31 @@ dataset_01, ControlSubject, Female
 dataset_02, Male
 ----
 
-* Example CSV file using an alternate semicolon delimiter and no header (link:files/dataset_tag_semicolon_noheader.csv[download])
+* Example CSV file using an alternate semicolon delimiter and no header
+  (link:files/dataset_tag_semicolon_noheader.csv[download])
 
 ----
 dataset_01;ControlSubject;Female
 dataset_02;Male
 ----
 
+
 [[tutorial-omero-cat]]
 === Usage tutorial
 
 ==== Upload CSV tags file
 
-Attach your tag file to your OMERO Project, either with the default name or a name of your choice.
+Use the attachments interface
 
 image::images/attach-file.png[Attach file]
+
+==== Tagging datasets
+
+Attach your tag file to your OMERO project, either with the default name or a name of your choice.
+
+==== Tagging images
+
+Attach your tag file to your OMERO dataset, either with the default name or a name of your choice.
 
 ==== Start the CSV annotation tool
 
