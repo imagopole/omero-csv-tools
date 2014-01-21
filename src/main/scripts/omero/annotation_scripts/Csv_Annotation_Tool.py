@@ -382,7 +382,7 @@ def run_as_script():
     #    ),
 
     #---- script metadata
-    version      = "0.2 [OMERO-5.0.0-beta1-ice34]",
+    version      = "0.2.1 [OMERO-5.0.0-beta1-ice34]",
     authors      = [ "S. Simard", "Imagopole" ],
     institutions = [ "Institut Pasteur" ],
     contact      = "ssimard@pasteur.fr"
