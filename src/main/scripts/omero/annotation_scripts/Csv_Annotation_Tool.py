@@ -119,11 +119,16 @@ def to_uppercase(value):
         return trim(value).upper()
     return value
 
+def first_item_or_none(list_value):
+    if list_value:
+        return list_value[0]
+    return None
+
 PARAMETERS_VALUES_MAPPING = {
     Labels.ANNOTATED_TYPE  : to_lowercase,
     Labels.ANNOTATION_TYPE : to_lowercase,
     Labels.DATA_TYPE       : to_lowercase,
-    Labels.IDs             : None,
+    Labels.IDs             : first_item_or_none,
     Labels.FILE_NAME       : trim,
     Labels.DELIMITER       : trim,
     Labels.SKIP_HEADER     : to_lowercase,
@@ -312,7 +317,7 @@ def run_as_script():
         values = CONTAINER_TYPES_ENUM
         ),
 
-    scripts.Int(
+    scripts.List(
         Labels.IDs,
         optional = False,
         grouping = "1.1",
