@@ -9,8 +9,10 @@
 # Lookup common dependencies set (assumed from current directory)
 source "dependencies.sh"
 
-# use the "with-dependencies" distribution
-RUN_CLASSPATH="$DEPENDENCIES_CLASSPATH"
+# use the "standalone" distribution
+RUN_CLASSPATH="$STANDALONE_CLASSPATH"
+# uncomment to use the "with-dependencies" distribution instead
+# RUN_CLASSPATH="$DEPENDENCIES_CLASSPATH"
 MAIN_CLASS="org.imagopole.omero.tools.CsvAnnotatorCliMain"
 JVM_OPTS="-Xms64M -Xmx256M"
 
