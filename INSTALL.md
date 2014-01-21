@@ -19,7 +19,7 @@
 ## Configure the server scripting environment
 
 - Deploy the OMERO scripts located in the `annotation_scripts` distribution folder to your OMERO server.
-  For details see: http://www.openmicroscopy.org/site/support/omero5/developers/Modules/Scripts/Guide.html
+  For details see: http://www.openmicroscopy.org/site/support/omero5/developers/scripts/user-guide.html
 
 - Check that the CSV tool script `csv-annotation-tool-script.sh` is executable for the OMERO user.
 
@@ -33,7 +33,7 @@
 
 - Launch the script from OMERO.server, OMERO.insight or OMERO.web via
   `Scripts > Annotation Scripts > CSV Anntotation Tool`.
-  See: http://www.openmicroscopy.org/site/support/omero5/developers/Modules/Scripts/Guide.html
+  See: http://www.openmicroscopy.org/site/support/omero5/developers/scripts/user-guide.html
 
 
 # OMERO CSV Annotation Tool deployment as a standalone CLI tool
