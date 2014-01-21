@@ -229,7 +229,7 @@ task standaloneDistZip(type: Zip) { zipTask ->
     from "$buildDir/asciidoc"
     from "$projectDir/src/main/scripts/cli"
     from "$projectDir/src/main/scripts/omero"
-    from fileTree("$projectDir").include("*.md")
+    from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
 /** Create all distribution bundles */
