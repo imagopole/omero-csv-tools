@@ -14,7 +14,7 @@ annotations ecosystem.
 [[overview]]
 == Introduction to OMERO annotations
 
-[[overview-omero-annotations]]
+[[overview-strucured-annotations]]
 === OMERO and structured annotations
 
 Examples of how you can annotate your data as an OMERO user:
@@ -29,8 +29,8 @@ Examples of how you can annotate your data as an OMERO user:
 [[overview-omero-annotations]]
 === OMERO clients annotations
 
-For general usage of annotations in OMERO, please see the LOCI tutorial at
-http://loci.wisc.edu/applications/omero-usage-tutorials#annotating]
+For general usage of annotations in OMERO, please see the OME tutorial at
+http://help.openmicroscopy.org/managing-data.html
 
 [[overview-omero-webtagging]]
 === OMERO webtagging
@@ -55,7 +55,7 @@ Workflow outline (details below):
 
 [format="csv", options="header"]
 |===
-In order to tag, Attach CSV file to, Default file name will be, Default separator will be, CSV header will be expected?
+In order to tag, Attach CSV file to, Default file name will be, Default separator will be, CSV header will be ignored?
 images, dataset, image_tag.csv, comma, yes
 datasets, project, dataset_tag.csv, comma, yes
 |===
@@ -63,13 +63,50 @@ datasets, project, dataset_tag.csv, comma, yes
 [[supported-omero-cat]]
 === Supported features
 
-The CSV tool currently allows:
+The annotation tool relies on the file attachment mechanism provided by OMERO to retrieve the CSV file remotely.
+
+In its current form, it follows OMERO's hierarchical Project / Dataset / Image organisation scheme to relate
+the CSV file to the candidates for annotation.
+The tool currently allows:
 
 * tagging *datasets* nested _within_ a *project* (ie. ``orphans'' or ``top-level'' datasets are
   currently not supported, but may be at a later stage)
 * tagging *images* nested _within_ a *dataset* (whether the dataset is nested within a project or not)
 * attaching the CSV file to a *project* or a *dataset* (in order to annotate _datasets_ and _images_,
   respectively)
+
+==== Example data layout
+
+Assuming the following hierarchy and CSV attachments:
+
+----
+MyOmeroGroup
+  +-- Project-P0  .................  dataset_tag_P0.csv
+  |     +-- Dataset-D1  ...........  image_tag_D1.csv
+  |     |     +-- Image-D1.1
+  |     |     +-- Image-D1.2
+  |     +-- Dataset-D2
+  +-- Dataset-DN  .................  image_tag_DN.csv
+        +-- Image-DN1.1
+        +-- Image-DN1.2
+----
+
+The available tagging combinations would be:
+
+[width="100%", cols="3", options="header"]
+|========================================================================
+|CSV attachment         2+|Candidates for tagging
+|+dataset_tag_P0.csv+    |All datasets within +Project-P0+ |+Dataset-D1+
+|                        |                                 |+Dataset-D2+
+|+image_tag_D1.csv+      |All images within +Dataset-D1+   |+Image-D1.1+
+|                        |                                 |+Image-D1.2+
+|+image_tag_DN.csv+      |All images within +Dataset-DN+   |+Image-DN.1+
+|                        |                                 |+Image-DN.2+
+|========================================================================
+
+NOTE: CSV attachments names above have been customized to reflect the project or dataset they are
+linked to for readability only - in practice, using the default naming for all ranks in the hierarchy
+would work equally.
 
 [[conventions-omero-cat]]
 === Data management conventions
@@ -83,8 +120,8 @@ The default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+ann
 
 Example default file names:
 
-* File containing at list one _tag_  to be applied to at least one _dataset_: *dataset_tag.csv*
-* File containing at list one _tag_  to be applied to at least one _image_: *image_tag.csv*
+* File containing at least one _tag_ to be applied to at least one _dataset_: *dataset_tag.csv*
+* File containing at least one _tag_ to be applied to at least one _image_: *image_tag.csv*
 
 The file content is consequently expected to be of homogenous nature: you cannot mix tags to be
 applied to images and datasets in the same file (you would need two files for this).
@@ -100,7 +137,7 @@ The CSV format is expected to be in the form of:
 
 Other default file format parameters which you can customise are:
 
-[width="50%"]
+[width="50%", options="header"]
 |====================================
 |Parameter            |Default value
 |Ignore columns header|true
