@@ -320,7 +320,7 @@ def run_as_script():
     scripts.List(
         Labels.IDs,
         optional = False,
-        grouping = "1.1",
+        grouping = "1",
         description = "Identifier of the data type above (CSV file holder and parent of the data to be annotated). Please input only one ID."
         ),
 
@@ -336,7 +336,7 @@ def run_as_script():
     scripts.String(
         Labels.ANNOTATED_TYPE,
         optional = False,
-        grouping = "1.2",
+        grouping = "1",
         description = "The data you want to annotate (eg. dataset or image)",
         values = ANNOTATED_TYPES_ENUM
         ),
