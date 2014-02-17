@@ -65,3 +65,6 @@ from a single package, whereas using separate dependencies provides a more fine 
 ## Reference documentation
 
 - OMERO.scripts guide: http://www.openmicroscopy.org/site/support/omero5/developers/scripts/user-guide.html
+
+- OMERO.scripts style guide: http://www.openmicroscopy.org/site/support/omero5/developers/scripts/style-guide.html
+
