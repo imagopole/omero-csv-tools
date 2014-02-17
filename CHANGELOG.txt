@@ -1,0 +1,18 @@
+# OMERO CSV Annotation Tool Release Notes
+
+
+## 0.2.2
+
+- Additional distributions (docs/examples)
+- Fix input validation when running in OMERO.insight
+
+
+## 0.2.1
+
+- Documentation fixes and enhancements
+
+
+## 0.2
+
+- First published version
+- Support for Dataset and Image tagging via CLI and OMERO.script
