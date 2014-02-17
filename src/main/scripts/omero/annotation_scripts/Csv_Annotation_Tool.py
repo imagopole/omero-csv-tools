@@ -62,7 +62,7 @@ CONTAINER_TYPES_ENUM = [
 # parameters and their keys/labels
 ##
 class Labels:
-    ANNOTATED_TYPE  = "Annotated_Data_Type"
+    ANNOTATED_TYPE  = "Target_For_Annotation"
     ANNOTATION_TYPE = "Annotation_Type"
     DATA_TYPE       = "Data_Type"
     IDs             = "IDs"
