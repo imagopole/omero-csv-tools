@@ -11,5 +11,4 @@ A CSV toolset for bulk data annotation in OMERO.
 
 ## Downloads
 
-https://bintray.com/imagopole/omero/omero-csv-tools/
-
+- Binary distributions, documentation and data samples: https://bintray.com/imagopole/omero/omero-csv-tools/
