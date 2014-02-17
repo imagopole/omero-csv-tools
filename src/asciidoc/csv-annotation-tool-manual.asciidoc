@@ -190,6 +190,6 @@ Attach your tag file to your OMERO dataset, either with the default name or a na
 
 image::images/script-menu.png[Script menu]
 
-* Customise the input parameters and launch
+* Customize the input parameters and launch
 
 image::images/script-ui.png[Script GUI]
