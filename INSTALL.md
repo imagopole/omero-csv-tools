@@ -24,7 +24,7 @@ Example - assuming deployment to `/opt/omero/lib/omero-csv-annotation-tool`:
 ## Configure the server scripting environment
 
 - Deploy the OMERO scripts located in the `annotation_scripts` distribution folder to your OMERO server:
-  add the `annotation_scripts` directory to your `$OMERO_HOME/lib/scripts/omero/` directory.
+  add the `annotation_scripts` directory to your `OMERO.server/lib/scripts/omero/` directory.
 
 - Check that the CSV tool script `csv-annotation-tool-script.sh` is executable for the OMERO user,
   or `chmod u+x csv-annotation-tool-script.sh`
