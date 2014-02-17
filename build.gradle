@@ -189,7 +189,7 @@ fatJar {
     classifier "standalone"
     manifest = sharedManifest
     exclude (
-        'META-INF/*.txt', 'META-INF/*.RSA', 'META-INF/*.SF'
+        'META-INF/*.txt', 'META-INF/*.RSA', 'META-INF/*.DSA', 'META-INF/*.SF'
     )
 }
 
@@ -216,7 +216,7 @@ task withDepsDistZip(type: Zip) { zipTask ->
     from "$buildDir/asciidoc"
     from "$projectDir/src/main/scripts/cli"
     from "$projectDir/src/main/scripts/omero"
-    from fileTree("$projectDir").include("*.md")
+    from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
 /** Create a distribution bundle with a standalone fat jar + shell scripts included */
