@@ -7,7 +7,7 @@ from datetime import datetime
 
 import omero
 import omero.scripts as scripts
-from omero.rtypes import unwrap, rstring
+from omero.rtypes import unwrap, rstring, rlong
 
 ##
 # This script expects the external Java tool to be available as
@@ -322,7 +322,7 @@ def run_as_script():
         optional = False,
         grouping = "1",
         description = "Identifier of the data type above (CSV file holder and parent of the data to be annotated). Please input only one ID."
-        ),
+        ).ofType(rlong(0)),
 
     # Keep script UI minimal for now - may reintroduce this later on if additional annotation types are supported
     #scripts.String(
