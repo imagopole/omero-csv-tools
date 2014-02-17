@@ -345,21 +345,21 @@ def run_as_script():
     scripts.String(
         Labels.FILE_NAME,
         optional = True,
-        grouping = "3",
+        grouping = "2",
         description = "Name of the CSV file, with extension (eg. 'my_project.csv'). If left empty, the following naming convention is used: {annotated-type}_{annotation-type}.csv"
         ),
 
     scripts.String(
         Labels.DELIMITER,
         optional = True,
-        grouping = "3.1",
+        grouping = "2.1",
         description = "The CSV file delimiter character. Leave empty to use the default value, ie. a comma (,)."
         ),
 
     scripts.Bool(
         Labels.SKIP_HEADER,
         optional = True,
-        grouping = "3.2",
+        grouping = "2.2",
         description = "Ignore the first (header) line from the CSV file. Default value: true. Tick to process all lines.",
         default = True
         ),
@@ -369,7 +369,7 @@ def run_as_script():
     scripts.String(
         Labels.CHARSET,
         optional = True,
-        grouping = "3.3",
+        grouping = "2.3",
         description = "CSV file charset encoding to use when reading. Default value: UTF-8. Leave blank if unknown."
         ),
 
