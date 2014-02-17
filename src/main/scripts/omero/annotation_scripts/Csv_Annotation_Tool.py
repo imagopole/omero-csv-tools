@@ -313,7 +313,7 @@ def run_as_script():
         Labels.DATA_TYPE,
         optional = False,
         grouping = "1",
-        description = "The data type (eg. project or dataset) bearing the attached the CSV file (and 'parent' of the data you want to annotate)",
+        description = "The data type (eg. project or dataset) bearing the attached CSV file (and 'parent' of the data you want to annotate)",
         values = CONTAINER_TYPES_ENUM
         ),
 
@@ -337,7 +337,7 @@ def run_as_script():
         Labels.ANNOTATED_TYPE,
         optional = False,
         grouping = "1",
-        description = "The data you want to annotate (eg. dataset or image)",
+        description = "The type of data you want to annotate (eg. dataset or image)",
         values = ANNOTATED_TYPES_ENUM
         ),
 
@@ -346,7 +346,7 @@ def run_as_script():
         Labels.FILE_NAME,
         optional = True,
         grouping = "2",
-        description = "Name of the CSV file, with extension (eg. 'my_project.csv'). If left empty, the following naming convention is used: {annotated-type}_{annotation-type}.csv"
+        description = "Name of the CSV file, with extension (eg. 'my_project.csv'). Leave empty to use the default naming convention: {annotated-type}_{annotation-type}.csv"
         ),
 
     scripts.String(
@@ -360,7 +360,7 @@ def run_as_script():
         Labels.SKIP_HEADER,
         optional = True,
         grouping = "2.2",
-        description = "Ignore the first (header) line from the CSV file. Default value: true. Tick to process all lines.",
+        description = "Ignore the first (header) line from the CSV file. Default value: enabled. Tick to process all lines.",
         default = True
         ),
 
