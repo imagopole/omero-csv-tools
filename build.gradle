@@ -232,9 +232,27 @@ task standaloneDistZip(type: Zip) { zipTask ->
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
+/** Create a documentation only bundle with user manual and CSV files samples */
+task docsDistZip(type: Zip) { zipTask ->
+    dependsOn asciidoctor
+
+    classifier = 'docs-with-examples'
+
+    from "$buildDir/asciidoc"
+    from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
+}
+
+/** Create an examples only bundle with CSV files samples */
+task examplesDistZip(type: Zip) { zipTask ->
+
+    classifier = 'examples'
+
+    from "$buildDir/asciidoc/files"
+}
+
 /** Create all distribution bundles */
 task distributionZip {
-    dependsOn standaloneDistZip, withDepsDistZip
+    dependsOn standaloneDistZip, withDepsDistZip, docsDistZip, examplesDistZip
 }
 
 /**************************************/
