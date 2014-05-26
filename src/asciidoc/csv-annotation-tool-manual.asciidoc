@@ -216,5 +216,5 @@ All packages are downloadable from {bintray_artifact_url}, including a version o
 |+omero-csv-tools-<VERSION>-dist-standalone.zip+           |Full package for single jar file installation     |Y                      |Y
 |+omero-csv-tools-<VERSION>-dist-with-dependencies.zip+    |Full package for multiple jar files installation  |Y                      |Y
 |+omero-csv-tools-<VERSION>-docs-with-examples.zip+        |Documentation package with sample data            |Y                      |Y
-|+omero-csv-tools--<VERSION>-examples.zip+                 |Example CSV data only                             |N                      |Y
+|+omero-csv-tools-<VERSION>-examples.zip+                  |Example CSV data only                             |N                      |Y
 |=============================================================================================================================================================
