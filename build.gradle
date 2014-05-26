@@ -29,7 +29,8 @@ ext.sharedManifest = manifest {
 }
 
 ext.versions = [
-    omero        : '5.0.0-beta1-ice34',
+    omero        : '5.0.0-beta1',
+    iceQualifier : 'ice34',
     slf4j        : '1.7.5',                          //--OMERO: n/a (logback-core + logback-classic 1.0.9)
     logback      : '1.0.9',                          //--OMERO: 1.0.9
     testng       : '6.8',                            //--OMERO: n/p (5.14.10)
@@ -60,13 +61,12 @@ repositories {
     mavenLocal()
     mavenCentral()
 
-    // unpublished artifacts kept under source control for lack of a better way
-    // (eg. OMERO language bindings and other dependencies not published
-    // in a central repo like Apache Commons CSV)
-    flatDir (
-        name: "thirdPartyUnpublishedLibs",
-        dirs: "$projectDir/lib"
-    )
+    // mirror for artifacts not published in a central repo (eg. OMERO language bindings
+    // and other dependencies not published in a central repo like Apache Commons CSV)
+    maven {
+        name 'Bintray Imagopole repo'
+        url  'http://dl.bintray.com/imagopole/maven'
+    }
 }
 
 /**
@@ -79,7 +79,7 @@ dependencies {
     // OMERO 5 Java bindings
     // see http://www.openmicroscopy.org/site/support/omero5/developers/Java.html
     //     http://downloads.openmicroscopy.org/omero/5.0.0-beta1/OMERO.java-5.0.0-beta1-ice34-b3470.zip
-    compile ':omero_client:' + versions.omero
+    compile group: 'ome.omero', name: 'omero_client', version: versions.omero, classifier: versions.iceQualifier
 
     // Apache Commons CSV uses a custom snapshot build from trunk at rev. r1534206
     // see http://svn.apache.org/repos/asf/commons/proper/csv/trunk/
