@@ -7,7 +7,9 @@
 
 # Distribution unpack directory
 # Assumed to be the current folder for the executed script
-JARS_DIR=`dirname $0`
+BIN_DIR=`dirname $0`
+UNPACK_DIR=`readlink -e "$BIN_DIR/.."`
+JARS_DIR="$UNPACK_DIR/lib"
 CSV_TOOL_VERSION="0.2.3-SNAPSHOT"
 
 ####
@@ -37,7 +39,7 @@ $JARS_DIR/commons-csv-1.0-r1534206.jar:\
 $JARS_DIR/guava-13.0.jar:\
 $JARS_DIR/java-getopt-1.0.13.jar:\
 $JARS_DIR/jsr305-1.3.7.jar:\
-$JARS_DIR/omero-csv-tools-$CSV_TOOL_VERSION.jar
+$UNPACK_DIR/omero-csv-tools-$CSV_TOOL_VERSION.jar
 
 # Full classpath for the "with-dependencies" distribution
 DEPENDENCIES_CLASSPATH="$JARS_DIR:$LOGGER_BINDINGS_CLASSPATH:$OMERO_CLIENT_CLASSPATH:$CSV_ANNOTATION_TOOL_CLASSPATH"
@@ -45,4 +47,4 @@ DEPENDENCIES_CLASSPATH="$JARS_DIR:$LOGGER_BINDINGS_CLASSPATH:$OMERO_CLIENT_CLASS
 ####
 # Full classpath for the "standalone" distribution
 # May be used in place of DEPENDENCIES_CLASSPATH (dependencies merged into a fat jar)
-STANDALONE_CLASSPATH="$JARS_DIR/omero-csv-tools-$CSV_TOOL_VERSION-standalone.jar"
+STANDALONE_CLASSPATH="$UNPACK_DIR/omero-csv-tools-$CSV_TOOL_VERSION-standalone.jar"

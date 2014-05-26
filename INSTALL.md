@@ -23,14 +23,14 @@ Example - assuming deployment to `/opt/omero/lib/omero-csv-annotation-tool`:
 
 ## Configure the server scripting environment
 
-- Deploy the OMERO scripts located in the `annotation_scripts` distribution folder to your OMERO server:
+- Deploy the OMERO scripts located in the `scripts/omero/annotation_scripts` distribution folder to your OMERO server:
   add the `annotation_scripts` directory to your `OMERO.server/lib/scripts/omero/` directory.
 
-- Check that the CSV tool script `csv-annotation-tool-script.sh` is executable for the OMERO user,
-  or `chmod u+x csv-annotation-tool-script.sh`
+- Check that the CSV tool script `bin/csv-annotation-tool-script.sh` is executable for the OMERO user,
+  or `chmod u+x bin/csv-annotation-tool-script.sh`
 
 - Make sure that this script is available on the PATH environment variable - hence accessible to the
-  OMERO.server scripting environment: `export PATH=$PATH:/opt/omero/lib/omero-csv-annotation-tool`.
+  OMERO.server scripting environment: `export PATH=$PATH:/opt/omero/lib/omero-csv-annotation-tool/bin`.
 
 
 ## Run the script
@@ -45,7 +45,7 @@ Example - assuming deployment to `/opt/omero/lib/omero-csv-annotation-tool`:
 
 - As above, unpack the distribution (either standalone or with dependencies).
 
-- Run `csv-annotation-tool-cli.sh` for usage arguments.
+- Run `cd bin && ./csv-annotation-tool-cli.sh` for usage arguments.
 
 
 # Miscellaneous

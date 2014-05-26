@@ -229,33 +229,52 @@ test.dependsOn integrationTestDbSetup
 
 /** Create a distribution bundle with runtime dependencies + shell scripts included */
 task withDepsDistZip(type: Zip) { zipTask ->
+
     dependsOn asciidoctor
 
     classifier = 'dist-with-dependencies'
 
+    into ("lib") {
+        from configurations.runtime
+    }
+    into ("docs") {
+        from "$buildDir/asciidoc"
+    }
+    into ("bin") {
+        from "$projectDir/src/main/scripts/cli"
+        from fileTree("$projectDir/src/main/scripts/omero").include("*.sh")
+    }
+    into ("scripts") {
+        from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
+    }
     from configurations.runtime.allArtifacts.files
-    from configurations.runtime
-    from "$buildDir/asciidoc"
-    from "$projectDir/src/main/scripts/cli"
-    from "$projectDir/src/main/scripts/omero"
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
 /** Create a distribution bundle with a standalone fat jar + shell scripts included */
 task standaloneDistZip(type: Zip) { zipTask ->
+
     dependsOn asciidoctor, fatJar
 
     classifier = 'dist-standalone'
 
+    into ("docs") {
+        from "$buildDir/asciidoc"
+    }
+    into ("bin") {
+        from "$projectDir/src/main/scripts/cli"
+        from fileTree("$projectDir/src/main/scripts/omero").include("*.sh")
+    }
+    into ("scripts") {
+        from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
+    }
     from "$buildDir/libs"
-    from "$buildDir/asciidoc"
-    from "$projectDir/src/main/scripts/cli"
-    from "$projectDir/src/main/scripts/omero"
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
 /** Create a documentation only bundle with user manual and CSV files samples */
 task docsDistZip(type: Zip) { zipTask ->
+
     dependsOn asciidoctor
 
     classifier = 'docs-with-examples'

@@ -13,7 +13,8 @@
 # specific main class suited to the OMERO.scripts environment.
 
 # Note: Jar dependencies otherwise sourced from "dependencies.sh" are inlined here
-JARS_DIR=`dirname $0`
+BIN_DIR=`dirname $0`
+JARS_DIR=`readlink -e "$BIN_DIR/.."`
 CSV_TOOL_VERSION="0.2.3-SNAPSHOT"
 STANDALONE_CLASSPATH="$JARS_DIR/omero-csv-tools-$CSV_TOOL_VERSION-standalone.jar"
 
