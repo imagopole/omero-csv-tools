@@ -53,6 +53,7 @@ Example - assuming deployment to `/opt/omero/lib/omero-csv-annotation-tool`:
 ## Alternate deployment options
 
 Two binary distributions are supplied:
+
 - _standalone_: contains all the required classpath dependencies bundled into a single jar file (ie. uberjar
   distribution).
 - _with dependencies_: provides all required classpath dependencies as individual jars.
