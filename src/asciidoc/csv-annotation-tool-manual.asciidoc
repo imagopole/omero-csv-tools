@@ -211,10 +211,10 @@ image::images/script-ui.png[Script GUI]
 All packages are downloadable from {bintray_artifact_url}, including a version of this manual and examples:
 
 [width="100%", options="header"]
-|=============================================================================================================================================================
-|Distribution file name                                    |Description                                       |Includes documentation | Includes CSV samples
-|+omero-csv-tools-<VERSION>-dist-standalone.zip+           |Full package for single jar file installation     |Y                      |Y
-|+omero-csv-tools-<VERSION>-dist-with-dependencies.zip+    |Full package for multiple jar files installation  |Y                      |Y
-|+omero-csv-tools-<VERSION>-docs-with-examples.zip+        |Documentation package with sample data            |Y                      |Y
-|+omero-csv-tools-<VERSION>-examples.zip+                  |Example CSV data only                             |N                      |Y
-|=============================================================================================================================================================
+|===================================================================================================================================================================
+|Distribution file name                                           |Description                                       |Includes documentation | Includes CSV samples
+|+omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-standalone.zip+        |Full package for single jar file installation     |Y                      |Y
+|+omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-with-dependencies.zip+ |Full package for multiple jar files installation  |Y                      |Y
+|+omero-csv-tools-<VERSION>-docs-with-examples.zip+               |Documentation package with sample data            |Y                      |Y
+|+omero-csv-tools-<VERSION>-examples.zip+                         |Example CSV data only                             |N                      |Y
+|===================================================================================================================================================================

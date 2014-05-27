@@ -11,7 +11,7 @@
 
 ## Get the standalone distribution
 
-- Download `omero-csv-tools-VERSION-dist-standalone.zip`
+- Download `omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-standalone.zip`
 
 - Unpack to a location of your choice.
 
@@ -56,9 +56,10 @@ Two binary distributions are supplied:
 
 - _standalone_: contains all the required classpath dependencies bundled into a single jar file (ie. uberjar
   distribution).
+
 - _with dependencies_: provides all required classpath dependencies as individual jars.
 
-Depending on your needs and preferences, you may choose either - the standalone distribution allows deployment
+Depending on your needs and preferences, you may choose either: the standalone distribution allows deployment
 from a single package, whereas using separate dependencies provides a more fine grained classpath management
 (eg. cherry-picking jars or shell scripts to a different location).
 

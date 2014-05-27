@@ -47,6 +47,9 @@ ext.sharedManifest = manifest {
                'X-Omero-Ice-Version': iceVersions.main
 }
 
+/** Full omero server + ice flavor classifier for distribution packages */
+ext.omeClassifier = omeVersions.qualifier + '-' + iceVersions.qualifier
+
 ext.versions = [
     omero        : omeVersions.omero,
     iceQualifier : iceVersions.qualifier,
@@ -251,7 +254,7 @@ task withDepsDistZip(type: Zip) { zipTask ->
 
     dependsOn asciidoctor
 
-    classifier = 'dist-with-dependencies'
+    classifier = omeClassifier + '-with-dependencies'
 
     into ("lib") {
         from configurations.runtime
@@ -275,7 +278,7 @@ task standaloneDistZip(type: Zip) { zipTask ->
 
     dependsOn asciidoctor, fatJar
 
-    classifier = 'dist-standalone'
+    classifier = omeClassifier + '-standalone'
 
     into ("docs") {
         from "$buildDir/asciidoc"
