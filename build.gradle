@@ -8,7 +8,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'project-report' // gradle-1.9 feature
 apply plugin: 'jacoco'         // gradle-1.9 incubating
 apply plugin: 'asciidoctor'
-apply plugin: 'fatjar'
+apply plugin: 'shadow'
 apply plugin: 'artifactory'
 
 
@@ -234,12 +234,13 @@ asciidoctor {
     backend = "html5"
 }
 
-fatJar {
+shadow {
     classifier "standalone"
-    manifest = sharedManifest
-    exclude (
-        'META-INF/*.txt', 'META-INF/*.RSA', 'META-INF/*.DSA', 'META-INF/*.SF'
-    )
+
+    exclude 'META-INF/*.txt'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    exclude 'META-INF/*.SF'
 }
 
 
@@ -282,7 +283,7 @@ task withDepsDistZip(type: Zip) { zipTask ->
 /** Create a distribution bundle with a standalone fat jar + shell scripts included */
 task standaloneDistZip(type: Zip) { zipTask ->
 
-    dependsOn asciidoctor, fatJar
+    dependsOn asciidoctor, shadowJar
 
     classifier = omeClassifier + '-standalone'
 
@@ -296,7 +297,7 @@ task standaloneDistZip(type: Zip) { zipTask ->
     into ("scripts") {
         from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
     }
-    from "$buildDir/libs"
+    from fileTree("$distsDir").include("*.jar")
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
@@ -331,7 +332,7 @@ task distributionZip {
 buildscript {
     ext.pluginsVersions = [
         asciidoctor : '0.7.0',
-        fatjar      : '0.2-rc1',
+        shadow      : '0.8',
         artifactory : '2.0.9'
     ]
 
@@ -346,7 +347,7 @@ buildscript {
 
     dependencies {
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:' + pluginsVersions.asciidoctor
-        classpath 'eu.appsatori:gradle-fatjar-plugin:' + pluginsVersions.fatjar
+        classpath 'com.github.jengelman.gradle.plugins:shadow:' + pluginsVersions.shadow
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
     }
 }
