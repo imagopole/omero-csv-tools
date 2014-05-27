@@ -12,6 +12,22 @@ apply plugin: 'fatjar'
 
 
 /********************************/
+/**** Profile configuration ****/
+
+/** Profile loading boilerplate */
+def applyProfile(aProfile) {
+    def profilesDir = relativePath('build-profiles')
+
+    println 'Loading profile: ' + aProfile + '.gradle'
+    apply from: profilesDir + '/' + aProfile + '.gradle'
+}
+
+/** usage: gradle build -Pprofile=omero500-ice34 */
+ext.profile = hasProperty("profile") ? profile : 'omero500-ice34' // default profile: omero-5.0.0 + ice-3.4.2
+applyProfile(profile)
+
+
+/********************************/
 /**** Project configuration ****/
 
 group = 'org.imagopole.omero'
@@ -25,14 +41,17 @@ description = """OMERO CSV Annotation Tool"""
 ext.sharedManifest = manifest {
     attributes 'Implementation-Title': 'OMERO CSV Annotation Tool',
                'Implementation-Version': version,
-               'Main-Class': 'org.imagopole.omero.tools.CsvAnnotatorCliMain'
+               'Main-Class': 'org.imagopole.omero.tools.CsvAnnotatorCliMain',
+               'X-Build-Profile': profile,
+               'X-Omero-Version': omeVersions.omero,
+               'X-Omero-Ice-Version': iceVersions.main
 }
 
 ext.versions = [
-    omero        : '5.0.0-beta1',
-    iceQualifier : 'ice34',
-    slf4j        : '1.7.5',                          //--OMERO: n/a (logback-core + logback-classic 1.0.9)
-    logback      : '1.0.9',                          //--OMERO: 1.0.9
+    omero        : omeVersions.omero,
+    iceQualifier : iceVersions.qualifier,
+    slf4j        : omeVersions.libs.slf4j,           //--OMERO: cf. profile
+    logback      : omeVersions.libs.logback,         //--OMERO: cf. profile
     testng       : '6.8',                            //--OMERO: n/p (5.14.10)
     unitils      : '3.3',                            //--OMERO: n/a
     postgresJdbc : '8.4-702.jdbc4',                  //--OMERO: 9.1-901.jdbc3

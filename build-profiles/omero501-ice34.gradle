@@ -1,0 +1,17 @@
+/**
+ * Buildfile fragment used as a Maven-style profile to define specific OMERO dependencies
+ * for the 5.0.1-ice34 server flavor.
+ **/
+
+ext.omeVersions = [
+    omero      : '5.0.1',
+    libs       : [
+                   slf4j   : '1.7.6',
+                   logback : '1.1.1'
+                 ]
+]
+
+ext.iceVersions = [
+    main           : '3.4.2',           //--OMERO: ice33, 34 or 35
+    qualifier      : 'ice34'            //--OMERO: client version + ice qualifier (omero_client specific qualifier)
+]
