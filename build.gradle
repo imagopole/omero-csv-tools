@@ -9,6 +9,7 @@ apply plugin: 'project-report' // gradle-1.9 feature
 apply plugin: 'jacoco'         // gradle-1.9 incubating
 apply plugin: 'asciidoctor'
 apply plugin: 'fatjar'
+apply plugin: 'artifactory'
 
 
 /********************************/
@@ -82,6 +83,11 @@ jar {
 repositories {
     mavenLocal()
     mavenCentral()
+
+    maven {
+        name 'Artifactory OME repo'
+        url  'http://artifacts.openmicroscopy.org/artifactory/repo'
+    }
 
     // mirror for artifacts not published in a central repo (eg. OMERO language bindings
     // and other dependencies not published in a central repo like Apache Commons CSV)
@@ -325,7 +331,8 @@ task distributionZip {
 buildscript {
     ext.pluginsVersions = [
         asciidoctor : '0.7.0',
-        fatjar      : '0.2-rc1'
+        fatjar      : '0.2-rc1',
+        artifactory : '2.0.9'
     ]
 
     repositories {
@@ -340,5 +347,6 @@ buildscript {
     dependencies {
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:' + pluginsVersions.asciidoctor
         classpath 'eu.appsatori:gradle-fatjar-plugin:' + pluginsVersions.fatjar
+        classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
     }
 }
