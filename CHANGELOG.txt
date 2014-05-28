@@ -1,6 +1,11 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.2.3
+
+- Build/packaging maintenance (server flavors)
+
+
 ## 0.2.2
 
 - Additional distributions (docs/examples)
