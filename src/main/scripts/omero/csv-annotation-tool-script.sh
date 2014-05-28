@@ -15,7 +15,7 @@
 # Note: Jar dependencies otherwise sourced from "dependencies.sh" are inlined here
 BIN_DIR=`dirname $0`
 JARS_DIR=`readlink -e "$BIN_DIR/.."`
-CSV_TOOL_VERSION="0.2.3"
+CSV_TOOL_VERSION="0.2.4-SNAPSHOT"
 STANDALONE_CLASSPATH="$JARS_DIR/omero-csv-tools-$CSV_TOOL_VERSION-standalone.jar"
 
 # use the "standalone" distribution

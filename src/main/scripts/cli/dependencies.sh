@@ -10,7 +10,7 @@
 BIN_DIR=`dirname $0`
 UNPACK_DIR=`readlink -e "$BIN_DIR/.."`
 JARS_DIR="$UNPACK_DIR/lib"
-CSV_TOOL_VERSION="0.2.3"
+CSV_TOOL_VERSION="0.2.4-SNAPSHOT"
 
 ####
 # Dependencies provided by the "with-dependencies" distribution 
