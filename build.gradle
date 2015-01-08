@@ -351,3 +351,7 @@ buildscript {
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
     }
 }
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '1.9'
+}
