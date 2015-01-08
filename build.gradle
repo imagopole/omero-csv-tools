@@ -8,7 +8,7 @@ apply plugin: 'checkstyle'
 apply plugin: 'project-report' // gradle-1.9 feature
 apply plugin: 'jacoco'         // gradle-1.9 incubating
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
-apply plugin: 'shadow'
+apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'artifactory'
 
 
@@ -234,8 +234,9 @@ asciidoctor {
     backends = [ "html5" ]
 }
 
-shadow {
+shadowJar {
     classifier "standalone"
+	manifest = sharedManifest
 
     exclude 'META-INF/*.txt'
     exclude 'META-INF/*.DSA'
@@ -297,7 +298,7 @@ task standaloneDistZip(type: Zip) { zipTask ->
     into ("scripts") {
         from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
     }
-    from fileTree("$distsDir").include("*.jar")
+    from fileTree("$libsDir").include("*-standalone.jar")
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
 }
 
@@ -332,7 +333,7 @@ task distributionZip {
 buildscript {
     ext.pluginsVersions = [
         asciidoctor : '1.5.0',
-        shadow      : '0.8',
+        shadow      : '1.2.0',
         artifactory : '2.2.5'
     ]
 
