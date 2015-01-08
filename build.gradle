@@ -333,7 +333,7 @@ buildscript {
     ext.pluginsVersions = [
         asciidoctor : '0.7.0',
         shadow      : '0.8',
-        artifactory : '2.0.9'
+        artifactory : '2.2.5'
     ]
 
     repositories {
@@ -353,5 +353,5 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '1.9'
+	gradleVersion = '2.2.1'
 }
