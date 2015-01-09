@@ -35,7 +35,7 @@ $JARS_DIR/omero_client-5.0.0-beta1-ice34.jar
 CSV_ANNOTATION_TOOL_CLASSPATH=\
 $JARS_DIR/jcl-over-slf4j-1.7.5.jar:\
 $JARS_DIR/slf4j-api-1.7.5.jar:\
-$JARS_DIR/commons-csv-1.0-r1534206.jar:\
+$JARS_DIR/commons-csv-1.1.jar:\
 $JARS_DIR/guava-13.0.jar:\
 $JARS_DIR/java-getopt-1.0.13.jar:\
 $JARS_DIR/jsr305-1.3.7.jar:\

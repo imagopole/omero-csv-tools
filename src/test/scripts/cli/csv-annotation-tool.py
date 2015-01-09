@@ -24,7 +24,7 @@ DEPENDENCIES_JARS_LIST = [
              "omero_client-5.0.0-beta1-ice34.jar",
              "jcl-over-slf4j-1.7.5.jar", 
              "slf4j-api-1.7.5.jar", 
-             "commons-csv-1.0-SNAPSHOT.jar", 
+             "commons-csv-1.1.jar",
              "guava-13.0.jar", 
              "java-getopt-1.0.13.jar", 
              "jsr305-1.3.7.jar", 

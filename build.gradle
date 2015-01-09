@@ -62,7 +62,7 @@ ext.versions = [
     guava        : '13.0',                           //--OMERO: jdk5-13.0'
     jsr305       : '1.3.7',                          //--OMERO: n/a
     getopt       : '1.0.13',                         //--OMERO: 1.0.13
-    commonsCsv   : '1.0-r1534206',                   //--OMERO: n/a
+    commonsCsv   : '1.1',                            //--OMERO: n/a
     hibernate    : [
                      core          : '3.5.6-Final',  //--OMERO: "n/a" (hibernate-3.5.6-4510)
                      jpa           : '1.0.0.Final',  //--OMERO: 1.0.0.Final
@@ -109,8 +109,6 @@ dependencies {
     //     http://downloads.openmicroscopy.org/omero/5.0.0-beta1/OMERO.java-5.0.0-beta1-ice34-b3470.zip
     compile group: 'ome.omero', name: 'omero_client', version: versions.omero, classifier: versions.iceQualifier
 
-    // Apache Commons CSV uses a custom snapshot build from trunk at rev. r1534206
-    // see http://svn.apache.org/repos/asf/commons/proper/csv/trunk/
     compile 'org.apache.commons:commons-csv:' + versions.commonsCsv
     compile 'gnu.getopt:java-getopt:' + versions.getopt
     compile 'com.google.guava:guava:' + versions.guava
