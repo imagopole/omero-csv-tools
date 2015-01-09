@@ -58,7 +58,7 @@ ext.versions = [
     logback      : omeVersions.libs.logback,         //--OMERO: cf. profile
     testng       : '6.8',                            //--OMERO: n/p (5.14.10)
     unitils      : '3.3',                            //--OMERO: n/a
-    postgresJdbc : '8.4-702.jdbc4',                  //--OMERO: 9.1-901.jdbc3
+    postgresJdbc : '9.3-1102-jdbc4',                 //--OMERO: 9.1-901.jdbc3
     guava        : '13.0',                           //--OMERO: jdk5-13.0'
     jsr305       : '1.3.7',                          //--OMERO: n/a
     getopt       : '1.0.13',                         //--OMERO: 1.0.13
@@ -148,7 +148,7 @@ dependencies {
         exclude group: 'org.slf4j'
         exclude group: 'ch.qos.logback'
     }
-    testRuntime 'postgresql:postgresql:' + versions.postgresJdbc
+    testRuntime 'org.postgresql:postgresql:' + versions.postgresJdbc
 
     //scriptsRuntime 'org.python:jython-standalone:2.5.3'
 }
