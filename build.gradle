@@ -54,8 +54,8 @@ ext.omeClassifier = omeVersions.qualifier + '-' + iceVersions.qualifier
 ext.versions = [
     omero        : omeVersions.omero,
     iceQualifier : iceVersions.qualifier,
-    slf4j        : omeVersions.libs.slf4j,           //--OMERO: cf. profile
-    logback      : omeVersions.libs.logback,         //--OMERO: cf. profile
+    slf4j        : '1.7.6',                          //--OMERO: 1.7.6
+    logback      : '1.1.1',                          //--OMERO: 1.1.1
     testng       : '6.8',                            //--OMERO: n/p (5.14.10)
     unitils      : '3.3',                            //--OMERO: n/a
     postgresJdbc : '9.3-1102-jdbc4',                 //--OMERO: 9.1-901.jdbc3
