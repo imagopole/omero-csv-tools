@@ -5,6 +5,7 @@
 
 ext.omeVersions = [
     omero      : '5.0.2',
+	qualifier  : 'ome502',              //-- short server flavor classifier for distribution packages
     libs       : [
                    slf4j   : '1.7.6',
                    logback : '1.1.1'
