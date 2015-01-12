@@ -115,14 +115,14 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:' + versions.jsr305
 
     // required OMERO transitive dependencies
-    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:' + versions.hibernate.jpa
-    compile(group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate.core) {
+    testCompile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:' + versions.hibernate.jpa
+    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate.core) {
         transitive = false
     }
-    compile(group: 'org.hibernate', name: 'hibernate-annotations', version: versions.hibernate.core) {
+    testCompile(group: 'org.hibernate', name: 'hibernate-annotations', version: versions.hibernate.core) {
         transitive = false
     }
-    compile(group: 'org.hibernate', name: 'hibernate-search', version: versions.hibernate.search) {
+    testCompile(group: 'org.hibernate', name: 'hibernate-search', version: versions.hibernate.search) {
         transitive = false
     }
 

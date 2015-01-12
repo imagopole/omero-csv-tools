@@ -25,10 +25,6 @@ $JARS_DIR/logback-classic-1.0.9.jar
 
 # OMERO Blitz client bindings and dependencies
 OMERO_CLIENT_CLASSPATH=\
-$JARS_DIR/hibernate-annotations-3.5.6-Final.jar:\
-$JARS_DIR/hibernate-core-3.5.6-Final.jar:\
-$JARS_DIR/hibernate-jpa-2.0-api-1.0.0.Final.jar:\
-$JARS_DIR/hibernate-search-3.1.1.GA.jar:\
 $JARS_DIR/omero_client-5.0.0-beta1-ice34.jar
 
 # CSV Annotation Tool dependencies
