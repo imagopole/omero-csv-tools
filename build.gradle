@@ -24,7 +24,7 @@ def applyProfile(aProfile) {
 }
 
 /** usage: gradle build -Pprofile=omero500-ice34 */
-ext.profile = hasProperty("profile") ? profile : 'omero503-ice34' // default profile: omero-5.0.3 + ice-3.4.2
+ext.profile = hasProperty("profile") ? profile : 'omero506-ice34' // default profile: omero-5.0.6 + ice-3.4.2
 applyProfile(profile)
 
 
