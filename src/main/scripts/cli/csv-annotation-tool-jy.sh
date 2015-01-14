@@ -16,7 +16,7 @@ CSV_TOOL_JYTHON_SCRIPT="$BIN_DIR/csv-annotation-tool.jy"
 # Extra Jython classpath
 # Currrenly assumed to be present in the same directory as the CSV tool distribution
 # Uses the Jython standalone distribution
-JYTHON_VERSION="2.5.3"
+JYTHON_VERSION="2.7-b3"
 JYTHON_CLASSPATH=$JARS_DIR/jython-standalone-$JYTHON_VERSION.jar
 
 # use both "standalone" distributions
