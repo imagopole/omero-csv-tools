@@ -24,7 +24,7 @@ def applyProfile(aProfile) {
 }
 
 /** usage: gradle build -Pprofile=omero500-ice34 */
-ext.profile = hasProperty("profile") ? profile : 'omero502-ice34' // default profile: omero-5.0.2 + ice-3.4.2
+ext.profile = hasProperty("profile") ? profile : 'omero503-ice34' // default profile: omero-5.0.3 + ice-3.4.2
 applyProfile(profile)
 
 
@@ -44,7 +44,7 @@ ext.sharedManifest = manifest {
                'Implementation-Version': version,
                'Main-Class': 'org.imagopole.omero.tools.CsvAnnotatorCliMain',
                'X-Build-Profile': profile,
-               'X-Omero-Version': omeVersions.omero,
+               'X-Omero-Version': omeVersions.omeroRelease,
                'X-Omero-Ice-Version': iceVersions.main
 }
 
@@ -52,8 +52,8 @@ ext.sharedManifest = manifest {
 ext.omeClassifier = omeVersions.qualifier + '-' + iceVersions.qualifier
 
 ext.versions = [
-    omero        : omeVersions.omero,
-    iceQualifier : iceVersions.qualifier,
+    omero        : omeVersions.omeroRelease,         //--OMERO: cf. profile
+    ice          : iceVersions.main,                 //--OMERO: cf. profile
     slf4j        : '1.7.6',                          //--OMERO: 1.7.6
     logback      : '1.1.1',                          //--OMERO: 1.1.1
     testng       : '6.8',                            //--OMERO: n/p (5.14.10)
@@ -106,8 +106,10 @@ dependencies {
 
     // OMERO 5 Java bindings
     // see http://www.openmicroscopy.org/site/support/omero5/developers/Java.html
-    //     http://downloads.openmicroscopy.org/omero/5.0.0-beta1/OMERO.java-5.0.0-beta1-ice34-b3470.zip
-    compile group: 'ome.omero', name: 'omero_client', version: versions.omero, classifier: versions.iceQualifier
+    //      http://www.openmicroscopy.org/community/viewtopic.php?f=6&t=7573
+    compile group: 'omero', name: 'blitz', version: versions.omero, transitive: false
+	compile 'zeroc:ice:' + versions.ice
+	compile 'zeroc:ice-glacier2:' + versions.ice
 
     compile 'org.apache.commons:commons-csv:' + versions.commonsCsv
     compile 'gnu.getopt:java-getopt:' + versions.getopt
@@ -115,6 +117,12 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:' + versions.jsr305
 
     // required OMERO transitive dependencies
+
+    // note: the 'model-psql' jar is actually only required for 'testCompile' and 'runtime' scopes
+    compile group: 'omero', name: 'model-psql', version: versions.omero, transitive: false
+    // note: the 'common' jar is actually only required for 'testRuntime' and 'runtime' scopes
+    compile group: 'omero', name: 'common', version: versions.omero, transitive: false
+
     testCompile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:' + versions.hibernate.jpa
     testCompile(group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate.core) {
         transitive = false

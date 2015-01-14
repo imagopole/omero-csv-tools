@@ -4,7 +4,7 @@
  **/
 
 ext.omeVersions = [
-    omero      : '5.0.3',
+    omeroRelease : '5.0.3-ice34-b41',
     qualifier  : 'ome503',              //-- short server flavor classifier for distribution packages
 ]
 

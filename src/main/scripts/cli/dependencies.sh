@@ -11,6 +11,8 @@ BIN_DIR=`dirname $0`
 UNPACK_DIR=`readlink -e "$BIN_DIR/.."`
 JARS_DIR="$UNPACK_DIR/lib"
 CSV_TOOL_VERSION="0.2.4-SNAPSHOT"
+OMERO_VERSION="5.0.3-ice34-b41"
+ICE_VERSION="3.4.2"
 
 ####
 # Dependencies provided by the "with-dependencies" distribution 
@@ -20,17 +22,21 @@ CSV_TOOL_VERSION="0.2.4-SNAPSHOT"
 # Note: all logging output may be suppressed by using the SLF4J default no-op logger
 # (ie. by excluding the LOGGER_BINDINGS_CLASSPATH from the main CLASSPATH)
 LOGGER_BINDINGS_CLASSPATH=\
-$JARS_DIR/logback-core-1.0.9.jar:\
-$JARS_DIR/logback-classic-1.0.9.jar
+$JARS_DIR/logback-core-1.1.1.jar:\
+$JARS_DIR/logback-classic-1.1.1.jar
 
 # OMERO Blitz client bindings and dependencies
 OMERO_CLIENT_CLASSPATH=\
-$JARS_DIR/omero_client-5.0.0-beta1-ice34.jar
+$JARS_DIR/blitz-$OMERO_VERSION.jar:\
+$JARS_DIR/common-$OMERO_VERSION.jar:\
+$JARS_DIR/model-psql-$OMERO_VERSION.jar:\
+$JARS_DIR/ice-$ICE_VERSION.jar:\
+$JARS_DIR/ice-glacier2-$ICE_VERSION.jar
 
 # CSV Annotation Tool dependencies
 CSV_ANNOTATION_TOOL_CLASSPATH=\
-$JARS_DIR/jcl-over-slf4j-1.7.5.jar:\
-$JARS_DIR/slf4j-api-1.7.5.jar:\
+$JARS_DIR/jcl-over-slf4j-1.7.6.jar:\
+$JARS_DIR/slf4j-api-1.7.6.jar:\
 $JARS_DIR/commons-csv-1.1.jar:\
 $JARS_DIR/guava-13.0.jar:\
 $JARS_DIR/java-getopt-1.0.13.jar:\
