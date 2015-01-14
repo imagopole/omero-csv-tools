@@ -123,22 +123,16 @@ dependencies {
     // note: the 'common' jar is actually only required for 'testRuntime' and 'runtime' scopes
     compile group: 'omero', name: 'common', version: versions.omero, transitive: false
 
-    testCompile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:' + versions.hibernate.jpa
-    testCompile(group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate.core) {
-        transitive = false
-    }
-    testCompile(group: 'org.hibernate', name: 'hibernate-annotations', version: versions.hibernate.core) {
-        transitive = false
-    }
-    testCompile(group: 'org.hibernate', name: 'hibernate-search', version: versions.hibernate.search) {
-        transitive = false
-    }
-
     // logback slf4j binding
     runtime 'ch.qos.logback:logback-classic:' + versions.logback
     // slf4j bound to logback-classic + redirection of ACL to slf4j
     // (ie. slf4j replaces commons-logging - see http://www.slf4j.org/legacy.html)
     runtime 'org.slf4j:jcl-over-slf4j:' + versions.slf4j
+
+    testCompile 'org.hibernate.javax.persistence:hibernate-jpa-2.0-api:' + versions.hibernate.jpa
+    testCompile group: 'org.hibernate', name: 'hibernate-core', version: versions.hibernate.core, transitive: false
+    testCompile group: 'org.hibernate', name: 'hibernate-annotations', version: versions.hibernate.core, transitive: false
+    testCompile group: 'org.hibernate', name: 'hibernate-search', version: versions.hibernate.search, transitive: false
 
     testCompile 'org.testng:testng:' + versions.testng
     testCompile 'org.unitils:unitils-core:' + versions.unitils
