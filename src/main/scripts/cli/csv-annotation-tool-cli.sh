@@ -7,7 +7,8 @@
 #     csv-annotation-tool-cli.sh --help
 
 # Lookup common dependencies set (assumed from current directory)
-source "dependencies.sh"
+BIN_DIR=`dirname $0`
+source "$BIN_DIR/dependencies.sh"
 
 # use the "standalone" distribution
 RUN_CLASSPATH="$STANDALONE_CLASSPATH"

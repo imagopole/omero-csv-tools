@@ -7,10 +7,11 @@
 #     csv-annotation-tool-jy.sh --help
 
 # Lookup common dependencies set (assumed from current directory)
-source "dependencies.sh"
+BIN_DIR=`dirname $0`
+source "$BIN_DIR/dependencies.sh"
 
 # Jython script from the current distribution
-CSV_TOOL_JYTHON_SCRIPT="csv-annotation-tool.jy"
+CSV_TOOL_JYTHON_SCRIPT="$BIN_DIR/csv-annotation-tool.jy"
 
 # Extra Jython classpath
 # Currrenly assumed to be present in the same directory as the CSV tool distribution
