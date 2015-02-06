@@ -62,6 +62,19 @@ public class UpdateNoOpBlitzService implements OmeroUpdateService {
     }
 
     /**
+     * No-op mock implementation of the update method.
+     *
+     * @param iObject the model entity
+     * @return the argument entity
+     */
+    @Override
+    public IObject save(IObject iObject) throws ServerError {
+        Check.notNull(iObject, "iObject");
+        log.info("No-op [dry-run] - would be persisting 1 object to db");
+        return iObject;
+    }
+
+    /**
      * Returns session.
      * @return the session
      */

@@ -12,6 +12,7 @@ import omero.api.ServiceFactoryPrx;
 import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
 import org.imagopole.omero.tools.api.blitz.OmeroContainerService;
 import org.imagopole.omero.tools.api.blitz.OmeroFileService;
+import org.imagopole.omero.tools.api.blitz.OmeroQueryService;
 import org.imagopole.omero.tools.api.blitz.OmeroUpdateService;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
@@ -19,18 +20,22 @@ import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.imagopole.omero.tools.api.ctrl.CsvAnnotationController;
 import org.imagopole.omero.tools.api.ctrl.FileReaderController;
+import org.imagopole.omero.tools.api.ctrl.FileWriterController;
 import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.impl.blitz.AnnotationBlitzService;
 import org.imagopole.omero.tools.impl.blitz.ContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.FileBlitzService;
+import org.imagopole.omero.tools.impl.blitz.QueryBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateNoOpBlitzService;
 import org.imagopole.omero.tools.impl.ctrl.DefaultCsvAnnotationController;
 import org.imagopole.omero.tools.impl.ctrl.DefaultFileReaderController;
+import org.imagopole.omero.tools.impl.ctrl.DefaultFileWriterController;
 import org.imagopole.omero.tools.impl.logic.DefaultCsvAnnotationService;
 import org.imagopole.omero.tools.impl.logic.DefaultCsvReaderService;
 import org.imagopole.omero.tools.impl.logic.DefaultFileReaderService;
+import org.imagopole.omero.tools.impl.logic.DefaultFileWriterService;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +54,8 @@ public class CsvAnnotator {
     private CsvAnnotationConfig config;
     private ServiceFactoryPrx session;
     private CsvAnnotationController annotationController;
-    private FileReaderController fileController;
+    private FileReaderController fileReaderController;
+    private FileWriterController fileWriterController;
 
     /**
      * Parameterized constructor.
@@ -100,6 +106,27 @@ public class CsvAnnotator {
         // config is expected to be valid at this point
         log.debug("Config dump: {}", config.dump());
 
+        final Boolean isExportMode = config.getExportMode();
+
+        if (null != isExportMode && isExportMode) {
+            log.debug("Export mode requested");
+            runExportModeFromConfig(experimenterId);
+        } else {
+            log.debug("Annotate mode requested");
+            runAnnotateModeFromConfig(experimenterId);
+        }
+    }
+
+    /**
+     * Main entry point to the "annotate mode" logic.
+     *
+     * @param experimenterId the experimenter
+     * @throws ServerError OMERO client or server failure
+     * @throws IOException CSV file read failure
+     */
+    private void runAnnotateModeFromConfig(final Long experimenterId) throws ServerError, IOException {
+        Check.notNull(experimenterId, "experimenterId");
+
         final Long containerId = config.getContainerId();
         final String csvFileName = config.getOrInferCsvFilename();
 
@@ -115,7 +142,7 @@ public class CsvAnnotator {
         // read CSV content from input source (local file or remote file annotation)
         // and decode into string data
         final CsvData csvData =
-            fileController.readByFileContainerType(
+            fileReaderController.readByFileContainerType(
                     experimenterId,
                     containerId,
                     fileContainerType,
@@ -141,6 +168,40 @@ public class CsvAnnotator {
     }
 
     /**
+     * Main entry point to the "export mode" logic.
+     *
+     * @param experimenterId the experimenter
+     * @throws ServerError OMERO client or server failure
+     * @throws IOException CSV file write failure
+     */
+    private void runExportModeFromConfig(final Long experimenterId) throws ServerError, IOException {
+        Check.notNull(experimenterId, "experimenterId");
+
+        final Long containerId = config.getContainerId();
+        final String csvFileName = config.getOrInferCsvFilename();
+
+        // convert cli arguments to valid enum values or fail
+        final String containerTypeArg = config.getCsvContainerTypeArg();
+        final String annotationTypeArg = config.getAnnotationTypeArg();
+        final String annotatedTypeArg = config.getAnnotatedTypeArg();
+
+        final ContainerType fileContainerType = ContainerType.valueOf(containerTypeArg);
+        final AnnotationType annotationType = AnnotationType.valueOf(annotationTypeArg);
+        final AnnotatedType annotatedType = AnnotatedType.valueOf(annotatedTypeArg);
+
+        // convert the OMERO data hierarchy into CSV content
+        String fileContent = "";
+
+        // upload and attach the generated CSV to the OMERO container
+        fileWriterController.writeByFileContainerType(
+                experimenterId,
+                containerId,
+                fileContainerType,
+                csvFileName,
+                fileContent);
+    }
+
+    /**
      * Initialize required services.
      *
      * Calls sequence down "layers":
@@ -148,55 +209,79 @@ public class CsvAnnotator {
      * CsvAnnotator -> controllers -> application logic ("business") services -> OMERO Blitz services
      */
     private void wireDependencies() {
+        Charset charset = lookupCharsetOrFail(config.getCsvCharsetName());
+
         //-- omero/blitz common "layer"
         OmeroAnnotationService annotationService = new AnnotationBlitzService(session);
+        OmeroFileService fileService = new FileBlitzService(session);
+        OmeroUpdateService updateService = buildUpdateService(session, config);
 
         CsvAnnotationController annotationController =
-            buildAnnotationController(session, config,annotationService);
+            buildAnnotationController(session, config, annotationService, updateService);
 
-        FileReaderController fileController = buildFileController(session, config, annotationService);
+        FileReaderController fileReaderController =
+            buildFileReaderController(session, config, charset, annotationService, fileService);
+
+        FileWriterController fileWriterController =
+            buildFileWriterController(session, config, charset, fileService, updateService);
 
         this.annotationController = annotationController;
-        this.fileController = fileController;
+        this.fileReaderController = fileReaderController;
+        this.fileWriterController = fileWriterController;
     }
 
-    private FileReaderController buildFileController(
+    private FileReaderController buildFileReaderController(
             final ServiceFactoryPrx session,
             final CsvAnnotationConfig config,
-            final OmeroAnnotationService annotationService) {
-
-        //-- omero/blitz "layer"
-        OmeroFileService fileService = new FileBlitzService(session);
+            final Charset charset,
+            final OmeroAnnotationService annotationService,
+            final OmeroFileService fileService) {
 
         //-- business logic "layer"
         DefaultFileReaderService fileReaderService = new DefaultFileReaderService();
         fileReaderService.setFileService(fileService);
         fileReaderService.setAnnotationService(annotationService);
-        fileReaderService.setCharset(lookupCharsetOrFail(config.getCsvCharsetName()));
+        fileReaderService.setCharset(charset);
 
         //-- controller "layer"
-        final DefaultFileReaderController fileController = new DefaultFileReaderController();
-        fileController.setFileReaderService(fileReaderService);
+        final DefaultFileReaderController fileReaderController = new DefaultFileReaderController();
+        fileReaderController.setFileReaderService(fileReaderService);
 
-        return fileController;
+        return fileReaderController;
+    }
+
+    private FileWriterController buildFileWriterController(
+            final ServiceFactoryPrx session,
+            final CsvAnnotationConfig config,
+            final Charset charset,
+            final OmeroFileService fileService,
+            final OmeroUpdateService updateService) {
+
+        //-- omero/blitz "layer"
+        OmeroQueryService queryService = new QueryBlitzService(session);
+
+        //-- business logic "layer"
+        DefaultFileWriterService fileWriterService = new DefaultFileWriterService();
+        fileWriterService.setFileService(fileService);
+        fileWriterService.setQueryService(queryService);
+        fileWriterService.setUpdateService(updateService);
+        fileWriterService.setCharset(charset);
+
+        //-- controller "layer"
+        final DefaultFileWriterController fileWriterController = new DefaultFileWriterController();
+        fileWriterController.setFileWriterService(fileWriterService);
+
+        return fileWriterController;
     }
 
     private CsvAnnotationController buildAnnotationController(
             final ServiceFactoryPrx session,
             final CsvAnnotationConfig config,
-            final OmeroAnnotationService annotationService) {
+            final OmeroAnnotationService annotationService,
+            final OmeroUpdateService updateService) {
 
         //-- omero/blitz "layer"
         OmeroContainerService containerService = new ContainersBlitzService(session);
-
-        OmeroUpdateService updateService = null;
-        if (config.getDryRun()) {
-            log.info("Dry run requested - using no-op database update service");
-            updateService = new UpdateNoOpBlitzService(session);
-        } else {
-            log.info("Using default database update service");
-            updateService = new UpdateBlitzService(session);
-        }
 
         //-- business logic "layer"
         DefaultCsvReaderService csvReaderService = new DefaultCsvReaderService();
@@ -214,6 +299,23 @@ public class CsvAnnotator {
         annotationController.setCsvAnnotationService(csvAnnotationService);
 
         return annotationController;
+    }
+
+    private OmeroUpdateService buildUpdateService(
+            final ServiceFactoryPrx session,
+            final CsvAnnotationConfig config) {
+
+        OmeroUpdateService updateService = null;
+
+        if (config.getDryRun()) {
+            log.info("Dry run requested - using no-op database update service");
+            updateService = new UpdateNoOpBlitzService(session);
+        } else {
+            log.info("Using default database update service");
+            updateService = new UpdateBlitzService(session);
+        }
+
+        return updateService;
     }
 
     private static Charset lookupCharsetOrFail(String charsetName) {

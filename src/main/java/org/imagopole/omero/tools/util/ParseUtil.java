@@ -3,6 +3,10 @@
  */
 package org.imagopole.omero.tools.util;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
+import org.imagopole.omero.tools.api.RtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +82,16 @@ public final class ParseUtil {
         }
 
         return result;
+    }
+
+    public static MimeType parseContentTypeOrFail(String contentType) {
+        Check.notEmpty(contentType, "contentType");
+
+        try {
+            return new MimeType(contentType);
+        } catch (MimeTypeParseException mtpe) {
+            throw new RtException(mtpe.getMessage(), mtpe);
+        }
     }
 
 }

@@ -8,9 +8,12 @@ import omero.model.DatasetAnnotationLinkI;
 import omero.model.IObject;
 import omero.model.Image;
 import omero.model.ImageAnnotationLinkI;
+import omero.model.Project;
+import omero.model.ProjectAnnotationLinkI;
 
 import org.imagopole.omero.tools.api.blitz.AnnotationLinker;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.util.Check;
 
 import pojos.AnnotationData;
@@ -60,6 +63,63 @@ public class AnnotationLinkers {
         }
 
         return result;
+    }
+
+    /**
+     * Static factory method.
+     *
+     * @param containerType the type of container to be annotated
+     * @return the implementation specific association builder for the given annotation target
+     */
+    public static AnnotationLinker forContainerType(ContainerType containerType) {
+        Check.notNull(containerType, "ContainerType");
+
+        AnnotationLinker result = null;
+
+        switch(containerType) {
+
+            case project:
+                result = INSTANCE.new ProjectAnnotationLinker();
+                break;
+
+            case dataset:
+                result = INSTANCE.new DatasetAnnotationLinker();
+                break;
+
+            default:
+                throw new UnsupportedOperationException(
+                    "Linking to other containers than projects/datasets not implemented");
+
+        }
+
+        return result;
+    }
+
+    /**
+     * Association builder for <code>omero.model.Project</code> annotations.
+     *
+     * @author seb
+     *
+     */
+    public class ProjectAnnotationLinker implements AnnotationLinker {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public IObject link(AnnotationData annotationObject, DataObject modelObject) throws ClassCastException {
+            Check.notNull(annotationObject, "annotationObject");
+            Check.notNull(modelObject, "modelObject");
+
+            Project project = modelObject.asProject();
+
+            ProjectAnnotationLinkI link = new ProjectAnnotationLinkI();
+            link.setParent(project);
+            link.setChild(annotationObject.asAnnotation());
+
+            return link;
+        }
+
     }
 
     /**

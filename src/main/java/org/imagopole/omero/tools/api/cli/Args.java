@@ -147,7 +147,7 @@ public class Args {
                     throw new IllegalArgumentException("No model class for container of type local");
 
                 default:
-                    throw new IllegalArgumentException("Unknown annotated type");
+                    throw new IllegalArgumentException("Unknown container type");
 
             }
 
@@ -168,6 +168,7 @@ public class Args {
         public static final String    UTF_8_CHARSET     =  Charsets.UTF_8.name();
         public static final Boolean   SKIP_HEADER_ON    =  Boolean.TRUE;
         public static final Boolean   DRY_RUN_OFF       =  Boolean.FALSE;
+        public static final Boolean   EXPORT_MODE_OFF   =  Boolean.FALSE;
 
         private Defaults() {
             super();

@@ -69,6 +69,14 @@ public final class Check {
         }
     }
 
+    public static final void strictlyPositive(Integer number, String argName) {
+        Check.notNull(number, argName);
+
+        if (number.intValue() < 1) {
+             rejectEmptyParam(argName);
+        }
+    }
+
     private static void rejectEmptyParam(String argName) throws IllegalArgumentException {
         throw new IllegalArgumentException(
                 "Condition not met - expected : non-empty parameter for " + argName);

@@ -41,6 +41,7 @@ public class CsvAnnotationConfig {
     private String csvCharsetName  = Defaults.UTF_8_CHARSET;
     private Integer port           = Defaults.ICE_SSL_PORT;
     private Boolean dryRun         = Defaults.DRY_RUN_OFF;
+    private Boolean exportMode     = Defaults.EXPORT_MODE_OFF;
 
     /**
      * Vanilla constructor
@@ -64,7 +65,7 @@ public class CsvAnnotationConfig {
 
         // otherwise use the naming convention
         String inferredFileName =
-            NamingConventions.build(getAnnotatedTypeArg(), getAnnotationTypeArg());
+            NamingConventions.build(getAnnotatedTypeArg(), getAnnotationTypeArg(), getExportMode());
         log.info("Inferring csv filename from container & annotation types: {}", inferredFileName);
 
         return inferredFileName;
@@ -86,33 +87,38 @@ public class CsvAnnotationConfig {
             .add("csv-delimiter", getCsvDelimiter())
             .add("csv-skip-header", getCsvSkipHeader())
             .add("csv-charset", getCsvCharsetName())
+            .add("export-mode", getExportMode())
             .toString();
      }
 
     /**
      * FileAnnotation naming convention to hold tagging requests in CSV files.
      *
-     * As follows: <annotatedType>_<annotationType>.csv
+     * As follows: <annotatedType>_<annotationType>.csv (annotation mode)
+     *             <annotatedType>_<annotationType>.export.csv (export mode)
      * Eg.
-     *   - dataset_tag.csv     : tags applied to datasets
-     *   - dataset_comment.csv : comments applied to datasets
-     *   - image_tag.csv       : tags applied to images
+     *   - dataset_tag.csv     | dataset_tag.export.csv     : tags applied to datasets
+     *   - dataset_comment.csv | dataset_comment.export.csv : comments applied to datasets
+     *   - image_tag.csv       | image_tag.export.csv       : tags applied to images
      */
     private static final class NamingConventions {
 
         private static final String SEPARATOR = "_";
         private static final String PREFIX = "";
         private static final String EXTENSION = ".csv";
+        private static final String EXPORT_QUALIFIER = ".export";
 
         private static final String build(String containerType, String annotationType) {
             return PREFIX + containerType + SEPARATOR + annotationType + EXTENSION;
         }
 
-//        private static final String build(ContainerType containerType, AnnotationType annotationType) {
-//            return PREFIX
-//                 + containerType.name() + SEPARATOR + annotationType.name()
-//                 + EXTENSION;
-//        }
+        private static final String build(String containerType, String annotationType, Boolean isExportMode) {
+            if (null == isExportMode || !isExportMode) {
+                return build(containerType, annotationType);
+            }
+
+            return PREFIX + containerType + SEPARATOR + annotationType + EXPORT_QUALIFIER + EXTENSION;
+        }
 
         private NamingConventions() {
             super();
@@ -330,6 +336,20 @@ public class CsvAnnotationConfig {
      */
     public void setSessionKey(String sessionId) {
         this.sessionKey = sessionId;
+    }
+
+    /**
+     * @return the exportMode
+     */
+    public Boolean getExportMode() {
+        return exportMode;
+    }
+
+    /**
+     * @param exportMode the exportMode to set
+     */
+    public void setExportMode(Boolean exportMode) {
+        this.exportMode = exportMode;
     }
 
 }

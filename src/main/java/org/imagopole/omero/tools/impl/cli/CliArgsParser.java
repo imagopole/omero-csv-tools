@@ -30,7 +30,7 @@ public class CliArgsParser extends AbstractArgsParser {
            + "\n"
            + "  %s -s localhost -u my-username -w secret --annotated-type dataset "
            +      "--annotation-type tag --csv-container-type local --csv-container-id 1234 \n"
-           +"\n"
+           + "\n"
            + "Run: %s -h or --help for extended options";
 
     /** Long usage help. */
@@ -89,6 +89,10 @@ public class CliArgsParser extends AbstractArgsParser {
             + "      --csv-charset               CSV file charset name for decoding. \n"
             + "                                  Default value: UTF-8 \n"
             + "\n"
+            + "      --export-mode               Extract annotation metadata to CSV file. \n"
+            + "                                  Valid values: true, false \n"
+            + "                                  Default value: false \n"
+            + "\n"
             + "Options examples:"
             + "\n"
             + "  * Apply tags to datasets within project 1234 from a local csv file: \n"
@@ -110,12 +114,21 @@ public class CliArgsParser extends AbstractArgsParser {
             + "  -s localhost -u my-username -w secret --annotated-type dataset --annotation-type tag "
             + "--csv-container-type project --csv-container-id 1234 \n"
             + "\n"
+            + "  * Export tags and datasets to a remote csv file attached to a project with the default "
+            + "conventional name ('dataset_tag.export.csv'): \n"
+            + "  -s localhost -u my-username -w secret --annotated-type dataset --annotation-type tag "
+            + "--csv-container-type project --csv-container-id 1234 --export-mode=true \n"
+            + "\n"
+            + "  * Export tags and datasets to a local csv file with a custom name: \n "
+            + "  -s localhost -u my-username -w secret --annotated-type dataset --annotation-type tag "
+            + "--csv-container-type local --csv-file-name=/tmp/my_datasets.csv "
+            + "--csv-container-id 1234 --export-mode=true \n"
+            + "\n"
             + "Expected CSV format (with optional columns header): \n"
             + "------------------------------------------------------------------\n"
             + "name of annotated type, variable-length list of annotation values \n"
             + "dataset_1, tag_one, tag_two \n"
-            + "dataset_2, \"tag_three_is_quoted\" \n"
-            ;
+            + "dataset_2, \"tag_three_is_quoted\" \n";
 
     /** The GetOpts short options spec. */
     private static final String SHORT_OPTIONS = "s:u:w:p:h";
@@ -146,7 +159,8 @@ public class CliArgsParser extends AbstractArgsParser {
         new LongOpt("csv-file-name",   LongOpt.OPTIONAL_ARGUMENT, null, 10),
         new LongOpt("csv-delimiter",   LongOpt.OPTIONAL_ARGUMENT, null, 20),
         new LongOpt("csv-skip-header", LongOpt.OPTIONAL_ARGUMENT, null, 30),
-        new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40)
+        new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40),
+        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 50)
     };
 
     /**
@@ -196,6 +210,7 @@ public class CliArgsParser extends AbstractArgsParser {
         if (null == config.getCsvCharsetName())     { valid = false; validationMessages.append("\n csv-charset");        }
         if (null == config.getPort())               { valid = false; validationMessages.append("\n port");               }
         if (null == config.getDryRun())             { valid = false; validationMessages.append("\n dry-run");            }
+        if (null == config.getExportMode())         { valid = false; validationMessages.append("\n export-mode");        }
 
         log.debug("validConfig? {}", valid);
 

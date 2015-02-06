@@ -23,4 +23,13 @@ public interface OmeroUpdateService {
      */
     Collection<IObject> saveAll(List<IObject> iObjects) throws ServerError;
 
+    /**
+     * Persists a single OMERO model entity.
+     *
+     * @param iObject the model entity
+     * @return the persisted entity
+     * @throws ServerError OMERO client or server failure
+     */
+    IObject save(IObject iObject) throws ServerError;
+
 }

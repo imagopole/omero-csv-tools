@@ -64,6 +64,17 @@ public class UpdateBlitzService implements OmeroUpdateService {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IObject save(IObject iObject) throws ServerError {
+        Check.notNull(iObject, "iObject");
+
+        return session.getUpdateService().saveAndReturnObject(iObject);
+
+    }
+
+    /**
      * Returns session.
      * @return the session
      */

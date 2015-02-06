@@ -30,7 +30,7 @@ public class ScriptArgsParser extends AbstractArgsParser {
            + "\n"
            + "  %s -s localhost -k secret --annotated-type dataset "
            +      "--annotation-type tag --csv-container-type local --csv-container-id 1234 \n"
-           +"\n"
+           + "\n"
            + "Run: %s -h or --help for extended options";
 
     /** Long usage help. */
@@ -86,7 +86,10 @@ public class ScriptArgsParser extends AbstractArgsParser {
             + "      --csv-charset               CSV file charset name for decoding. \n"
             + "                                  Default value: UTF-8 \n"
             + "\n"
-            ;
+            + "      --export-mode               Extract annotation metadata to CSV file. \n"
+            + "                                  Valid values: true, false \n"
+            + "                                  Default value: false \n"
+            + "\n";
 
     /** The GetOpts short options spec. */
     private static final String SHORT_OPTIONS = "s:p:h:k";
@@ -116,7 +119,8 @@ public class ScriptArgsParser extends AbstractArgsParser {
         new LongOpt("csv-file-name",   LongOpt.OPTIONAL_ARGUMENT, null, 10),
         new LongOpt("csv-delimiter",   LongOpt.OPTIONAL_ARGUMENT, null, 20),
         new LongOpt("csv-skip-header", LongOpt.OPTIONAL_ARGUMENT, null, 30),
-        new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40)
+        new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40),
+        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 50)
 
     };
 
@@ -166,6 +170,7 @@ public class ScriptArgsParser extends AbstractArgsParser {
         if (null == config.getCsvCharsetName())     { valid = false; validationMessages.append("\n csv-charset");        }
         if (null == config.getPort())               { valid = false; validationMessages.append("\n port");               }
         if (null == config.getDryRun())             { valid = false; validationMessages.append("\n dry-run");            }
+        if (null == config.getExportMode())         { valid = false; validationMessages.append("\n export-mode");        }
 
         log.debug("validConfig? {}", valid);
 

@@ -37,6 +37,26 @@ public final class AnnotationsUtil {
     /** Application logs */
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationsUtil.class);
 
+    /** Default appliocation's MIME type. */
+    public static final String CSV_MIME_TYPE = "text/csv";
+
+    /** Root application namespace for annotations filtering. */
+    public static final String ROOT_NAMESPACE = "omero.csvtools";
+
+    /** Application namespace for export related operations. */
+    public static final String EXPORT_NAMESPACE = ROOT_NAMESPACE + "/export";
+
+    /** Metadata template for the <code>FileAnnotationData<code> description attribute.
+     *
+     *  Should be formatted with {@link String#format(String, Object...)}, with two required
+     *  arguments:
+     *  <ol>
+     *    <li>containerType</li>
+     *    <li>containerId</li>
+     *  </ol>
+     *  */
+    public static final String EXPORT_DESCRIPTION_FORMAT = "CSV export for %s %s";
+
     /**
      * Private constructor.
      */

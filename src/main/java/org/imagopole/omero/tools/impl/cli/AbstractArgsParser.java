@@ -125,6 +125,12 @@ public abstract class AbstractArgsParser implements ArgsParser {
                     config.setCsvCharsetName(csvCharsetName);
                     break;
 
+                // --export-mode : optional
+                case 50:
+                    String exportMode = g.getOptarg();
+                    config.setExportMode(parseBooleanOrNull(exportMode));
+                    break;
+
                 // --hostname : required
                 case 's':
                     String hostname = g.getOptarg();
