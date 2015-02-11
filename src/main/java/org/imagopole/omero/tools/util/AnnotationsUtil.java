@@ -9,13 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-
 import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
@@ -25,6 +18,15 @@ import org.slf4j.LoggerFactory;
 import pojos.AnnotationData;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Ordering;
 
 /**
  * Utility class for annotation entities handling.
@@ -185,6 +187,29 @@ public final class AnnotationsUtil {
                 TagAnnotationData transientTag = new TagAnnotationData(tagName);
                 result.add(transientTag.asIObject());
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * Builds a list of annotations by string value.
+     *
+     * Values are sorted by natural String order.
+     *
+     * @param annotations the annotations to be converted/sorted
+     * @return list of annotations values, or an empty list
+     */
+    public static List<String> toOrderedAnnotationValues(Collection<? extends AnnotationData> annotations) {
+        List<String> result = new ArrayList<String>();
+
+        if (null != annotations) {
+
+            Collection<String> annotationsValues =
+                    Collections2.transform(annotations, FunctionsUtil.toAnnotationStringContent);
+
+            result = Ordering.natural().sortedCopy(annotationsValues);
+
         }
 
         return result;

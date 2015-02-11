@@ -24,6 +24,7 @@ import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import pojos.AnnotationData;
 import pojos.DataObject;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
@@ -120,8 +121,8 @@ public class AnnotationBlitzService implements OmeroAnnotationService {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
     public Map<Long, Collection<TagAnnotationData>> listTagsLinkedToContainers(
                     Long experimenterId,
                     Collection<Long> containersIds,
@@ -144,9 +145,51 @@ public class AnnotationBlitzService implements OmeroAnnotationService {
 
         if (null != annotationsAlreadyLinkedToObjects) {
 
-            result=  DataObject.asPojos(annotationsAlreadyLinkedToObjects);
+            result = DataObject.asPojos(annotationsAlreadyLinkedToObjects);
 
         }
+
+        log.debug("Found {} tags linked to containers {} of type {} for experimenter {}",
+                  result.size(), containersIds, containerClass.getName(), experimenterId);
+
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<Long, Collection<AnnotationData>> listAnnotationsLinkedToNodes(
+            Long experimenterId,
+            Collection<Long> nodesIds,
+            Class<? extends IObject> nodeClass,
+            Class<? extends Annotation> annotationClass) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notEmpty(nodesIds, "nodesIds");
+        Check.notNull(nodeClass, "nodeClass");
+        Check.notNull(annotationClass, "annotationClass");
+
+        Map<Long, Collection<AnnotationData>> result = Collections.emptyMap();
+
+        Map<Long, List<Annotation>> annotationsAlreadyLinkedToObjects =
+            getSession().getMetadataService().loadSpecifiedAnnotationsLinkedTo(
+                annotationClass.getName(),
+                null,
+                null,
+                nodeClass.getName(),
+                Lists.newArrayList(nodesIds),
+                BlitzUtil.byExperimenter(experimenterId));
+
+        if (null != annotationsAlreadyLinkedToObjects) {
+
+            result = DataObject.asPojos(annotationsAlreadyLinkedToObjects);
+
+        }
+
+        log.debug("Found {} annotations of type {} linked to nodes {} of type {} for experimenter {}",
+                  result.size(), annotationClass.getName(), nodesIds, nodeClass.getName(), experimenterId);
 
         return result;
     }

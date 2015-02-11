@@ -5,10 +5,10 @@ package org.imagopole.omero.tools.impl.csv;
 
 import java.util.Collection;
 
-import com.google.common.collect.Iterables;
-
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.imagopole.omero.tools.util.Check;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Represents an annotation request from the CSV definition.
@@ -48,6 +48,8 @@ public class SimpleAnnotationLine implements CsvAnnotationLine {
     /**
      * Static factory method.
      *
+     * Requires annotation values. Typically used for CSV String to annotations parsing.
+     *
      * @param lineNumber the line number
      * @param targetName the annotation target
      * @param annotationsValues the annotation values
@@ -62,6 +64,29 @@ public class SimpleAnnotationLine implements CsvAnnotationLine {
         Check.notEmpty(targetName, String.format("targetName at line %d", lineNumber));
         Check.notEmpty(annotationsValues,
                        String.format("annotationsValues at line %d for %s", lineNumber, targetName));
+
+        return new SimpleAnnotationLine(lineNumber, targetName, annotationsValues);
+    }
+
+    /**
+     * Static factory method.
+     *
+     * Allows optional annotation values. Typically used for annotations to CSV String conversion.
+     *
+     * @param lineNumber the line number
+     * @param targetName the annotation target
+     * @param annotationsValues the annotation values
+     * @return the CSV line
+     */
+    public static CsvAnnotationLine createLenient(
+            Long lineNumber,
+            String targetName,
+            Collection<String> annotationsValues) {
+
+        Check.strictlyPositive(lineNumber, "lineNumber");
+        Check.notEmpty(targetName, String.format("targetName at line %d", lineNumber));
+        Check.notNull(annotationsValues,
+                      String.format("annotationsValues at line %d for %s", lineNumber, targetName));
 
         return new SimpleAnnotationLine(lineNumber, targetName, annotationsValues);
     }

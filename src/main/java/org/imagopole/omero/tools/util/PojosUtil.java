@@ -3,18 +3,27 @@
  */
 package org.imagopole.omero.tools.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
+import org.imagopole.omero.tools.api.dto.PojoData;
+import org.imagopole.omero.tools.impl.csv.SimpleAnnotationLine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import pojos.AnnotationData;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
-import org.imagopole.omero.tools.api.dto.PojoData;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.common.collect.Ordering;
 
 /**
  * Utility class for pojo entities handling.
@@ -24,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class PojosUtil {
 
-    /** Application logs */
+    /** Application logs. */
     private static final Logger LOG = LoggerFactory.getLogger(PojosUtil.class);
 
     /**
@@ -53,7 +62,7 @@ public final class PojosUtil {
      * Indexes a collection of OMERO Pojo entities by name.
      *
      * Note: name duplication is possible for some pojo types (eg. datasets), hence
-     * the returned <code>Multimap<code> implementation allows duplicate values
+     * the returned <code>Multimap</code> implementation allows duplicate values
      * for a given key (otherwise, a BiMap would be fine).
      *
      * @param pojos the pojos to index
@@ -79,6 +88,47 @@ public final class PojosUtil {
             for (PojoData pojo : pojos) {
                 Long key = pojo.getId();
                 result.put(key, pojo);
+            }
+
+        }
+
+        return result;
+    }
+
+    /**
+     * Builds a list of CSV lines from a list pojos.
+     *
+     * Lines are sorted by natural String order.
+     *
+     * @param pojos the pojos to be mapped to CSV lines
+     * @return list of pojos as CSV lines, or an empty list
+     */
+    public static List<CsvAnnotationLine> toSortedCsvAnnotationLines(Collection<PojoData> pojos) {
+        List<CsvAnnotationLine> result = new ArrayList<CsvAnnotationLine>();
+
+        if (null != pojos) {
+
+            // sort the "outer" (main) list on entity name
+            List<PojoData> orderedPojos = Lists.newArrayList(pojos);
+            Collections.sort(orderedPojos, Ordering.natural().onResultOf(FunctionsUtil.toPojoName));
+
+            // pseudo line number based on list index from the re-ordered input pojos
+            long lineNumber = 1L;
+            for (PojoData pojo : orderedPojos) {
+
+                String targetName = pojo.getName();
+                Collection<AnnotationData> annotations = pojo.getAnnotations();
+
+                // sort the "inner" (annotations) list on annotation name/value
+                List<String> annotationsValues =
+                    AnnotationsUtil.toOrderedAnnotationValues(annotations);
+
+                CsvAnnotationLine line =
+                    SimpleAnnotationLine.createLenient(lineNumber, targetName, annotationsValues);
+
+                result.add(line);
+                lineNumber++;
+
             }
 
         }

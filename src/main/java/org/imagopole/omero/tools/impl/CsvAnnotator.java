@@ -5,6 +5,7 @@ package org.imagopole.omero.tools.impl;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Collection;
 
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
@@ -19,10 +20,13 @@ import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.imagopole.omero.tools.api.ctrl.CsvAnnotationController;
+import org.imagopole.omero.tools.api.ctrl.CsvExportController;
 import org.imagopole.omero.tools.api.ctrl.FileReaderController;
 import org.imagopole.omero.tools.api.ctrl.FileWriterController;
+import org.imagopole.omero.tools.api.ctrl.MetadataController;
 import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
+import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.impl.blitz.AnnotationBlitzService;
 import org.imagopole.omero.tools.impl.blitz.ContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.FileBlitzService;
@@ -30,12 +34,16 @@ import org.imagopole.omero.tools.impl.blitz.QueryBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateNoOpBlitzService;
 import org.imagopole.omero.tools.impl.ctrl.DefaultCsvAnnotationController;
+import org.imagopole.omero.tools.impl.ctrl.DefaultCsvExportController;
 import org.imagopole.omero.tools.impl.ctrl.DefaultFileReaderController;
 import org.imagopole.omero.tools.impl.ctrl.DefaultFileWriterController;
+import org.imagopole.omero.tools.impl.ctrl.DefaultMetadataController;
 import org.imagopole.omero.tools.impl.logic.DefaultCsvAnnotationService;
 import org.imagopole.omero.tools.impl.logic.DefaultCsvReaderService;
+import org.imagopole.omero.tools.impl.logic.DefaultCsvWriterService;
 import org.imagopole.omero.tools.impl.logic.DefaultFileReaderService;
 import org.imagopole.omero.tools.impl.logic.DefaultFileWriterService;
+import org.imagopole.omero.tools.impl.logic.DefaultMetadataService;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +62,8 @@ public class CsvAnnotator {
     private CsvAnnotationConfig config;
     private ServiceFactoryPrx session;
     private CsvAnnotationController annotationController;
+    private MetadataController metadataController;
+    private CsvExportController exportController;
     private FileReaderController fileReaderController;
     private FileWriterController fileWriterController;
 
@@ -189,8 +199,16 @@ public class CsvAnnotator {
         final AnnotationType annotationType = AnnotationType.valueOf(annotationTypeArg);
         final AnnotatedType annotatedType = AnnotatedType.valueOf(annotatedTypeArg);
 
+        // lookup the (annotated) OMERO data hierarchy for export
+        Collection<PojoData> entitiesPlusAnnotations =
+            metadataController.listEntitiesPlusAnnotations(
+                experimenterId,
+                containerId,
+                annotationType,
+                annotatedType);
+
         // convert the OMERO data hierarchy into CSV content
-        String fileContent = "";
+        String fileContent = exportController.convertToCsv(entitiesPlusAnnotations);
 
         // upload and attach the generated CSV to the OMERO container
         fileWriterController.writeByFileContainerType(
@@ -215,9 +233,10 @@ public class CsvAnnotator {
         OmeroAnnotationService annotationService = new AnnotationBlitzService(session);
         OmeroFileService fileService = new FileBlitzService(session);
         OmeroUpdateService updateService = buildUpdateService(session, config);
+        OmeroContainerService containerService = new ContainersBlitzService(session);
 
         CsvAnnotationController annotationController =
-            buildAnnotationController(session, config, annotationService, updateService);
+            buildAnnotationController(session, config, annotationService, containerService, updateService);
 
         FileReaderController fileReaderController =
             buildFileReaderController(session, config, charset, annotationService, fileService);
@@ -225,9 +244,17 @@ public class CsvAnnotator {
         FileWriterController fileWriterController =
             buildFileWriterController(session, config, charset, fileService, updateService);
 
+        MetadataController metadataController =
+            buildMetadataController(session, config, annotationService, containerService);
+
+        CsvExportController exportController =
+            buildExportController(session, config);
+
         this.annotationController = annotationController;
         this.fileReaderController = fileReaderController;
         this.fileWriterController = fileWriterController;
+        this.metadataController = metadataController;
+        this.exportController = exportController;
     }
 
     private FileReaderController buildFileReaderController(
@@ -278,10 +305,8 @@ public class CsvAnnotator {
             final ServiceFactoryPrx session,
             final CsvAnnotationConfig config,
             final OmeroAnnotationService annotationService,
+            final OmeroContainerService containerService,
             final OmeroUpdateService updateService) {
-
-        //-- omero/blitz "layer"
-        OmeroContainerService containerService = new ContainersBlitzService(session);
 
         //-- business logic "layer"
         DefaultCsvReaderService csvReaderService = new DefaultCsvReaderService();
@@ -299,6 +324,40 @@ public class CsvAnnotator {
         annotationController.setCsvAnnotationService(csvAnnotationService);
 
         return annotationController;
+    }
+
+    private MetadataController buildMetadataController(
+            final ServiceFactoryPrx session,
+            final CsvAnnotationConfig config,
+            final OmeroAnnotationService annotationService,
+            final OmeroContainerService containerService) {
+
+        //-- business logic "layer"
+        DefaultMetadataService metadataService = new DefaultMetadataService();
+        metadataService.setAnnotationService(annotationService);
+        metadataService.setContainerService(containerService);
+
+        //-- controller "layer"
+        DefaultMetadataController metadataController = new DefaultMetadataController();
+        metadataController.setMetadataService(metadataService);
+
+        return metadataController;
+    }
+
+    private CsvExportController buildExportController(
+            final ServiceFactoryPrx session,
+            final CsvAnnotationConfig config) {
+
+        //-- business logic "layer"
+        DefaultCsvWriterService csvWriterService = new DefaultCsvWriterService();
+        csvWriterService.setDelimiter(config.getCsvDelimiter());
+        csvWriterService.setSkipHeader(config.getCsvSkipHeader());
+
+        //-- controller "layer"
+        DefaultCsvExportController exportController = new DefaultCsvExportController();
+        exportController.setCsvWriterService(csvWriterService);
+
+        return exportController;
     }
 
     private OmeroUpdateService buildUpdateService(

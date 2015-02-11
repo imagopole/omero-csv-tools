@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import omero.ServerError;
+import omero.model.Annotation;
 import omero.model.IObject;
+import pojos.AnnotationData;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
 
@@ -51,5 +53,22 @@ public interface OmeroAnnotationService {
                     Long experimenterId,
                     Collection<Long> containersIds,
                     Class<? extends IObject> containerClass) throws ServerError;
+
+    /**
+     * Retrieve all annotations of the given type, and already associated with
+     * nodes of the specified type owned by experimenter.
+     *
+     * @param experimenterId the experimenter
+     * @param nodesIds the container IDs or children IDs
+     * @param nodeClass the annotated node model class (eg. <code>omero.model.Dataset</code>)
+     * @param annotationClass the annotation model class (eg. <code>omero.model.TagAnnotation</code>)
+     * @return the annotations already linked to the requested containers/nodes, or an empty list if none
+     * @throws ServerError  OMERO client or server failure
+     */
+    Map<Long, Collection<AnnotationData>> listAnnotationsLinkedToNodes(
+                    Long experimenterId,
+                    Collection<Long> nodesIds,
+                    Class<? extends IObject> nodeClass,
+                    Class<? extends Annotation> annotationClass) throws ServerError;
 
 }

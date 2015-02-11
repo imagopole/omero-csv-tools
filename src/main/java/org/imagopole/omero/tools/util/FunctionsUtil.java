@@ -10,17 +10,18 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.impl.dto.DefaultPojoData;
 
+import pojos.AnnotationData;
 import pojos.DatasetData;
 import pojos.FileAnnotationData;
 import pojos.ImageData;
 import pojos.TagAnnotationData;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * Utility class as holder of misc. Guava functions.
@@ -142,6 +143,23 @@ public final class FunctionsUtil {
 
             if (null != input) {
                 result = input.getFileName();
+            }
+
+            return result;
+        }
+
+    };
+
+    public static final Function<AnnotationData, String> toAnnotationStringContent =
+                    new Function<AnnotationData, String>() {
+
+        @Override
+        @Nullable
+        public String apply(@Nullable AnnotationData input) {
+            String result = null;
+
+            if (null != input) {
+                result = input.getContentAsString();
             }
 
             return result;

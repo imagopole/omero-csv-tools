@@ -3,6 +3,9 @@
  */
 package org.imagopole.omero.tools.api.dto;
 
+import java.util.Collection;
+
+import pojos.AnnotationData;
 import pojos.DataObject;
 
 
@@ -25,5 +28,8 @@ public interface PojoData {
 
     /** The underlying OMERO entity */
     DataObject getModelObject();
+
+    /** The annotations linked to the underlying OMERO entity. */
+    Collection<AnnotationData> getAnnotations();
 
 }

@@ -16,6 +16,7 @@ import org.imagopole.omero.tools.api.RtException;
 import org.imagopole.omero.tools.api.csv.CsvLine;
 import org.imagopole.omero.tools.api.csv.CsvLineReader;
 import org.imagopole.omero.tools.util.Check;
+import org.imagopole.omero.tools.util.CommonsCsvUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,10 +33,6 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CommonsCsvStringReader implements CsvLineReader<CsvLine> {
-
-    /** Default CSV format for this reader */
-    private static final CSVFormat DEFAULT_CSV_FORMAT =
-        CSVFormat.DEFAULT.withIgnoreEmptyLines(true).withIgnoreSurroundingSpaces(true);
 
     /** Application logs */
     private final Logger log = LoggerFactory.getLogger(CommonsCsvStringReader.class);
@@ -69,7 +66,7 @@ public class CommonsCsvStringReader implements CsvLineReader<CsvLine> {
     public static CsvLineReader<CsvLine> defaultReader(String fileContent) {
         Check.notEmpty(fileContent, "fileContent");
 
-        return new CommonsCsvStringReader(DEFAULT_CSV_FORMAT, fileContent);
+        return new CommonsCsvStringReader(CommonsCsvUtil.DEFAULT_CSV_FORMAT, fileContent);
     }
 
     /**
@@ -88,13 +85,12 @@ public class CommonsCsvStringReader implements CsvLineReader<CsvLine> {
         Check.notEmpty(fileContent, "fileContent");
         Check.notNull(delimiter, "delimiter");
 
-        CSVFormat customFormat =
-            DEFAULT_CSV_FORMAT.withDelimiter(delimiter).withSkipHeaderRecord(skipHeader);
+        CSVFormat customFormat = CommonsCsvUtil.defaultFormatWith(delimiter, skipHeader);
 
         return new CommonsCsvStringReader(customFormat, fileContent);
     }
 
-    /**
+	/**
      * {@inheritDoc}
      */
     @Override
