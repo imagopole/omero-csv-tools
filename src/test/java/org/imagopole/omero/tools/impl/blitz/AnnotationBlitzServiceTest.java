@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
-
 import omero.ServerError;
 import omero.api.IMetadataPrx;
 import omero.api.ServiceFactoryPrx;
@@ -28,6 +26,7 @@ import omero.model.TagAnnotation;
 import omero.model.TagAnnotationI;
 
 import org.imagopole.omero.tools.TestsUtil;
+import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.util.BlitzUtil;
 import org.testng.annotations.BeforeMethod;
@@ -36,8 +35,11 @@ import org.testng.collections.Lists;
 import org.unitils.UnitilsTestNG;
 import org.unitils.mock.Mock;
 
+import pojos.AnnotationData;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author seb
@@ -79,6 +81,50 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listFilesAttachedToContainerShouldRejectNullContainerIdParam() throws ServerError {
         annotationService.listFilesAttachedToContainer(ContainerType.project.getModelClass(), null);
+    }
+
+
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listAnnotationsLinkedToNodesShouldRejectNullExperimenterIdParam() throws ServerError {
+        annotationService.listAnnotationsLinkedToNodes(
+            null,
+            Lists.newArrayList(1L), ContainerType.project.getModelClass(), AnnotationType.tag.getModelClass());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+            expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listAnnotationsLinkedToNodesShouldRejectNullNodesIdsParam() throws ServerError {
+        annotationService.listAnnotationsLinkedToNodes(
+            1L,
+            null,
+            ContainerType.project.getModelClass(), AnnotationType.tag.getModelClass());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+            expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listAnnotationsLinkedToNodesShouldRejectEmptyNodesIdsParam() throws ServerError {
+        annotationService.listAnnotationsLinkedToNodes(
+            1L,
+            new ArrayList<Long>(),
+            ContainerType.project.getModelClass(), AnnotationType.tag.getModelClass());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listAnnotationsLinkedToNodesShouldRejectNullContainerTypeParam() throws ServerError {
+        annotationService.listAnnotationsLinkedToNodes(
+            1L, Lists.newArrayList(1L),
+            null, AnnotationType.tag.getModelClass());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listAnnotationsLinkedToNodesShouldRejectNullNodeTypeParam() throws ServerError {
+        annotationService.listAnnotationsLinkedToNodes(
+            1L, Lists.newArrayList(1L),
+            ContainerType.project.getModelClass(), null);
     }
 
 
@@ -200,6 +246,110 @@ public class AnnotationBlitzServiceTest extends UnitilsTestNG {
         sessionMock.assertInvoked().getMetadataService();
         metadataPrxMock.assertInvoked().loadSpecifiedAnnotationsLinkedTo(
                         FileAnnotation.class.getName(),
+                        null,
+                        null,
+                        ContainerType.project.getModelClass().getName(),
+                        Lists.newArrayList(1L),
+                        null);
+    }
+
+
+    @Test
+    public void listAnnotationsLinkedToNodesShouldConvertNullsToEmptyResult() throws ServerError {
+        metadataPrxMock.returns(null).loadSpecifiedAnnotationsLinkedTo(
+                        TagAnnotation.class.getName(),
+                        null,
+                        null,
+                        ContainerType.project.getModelClass().getName(),
+                        Lists.newArrayList(1L),
+                        null);
+
+        Map<Long, Collection<AnnotationData>> result =
+            annotationService.listAnnotationsLinkedToNodes(
+                    1L,
+                    Lists.newArrayList(1L),
+                    ContainerType.project.getModelClass(),
+                    AnnotationType.tag.getModelClass());
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        sessionMock.assertInvoked().getMetadataService();
+        metadataPrxMock.assertInvoked().loadSpecifiedAnnotationsLinkedTo(
+                 TagAnnotation.class.getName(),
+                 null,
+                 null,
+                 ContainerType.project.getModelClass().getName(),
+                 Lists.newArrayList(1L),
+                 null);
+    }
+
+    @Test
+    public void listAnnotationsLinkedToNodesShouldReturnEmptyResultWhenNoAnnotationFound() throws ServerError {
+        Map<Long, Collection<AnnotationData>> expected = Collections.emptyMap();
+
+        metadataPrxMock.returns(expected).loadSpecifiedAnnotationsLinkedTo(
+                        TagAnnotation.class.getName(),
+                        null,
+                        null,
+                        ContainerType.project.getModelClass().getName(),
+                        Lists.newArrayList(1L),
+                        null);
+
+        Map<Long, Collection<AnnotationData>> result =
+            annotationService.listAnnotationsLinkedToNodes(
+                    1L,
+                    Lists.newArrayList(1L),
+                    ContainerType.project.getModelClass(),
+                    AnnotationType.tag.getModelClass());
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        sessionMock.assertInvoked().getMetadataService();
+        metadataPrxMock.assertInvoked().loadSpecifiedAnnotationsLinkedTo(
+                        TagAnnotation.class.getName(),
+                        null,
+                        null,
+                        ContainerType.project.getModelClass().getName(),
+                        Lists.newArrayList(1L),
+                        null);
+    }
+
+    @Test
+    public void listAnnotationsLinkedToNodes() throws ServerError {
+        // fixture
+        TagAnnotation tagAnnotation = new TagAnnotationI();
+        tagAnnotation.setTextValue(omero.rtypes.rstring("tag.annotation"));
+
+        Map<Long, Collection<TagAnnotation>> fixture = Maps.newHashMap();
+        fixture.put(1L, Lists.newArrayList(tagAnnotation));
+
+        metadataPrxMock.returns(fixture).loadSpecifiedAnnotationsLinkedTo(
+                        TagAnnotation.class.getName(),
+                        null,
+                        null,
+                        ContainerType.project.getModelClass().getName(),
+                        Lists.newArrayList(1L),
+                        null);
+
+        Map<Long, Collection<AnnotationData>> result =
+            annotationService.listAnnotationsLinkedToNodes(
+                    1L,
+                    Lists.newArrayList(1L),
+                    ContainerType.project.getModelClass(),
+                    AnnotationType.tag.getModelClass());
+
+        assertNotNull(result, "Non-null results expected");
+        assertEquals(result.size(), 1, "1 result expected");
+
+        Collection<AnnotationData> values = result.get(1L);
+        AnnotationData pojo = getOnlyElement(values);
+        assertEquals(pojo.getContentAsString(), "tag.annotation", "Wrong annotation name");
+
+        sessionMock.assertInvoked().getMetadataService();
+        metadataPrxMock.assertInvoked().loadSpecifiedAnnotationsLinkedTo(
+                        TagAnnotation.class.getName(),
                         null,
                         null,
                         ContainerType.project.getModelClass().getName(),

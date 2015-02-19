@@ -13,6 +13,7 @@ tests:
       - org.imagopole.omero.tools.util.ImagesUtilTest
       - org.imagopole.omero.tools.util.FunctionsUtilTest
       - org.imagopole.omero.tools.util.ParseUtilTest
+      - org.imagopole.omero.tools.util.PojosUtilTest
 
   - name: DTO
     classes:
@@ -22,6 +23,7 @@ tests:
 
   - name: CSV
     classes:
+      - org.imagopole.omero.tools.impl.csv.CommonsCsvAnnotationsWriterTest
       - org.imagopole.omero.tools.impl.csv.CommonsCsvStringReaderTest
       - org.imagopole.omero.tools.impl.csv.CsvAnnotationsReaderTest
       - org.imagopole.omero.tools.impl.csv.SimpleAnnotationLineTest
@@ -32,6 +34,7 @@ tests:
       - org.imagopole.omero.tools.impl.blitz.AnnotationBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.ContainerServiceBlitzTest
       - org.imagopole.omero.tools.impl.blitz.FileBlitzServiceTest
+      - org.imagopole.omero.tools.impl.blitz.QueryBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.UpdateBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.UpdateNoOpBlitzServiceTest
 
@@ -39,5 +42,7 @@ tests:
     classes:
       - org.imagopole.omero.tools.impl.logic.DefaultCsvAnnotationServiceTest
       - org.imagopole.omero.tools.impl.logic.DefaultCsvReaderServiceTest
+      - org.imagopole.omero.tools.impl.logic.DefaultCsvWriterServiceTest
       - org.imagopole.omero.tools.impl.logic.DefaultFileReaderServiceTest
-
+      - org.imagopole.omero.tools.impl.logic.DefaultFileWriterServiceTest
+      - org.imagopole.omero.tools.impl.logic.DefaultMetadataServiceTest

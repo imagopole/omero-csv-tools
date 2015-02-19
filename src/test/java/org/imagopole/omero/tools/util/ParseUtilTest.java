@@ -2,6 +2,11 @@ package org.imagopole.omero.tools.util;
 
 import static org.testng.Assert.assertEquals;
 
+import javax.activation.MimeType;
+import javax.activation.MimeTypeParseException;
+
+import org.imagopole.omero.tools.TestsUtil;
+import org.imagopole.omero.tools.api.RtException;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -35,6 +40,26 @@ public class ParseUtilTest {
         Boolean result = ParseUtil.parseBooleanOrNull(input);
 
         assertEquals(result, expected);
+    }
+
+    @Test(dataProvider="empty-mime-types-provider",
+          expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void parseContentTypeOrFailEmptyTests(String input) {
+        ParseUtil.parseContentTypeOrFail(input);
+    }
+
+    @Test(dataProvider="malformed-mime-types-provider",
+          expectedExceptions = { RtException.class, MimeTypeParseException.class })
+    public void parseContentTypeOrFailMalformedTests(String input) {
+        ParseUtil.parseContentTypeOrFail(input);
+    }
+
+    @Test(dataProvider="mime-types-provider")
+    public void parseContentTypeOrFailTests(String input, String expected) {
+        MimeType result = ParseUtil.parseContentTypeOrFail(input);
+
+        assertEquals(result.getBaseType(), expected);
     }
 
     @DataProvider(name="numbers-provider")
@@ -71,4 +96,34 @@ public class ParseUtilTest {
             { "TRUE", true },
         };
     }
+
+    @DataProvider(name="empty-mime-types-provider")
+    private Object[][] provideEmptyMimeTypes() {
+        return new Object[][] {
+            { null   },
+            { ""     },
+            { "    " }
+        };
+    }
+
+    @DataProvider(name="malformed-mime-types-provider")
+    private Object[][] provideMalformedMimeTypes() {
+        return new Object[][] {
+            { "/"             },
+            { "invalid.type"  },
+            { "invalid.type/" },
+            { "/invalid.type" },
+            { "invalid type"  }
+        };
+    }
+
+    @DataProvider(name="mime-types-provider")
+    private Object[][] provideMimeTypes() {
+        return new Object[][] {
+            { "text/plain",         "text/plain"       },
+            { "  text/csv",         "text/csv"         },
+            { "application/json  ", "application/json" }
+        };
+    }
+
 }

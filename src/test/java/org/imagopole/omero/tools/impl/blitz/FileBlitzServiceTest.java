@@ -8,6 +8,7 @@ import java.io.IOException;
 import omero.ServerError;
 import omero.api.RawFileStorePrx;
 import omero.api.ServiceFactoryPrx;
+import omero.model.OriginalFileI;
 
 import org.imagopole.omero.tools.TestsUtil;
 import org.testng.annotations.BeforeMethod;
@@ -73,13 +74,56 @@ public class FileBlitzServiceTest extends UnitilsTestNG {
     public void loadFromStoreShouldReleaseStatefulResourcesOnError() throws ServerError, IOException {
         rawFileStorePrxMock.returns(new byte[0]).read(0, 4096);
         rawFileStorePrxMock.raises(
-            new ServerError(new IllegalArgumentException("mock.error"))).read(0, 4096);
+            new ServerError(new IllegalArgumentException("mock.download.error"))).read(0, 4096);
 
         fileService.loadOriginalFile(1L, 5000L);
 
         sessionMock.assertInvoked().createRawFileStore();
         rawFileStorePrxMock.assertInvoked().setFileId(1L);
         rawFileStorePrxMock.assertInvoked().read(0, 4096);
+        rawFileStorePrxMock.assertInvoked().close();
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void uploadToStoreShouldRejectNullFileIdParam() throws ServerError, IOException {
+        fileService.uploadOriginalFile(null, "file.content".getBytes());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void uploadToStoreShouldRejectNullFileContentParam() throws ServerError, IOException {
+        fileService.uploadOriginalFile(1L, null);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void uploadToStoreShouldRejectEmptyFileContentParam() throws ServerError, IOException {
+        fileService.uploadOriginalFile(1L, "".getBytes());
+    }
+
+    @Test
+    public void uploadToStoreShouldReleaseStatefulResources() throws ServerError, IOException {
+        fileService.uploadOriginalFile(1L, "file.content".getBytes());
+
+        sessionMock.assertInvoked().createRawFileStore();
+        rawFileStorePrxMock.assertInvoked().setFileId(1L);
+        rawFileStorePrxMock.assertInvoked().close();
+    }
+
+    @Test
+    public void uploadToStoreShouldReleaseStatefulResourcesOnError() throws ServerError, IOException {
+        byte[] fileContent = "file.content".getBytes();
+        rawFileStorePrxMock.returns(new OriginalFileI()).save();
+        rawFileStorePrxMock.raises(
+            new ServerError(new IllegalArgumentException("mock.upload.error"))).save();
+
+        fileService.uploadOriginalFile(1L, fileContent);
+
+        sessionMock.assertInvoked().createRawFileStore();
+        rawFileStorePrxMock.assertInvoked().setFileId(1L);
+        rawFileStorePrxMock.assertInvoked().write(fileContent, 0L, fileContent.length);
+        rawFileStorePrxMock.assertInvoked().save();
         rawFileStorePrxMock.assertInvoked().close();
     }
 

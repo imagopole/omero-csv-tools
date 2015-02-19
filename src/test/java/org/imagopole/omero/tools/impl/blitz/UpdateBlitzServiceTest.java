@@ -63,6 +63,12 @@ public class UpdateBlitzServiceTest extends UnitilsTestNG {
         updateService.saveAll(null);
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveOneShouldRejectNullParams() throws ServerError {
+        updateService.save(null);
+    }
+
     @Test
     public void saveBatchShouldReturnEmptyResultsForEmptyParams() throws ServerError {
         List<IObject> params = Lists.newArrayList();
@@ -101,6 +107,27 @@ public class UpdateBlitzServiceTest extends UnitilsTestNG {
 
         sessionMock.assertInvoked().getUpdateService();
         updatePrxMock.assertInvoked().saveAndReturnArray(params);
+    }
+
+    @Test
+    public void saveOneShouldReturnConsistenlyWithParams() throws ServerError {
+        // expected fixture data
+        IObject expected = new DatasetAnnotationLinkI(1, true);
+
+        // input fixured data
+        IObject param = new DatasetAnnotationLinkI();
+
+        // fixture behavior
+        updatePrxMock.returns(expected).saveAndReturnObject(param);
+
+        IObject result = updateService.save(param);
+        log.debug("{}", result);
+
+        assertNotNull(result, "Non-null result expected");
+        assertEquals(result.getId().getValue(), 1, "Wrong id returned");
+
+        sessionMock.assertInvoked().getUpdateService();
+        updatePrxMock.assertInvoked().saveAndReturnObject(param);
     }
 
 }

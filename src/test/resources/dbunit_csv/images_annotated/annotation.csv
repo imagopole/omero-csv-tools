@@ -1,0 +1,3 @@
+id,discriminator,permissions,textvalue,creation_id,update_id,group_id,owner_id
+813,/basic/text/tag/,-40,DbUnit.images_annotated-Tag.Linked,888999,888999,801,802
+814,/basic/text/tag/,-40,DbUnit.images_annotated-Tag.Unlinked,888999,888999,801,802

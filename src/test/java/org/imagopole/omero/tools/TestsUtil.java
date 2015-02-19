@@ -4,18 +4,24 @@
 package org.imagopole.omero.tools;
 
 import java.io.File;
-
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import java.util.List;
 
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.dataset.xml.XmlProducer;
+import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.util.FunctionsUtil;
+import org.testng.collections.Lists;
+import org.unitils.reflectionassert.ReflectionComparatorMode;
 
 import pojos.DatasetData;
 import pojos.FileAnnotationData;
 import pojos.ImageData;
+import pojos.ProjectData;
+import pojos.TagAnnotationData;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 
 /**
@@ -29,6 +35,22 @@ public class TestsUtil {
 
     /** Default prefix for dataset names fixtures */
     public static final String DEFAULT_NAME_PREFIX = "testng.";
+
+    /** Default CSV format record separator */
+    public static final String CRLF = "\r\n";
+
+    /** Default CSV format quote character */
+    public static final String DOUBLE_QUOTE = "\"";
+
+    /** Default mode for reflection-based comparisons */
+    public static final ReflectionComparatorMode[] DEFAULT_COMPARATOR_MODE = new ReflectionComparatorMode[] {};
+
+    public static final ProjectData newProject(String name) {
+        ProjectData pj = new ProjectData();
+        pj.setName(name);
+
+        return pj;
+    }
 
     public static final DatasetData newDataset(String name) {
         DatasetData ds = new DatasetData();
@@ -68,9 +90,43 @@ public class TestsUtil {
         return new FileAnnotationData(new File(name));
     }
 
+    public static final TagAnnotationData newTag(String name) {
+        return new TagAnnotationData(name);
+    }
+
     public static Multimap<String, String> emptyStringMultimap() {
         Multimap<String, String> emptyMultimap = HashMultimap.create();
         return emptyMultimap;
+    }
+
+    public static List<CsvAnnotationLine> asListOrNull(CsvAnnotationLine... lines) {
+        List<CsvAnnotationLine> result = null;
+
+        if (null != lines) {
+            result = Lists.newArrayList(lines);
+        }
+
+        return result;
+    }
+
+    public static String crlf(String input) {
+        String result = null;
+
+        if (null != input) {
+            result = input.concat(CRLF);
+        }
+
+        return result;
+    }
+
+    public static String quote(String input) {
+        String result = null;
+
+        if (null != input) {
+            result = DOUBLE_QUOTE.concat(input).concat(DOUBLE_QUOTE);
+        }
+
+        return result;
     }
 
     /**
@@ -131,6 +187,9 @@ public class TestsUtil {
                 /** Dataset-Images hierarchy */
                 public final static String IMAGES =  DBUNIT_CSV_PREFIX + "images/";
 
+                /** Dataset-Images hierarchy with tags already associated to image */
+                public final static String IMAGES_ANNOTATED =  DBUNIT_CSV_PREFIX + "images_annotated/";
+
                 public final static class Linked {
                     public final static Long DATASET_ID = 805L;
                     public final static String DATASET_NAME = "DbUnit.linked-Dataset";
@@ -162,6 +221,14 @@ public class TestsUtil {
                     public final static Long DATASET_ID = 810L;
                     public final static String IMAGE_NAME = "DbUnit.images-Image";
                 }
+
+                public final static class ImagesAnnotated {
+                    public final static Long DATASET_ID = 811L;
+                    public final static String DATASET_NAME = "DbUnit.images_annotated-Dataset";
+                    public final static String IMAGE_NAME = "DbUnit.images_annotated-Image";
+                    public final static String TAG_NAME_LINKED = "DbUnit.images_annotated-Tag.Linked";
+                    public final static String TAG_NAME_UNLINKED = "DbUnit.images_annotated-Tag.Unlinked";
+                }
             }
 
             /**
@@ -178,6 +245,10 @@ public class TestsUtil {
                 /** Standalone Project */
                 public final static String PROJECT = DBUNIT_XML_PREFIX + "project.xml";
 
+                /** Standalone Project, target for file annotations  */
+                public final static String PROJECT_ATTACHMENT_TARGET =
+                    DBUNIT_XML_PREFIX + "project-attachment-target.xml";
+
                 /** Zero-length OriginalFile attached to project */
                 public final static String EMPTY_ATTACHMENT =
                     DBUNIT_XML_PREFIX + "empty-attachment.xml";
@@ -186,6 +257,11 @@ public class TestsUtil {
                  * name as <code>EMPTY_ATTACHMENT</code> */
                 public final static String EMPTY_ATTACHMENT_DUPLICATE =
                     DBUNIT_XML_PREFIX + "empty-attachment-dup.xml";
+
+                public final static class AttachmentTarget {
+                    public final static Long PROJECT_ID = 804L;
+                    public final static String PROJECT_NAME = "DbUnit-Project-AttachmentTarget";
+                }
             }
         }
 

@@ -3,6 +3,7 @@ package org.imagopole.omero.tools.util;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static org.imagopole.omero.tools.TestsUtil.newAttachment;
+import static org.imagopole.omero.tools.TestsUtil.newTag;
 import static org.imagopole.omero.tools.impl.csv.SimpleAnnotationLine.create;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -10,23 +11,27 @@ import static org.testng.Assert.assertTrue;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 import static org.unitils.reflectionassert.ReflectionComparatorMode.LENIENT_ORDER;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.Sets;
-
 import omero.model.IObject;
 
+import org.imagopole.omero.tools.TestsUtil;
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
+import pojos.AnnotationData;
 import pojos.FileAnnotationData;
+import pojos.TagAnnotationData;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.Sets;
 
 
 
@@ -233,6 +238,39 @@ public class AnnotationsUtilTest {
         assertReflectionEquals("Wrong values",
                                Lists.newArrayList(newAttachment("file.2")),
                                file2Values, LENIENT_ORDER);
+    }
+
+    @Test
+    public void toOrderedAnnotationValuesShouldConvertNullEmptyResult() {
+        List<String> result = AnnotationsUtil.toOrderedAnnotationValues(null);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+    }
+
+    @Test
+    public void toOrderedAnnotationValuesTests() {
+        List<String> emptyResult =
+            AnnotationsUtil.toOrderedAnnotationValues(new ArrayList<AnnotationData>());
+
+        assertNotNull(emptyResult, "Non-null results expected");
+        assertTrue(emptyResult.isEmpty(), "Empty results expected");
+
+        List<TagAnnotationData> tags = Lists.newArrayList(
+                newTag("tag.z1"), newTag("TAG.z1"),
+                newTag("tag.a2"), newTag("tag.a1"),
+                newTag("tag.2"), newTag("tag.1"),
+                newTag("TAG.2"), newTag("TAG.1"));
+
+        List<String> result = AnnotationsUtil.toOrderedAnnotationValues(tags);
+
+        assertNotNull(result, "Non-null results expected");
+        log.trace("{}", result);
+
+        List<String> expected = Lists.newArrayList(
+            "TAG.1", "TAG.2", "TAG.z1","tag.1", "tag.2", "tag.a1", "tag.a2", "tag.z1");
+
+        assertReflectionEquals("Wrong ordering", expected, result, TestsUtil.DEFAULT_COMPARATOR_MODE);
     }
 
 }
