@@ -70,6 +70,7 @@ class Labels:
     DELIMITER       = "CSV_Records_Separator"
     SKIP_HEADER     = "Skip_CSV_Header_Line"
     CHARSET         = "CSV_Text_Encoding"
+    EXPORT_MODE     = "Export_Mode"
     #DRY_RUN         = "Simulation_Mode"
 
 ##
@@ -89,7 +90,8 @@ PARAMETERS_KEYS_MAPPING = {
     Labels.FILE_NAME       : "csv-file-name",
     Labels.DELIMITER       : "csv-delimiter",
     Labels.SKIP_HEADER     : "csv-skip-header",
-    Labels.CHARSET         : "csv-charset"
+    Labels.CHARSET         : "csv-charset",
+    Labels.EXPORT_MODE     : "export-mode"
     #Labels.DRY_RUN         : "dry-run" 
 }
 
@@ -132,7 +134,8 @@ PARAMETERS_VALUES_MAPPING = {
     Labels.FILE_NAME       : trim,
     Labels.DELIMITER       : trim,
     Labels.SKIP_HEADER     : to_lowercase,
-    Labels.CHARSET         : to_uppercase
+    Labels.CHARSET         : to_uppercase,
+    Labels.EXPORT_MODE     : to_lowercase
     #Labels.DRY_RUN         : to_lowercase
 }
 
@@ -371,6 +374,13 @@ def run_as_script():
         optional = True,
         grouping = "2.3",
         description = "CSV file charset encoding to use when reading. Default value: UTF-8. Leave blank if unknown."
+        ),
+
+    scripts.Bool(
+        Labels.EXPORT_MODE,
+        optional = True,
+        grouping = "2.4",
+        description = "Extract the selected data to a CSV file. Default value: disabled. Tick to switch from default 'annotate' mode.",
         ),
 
     # Candidate for removal
