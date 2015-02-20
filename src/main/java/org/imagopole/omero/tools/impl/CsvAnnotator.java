@@ -32,7 +32,6 @@ import org.imagopole.omero.tools.impl.blitz.ContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.FileBlitzService;
 import org.imagopole.omero.tools.impl.blitz.QueryBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateBlitzService;
-import org.imagopole.omero.tools.impl.blitz.UpdateNoOpBlitzService;
 import org.imagopole.omero.tools.impl.ctrl.DefaultCsvAnnotationController;
 import org.imagopole.omero.tools.impl.ctrl.DefaultCsvExportController;
 import org.imagopole.omero.tools.impl.ctrl.DefaultFileReaderController;
@@ -167,14 +166,8 @@ public class CsvAnnotator {
                 csvData);
 
         // persist to database
-        if (config.getDryRun()) {
-            log.info("Dry run requested - skipping database persistence");
-            // TODO: add stdout info?
-        } else {
-            log.info("Persisting changes to database");
-
-            annotationController.saveAllAnnotationLinks(linksData);
-        }
+        log.info("Persisting changes to database");
+        annotationController.saveAllAnnotationLinks(linksData);
     }
 
     /**
@@ -232,7 +225,7 @@ public class CsvAnnotator {
         //-- omero/blitz common "layer"
         OmeroAnnotationService annotationService = new AnnotationBlitzService(session);
         OmeroFileService fileService = new FileBlitzService(session);
-        OmeroUpdateService updateService = buildUpdateService(session, config);
+        OmeroUpdateService updateService = new UpdateBlitzService(session);
         OmeroContainerService containerService = new ContainersBlitzService(session);
 
         CsvAnnotationController annotationController =
@@ -358,23 +351,6 @@ public class CsvAnnotator {
         exportController.setCsvWriterService(csvWriterService);
 
         return exportController;
-    }
-
-    private OmeroUpdateService buildUpdateService(
-            final ServiceFactoryPrx session,
-            final CsvAnnotationConfig config) {
-
-        OmeroUpdateService updateService = null;
-
-        if (config.getDryRun()) {
-            log.info("Dry run requested - using no-op database update service");
-            updateService = new UpdateNoOpBlitzService(session);
-        } else {
-            log.info("Using default database update service");
-            updateService = new UpdateBlitzService(session);
-        }
-
-        return updateService;
     }
 
     private static Charset lookupCharsetOrFail(String charsetName) {

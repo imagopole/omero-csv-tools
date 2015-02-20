@@ -40,7 +40,6 @@ public class CsvAnnotationConfig {
     private Boolean csvSkipHeader  = Defaults.SKIP_HEADER_ON;
     private String csvCharsetName  = Defaults.UTF_8_CHARSET;
     private Integer port           = Defaults.ICE_SSL_PORT;
-    private Boolean dryRun         = Defaults.DRY_RUN_OFF;
     private Boolean exportMode     = Defaults.EXPORT_MODE_OFF;
 
     /**
@@ -78,7 +77,6 @@ public class CsvAnnotationConfig {
             .add("password",  empty(getPassword()) ? "-" : "***")
             .add("session-key", empty(getSessionKey()) ? "-" : "***")
             .add("port", getPort())
-            .add("dry-run", getDryRun())
             .add("annotated-type", getAnnotatedTypeArg())
             .add("annotation-type", getAnnotationTypeArg())
             .add("csv-container-type", getCsvContainerTypeArg())
@@ -289,20 +287,6 @@ public class CsvAnnotationConfig {
         if (null != port) {
             this.port = port;
         }
-    }
-
-    /**
-     * @return the dryRun
-     */
-    public Boolean getDryRun() {
-        return dryRun;
-    }
-
-    /**
-     * @param dryRun the dryRun to set
-     */
-    public void setDryRun(Boolean dryRun) {
-        this.dryRun = dryRun;
     }
 
     /**

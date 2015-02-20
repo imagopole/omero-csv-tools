@@ -67,10 +67,6 @@ public class CliArgsParser extends AbstractArgsParser {
             + "\n"
             + "  -h, --help                      Display this help \n"
             + "\n"
-            + "  -n, --dry-run                   Process csv file but do not save annotations \n"
-            + "                                  Valid values: true, false \n"
-            + "                                  Default value: false \n"
-            + "\n"
             + "  -p, --port                      OMERO server port \n"
             + "                                  Default value: 4064 \n"
             + "\n"
@@ -152,7 +148,6 @@ public class CliArgsParser extends AbstractArgsParser {
         //   -- core args: keep naming in sync with the CLI importer tool
         new LongOpt("port",    LongOpt.OPTIONAL_ARGUMENT, null, 'p'),
         new LongOpt("help",    LongOpt.OPTIONAL_ARGUMENT, null, 'h'),
-        new LongOpt("dry-run", LongOpt.OPTIONAL_ARGUMENT, null, 'n'),
         //TBD: new LongOpt("debug",     LongOpt.OPTIONAL_ARGUMENT, null, '??'),
 
         //   -- app-specific args
@@ -209,7 +204,6 @@ public class CliArgsParser extends AbstractArgsParser {
         if (null == config.getCsvSkipHeader())      { valid = false; validationMessages.append("\n csv-skip-header");    }
         if (null == config.getCsvCharsetName())     { valid = false; validationMessages.append("\n csv-charset");        }
         if (null == config.getPort())               { valid = false; validationMessages.append("\n port");               }
-        if (null == config.getDryRun())             { valid = false; validationMessages.append("\n dry-run");            }
         if (null == config.getExportMode())         { valid = false; validationMessages.append("\n export-mode");        }
 
         log.debug("validConfig? {}", valid);

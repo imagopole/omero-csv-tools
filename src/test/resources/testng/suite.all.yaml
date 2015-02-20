@@ -36,7 +36,6 @@ tests:
       - org.imagopole.omero.tools.impl.blitz.FileBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.QueryBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.UpdateBlitzServiceTest
-      - org.imagopole.omero.tools.impl.blitz.UpdateNoOpBlitzServiceTest
 
   - name: Logic
     classes:

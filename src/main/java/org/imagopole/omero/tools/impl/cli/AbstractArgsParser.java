@@ -161,12 +161,6 @@ public abstract class AbstractArgsParser implements ArgsParser {
                     config.setPort(parseIntegerOrNull(port));
                     break;
 
-                // --dry-run : optional
-                case 'n':
-                    String dryRun = g.getOptarg();
-                    config.setDryRun(parseBooleanOrNull(dryRun));
-                    break;
-
                 // --help
                 case 'h':
                     isHelp = true; // trigger help()

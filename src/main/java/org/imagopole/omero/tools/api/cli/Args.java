@@ -167,7 +167,6 @@ public class Args {
         public static final Character COMMA_DELIMITER   =  ',';
         public static final String    UTF_8_CHARSET     =  Charsets.UTF_8.name();
         public static final Boolean   SKIP_HEADER_ON    =  Boolean.TRUE;
-        public static final Boolean   DRY_RUN_OFF       =  Boolean.FALSE;
         public static final Boolean   EXPORT_MODE_OFF   =  Boolean.FALSE;
 
         private Defaults() {

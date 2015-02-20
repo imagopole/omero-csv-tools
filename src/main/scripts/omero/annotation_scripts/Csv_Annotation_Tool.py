@@ -71,7 +71,6 @@ class Labels:
     SKIP_HEADER     = "Skip_CSV_Header_Line"
     CHARSET         = "CSV_Text_Encoding"
     EXPORT_MODE     = "Export_Mode"
-    #DRY_RUN         = "Simulation_Mode"
 
 ##
 # One-to-one mapping for conversion between:
@@ -92,7 +91,6 @@ PARAMETERS_KEYS_MAPPING = {
     Labels.SKIP_HEADER     : "csv-skip-header",
     Labels.CHARSET         : "csv-charset",
     Labels.EXPORT_MODE     : "export-mode"
-    #Labels.DRY_RUN         : "dry-run" 
 }
 
 ##
@@ -136,7 +134,6 @@ PARAMETERS_VALUES_MAPPING = {
     Labels.SKIP_HEADER     : to_lowercase,
     Labels.CHARSET         : to_uppercase,
     Labels.EXPORT_MODE     : to_lowercase
-    #Labels.DRY_RUN         : to_lowercase
 }
 
 
@@ -382,14 +379,6 @@ def run_as_script():
         grouping = "2.4",
         description = "Extract the selected data to a CSV file. Default value: disabled. Tick to switch from default 'annotate' mode.",
         ),
-
-    # Candidate for removal
-    # scripts.Bool(
-    #    Labels.DRY_RUN,
-    #   optional = True,
-    #    grouping = "5",
-    #    description = "Process csv file only (stop before saving results to database). Default value: false",
-    #    ),
 
     #---- script metadata
     version      = "0.2.3 [OMERO-5.0.x-ice34]",
