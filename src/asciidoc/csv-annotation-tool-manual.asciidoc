@@ -1,4 +1,4 @@
-= OMERO CSV Annotation Tool User Documentation
+= OMERO.csvtools User Documentation
 Imagopole
 :artifact_version: 0.2.2
 :bintray_artifact_url: https://bintray.com/imagopole/omero/omero-csv-tools/
@@ -10,7 +10,7 @@ Imagopole
 == Overview
 
 --
-This document is a guide to the OMERO CSV Annotation Tool features, as part of the OMERO structured
+This document is a guide to the OMERO.csvtools features, as part of the OMERO structured
 annotations ecosystem.
 --
 
@@ -31,7 +31,7 @@ Examples of how you can annotate your data as an OMERO user:
   OMERO.insight or OMERO.web.
 
 [[overview-omero-annotations]]
-=== OMERO clients annotations
+=== OMERO insight annotations
 
 For general usage of annotations in OMERO, please see the OME tutorial at
 http://help.openmicroscopy.org/managing-data.html
@@ -43,16 +43,17 @@ For detailed instructions on how to use the webtagging tool, please see the tool
 http://www.openmicroscopy.org/site/support/partner/omero.webtagging
 
 [[overview-omero-cat]]
-=== OMERO CSV annotation tool
+=== OMERO csvtools
 
 Workflow outline (details below):
 
+. Optionally export your current data to a seed CSV file.
 . Attach the tag definitions in CSV format to your OMERO project or dataset.
 . Run the CSV annotation tool script on the project or dataset.
 
 
 [[main-omero-cat]]
-== CSV annotation tool usage guidelines
+== CSV tools usage guidelines
 
 [[synopsis-omero-cat]]
 === Synopsis for the impatient
@@ -73,10 +74,10 @@ In its current form, it follows OMERO's hierarchical Project / Dataset / Image o
 the CSV file to the candidates for annotation.
 The tool currently allows:
 
-* tagging *datasets* nested _within_ a *project* (ie. ``orphans'' or ``top-level'' datasets are
+* tagging and exporting *datasets* nested _within_ a *project* (ie. ``orphans`` or ``top-level`` datasets are
   currently not supported, but may be at a later stage)
-* tagging *images* nested _within_ a *dataset* (whether the dataset is nested within a project or not)
-* attaching the CSV file to a *project* or a *dataset* (in order to annotate _datasets_ and _images_,
+* tagging and exporting *images* nested _within_ a *dataset* (whether the dataset is nested within a project or not)
+* attaching the CSV file to a *project* or a *dataset* (in order to export _datasets_ and _images_,
   respectively)
 
 ==== Example data layout
@@ -119,8 +120,11 @@ would work equally.
 
 If you don't use a specific file name, a default naming scheme is applied.
 
-The default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+annotated-type+* and
+In _annotate mode_, the default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+annotated-type+* and
 *+annotation-type+* being the supported script arguments.
+
+In _export mode_, the conventional name will be identified as such via an additional suffix appended to the
+default name: *+<annotated-type>_<annotation-type>.export.csv+*.
 
 Example default file names:
 
@@ -178,7 +182,15 @@ Download all CSV files from the {bintray_examples_dist_url}[examples zip distrib
 [[tutorial-omero-cat]]
 === Usage tutorial
 
-==== Upload CSV tags file
+==== Export CSV data
+
+To initialize a CSV file prior to adding new tags, you may run the annotation script in _export mode_
+beforehand, then download, edit and delete the generated attachment.
+
+NOTE: If you have used the default naming conventions, you may wish to rename the seed file prior to uploading
+      it again for tagging (ie. remove the ``.export`` suffix) for automatic detection on the next run in _annotate mode_.
+
+==== Upload/Download CSV tags file
 
 Use the attachments interface
 
