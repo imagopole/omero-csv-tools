@@ -6,8 +6,6 @@ package org.imagopole.omero.tools;
 
 import java.io.IOException;
 
-import Glacier2.CannotCreateSessionException;
-import Glacier2.PermissionDeniedException;
 import omero.ServerError;
 import omero.client;
 import omero.api.ServiceFactoryPrx;
@@ -20,6 +18,9 @@ import org.imagopole.omero.tools.impl.cli.CliArgsParser;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import Glacier2.CannotCreateSessionException;
+import Glacier2.PermissionDeniedException;
 
 
 /**
@@ -113,6 +114,19 @@ public class CsvAnnotatorCliMain {
     }
 
     /**
+     * Log and die for the calling OMERO script to handle the failure.
+     *
+     * Include the server stack trace in the error log.
+     *
+     * @param message error message
+     * @param serverError the OMERO server error
+     */
+    private static void die(String message, ServerError serverError) {
+        LOG.error("Remote stackTrace - {}", serverError.serverStackTrace);
+        die(message, (Throwable) serverError);
+    }
+
+    /**
      * Main entry point for the CLI.
      *
      * @param args the CLI arguments
@@ -149,7 +163,7 @@ public class CsvAnnotatorCliMain {
             csvAnnotator.runFromConfig(experimenterId);
 
         } catch (ServerError se) {
-            die("Failed to query/update OMERO [server]: " + se.getMessage(), se);
+            die("Failed to query/update OMERO [server]: " + se.message, se);
         } catch (IOException ioe) {
             die("Failed to query/update OMERO [io]: " + ioe.getMessage(), ioe);
         } catch (CannotCreateSessionException ccse) {

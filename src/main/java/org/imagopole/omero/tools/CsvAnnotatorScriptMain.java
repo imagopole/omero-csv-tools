@@ -99,6 +99,19 @@ public class CsvAnnotatorScriptMain {
     }
 
     /**
+     * Log and die for the calling OMERO script to handle the failure.
+     *
+     * Include the server stack trace in the error log.
+     *
+     * @param message error message
+     * @param serverError the OMERO server error
+     */
+    private static void die(String message, ServerError serverError) {
+        LOG.error("Remote stackTrace - {}", serverError.serverStackTrace);
+        die(message, (Throwable) serverError);
+    }
+
+    /**
      * Main entry point for the OMERO.script.
      *
      * @param args the script arguments
@@ -135,7 +148,7 @@ public class CsvAnnotatorScriptMain {
             csvAnnotator.runFromConfig(experimenterId);
 
         } catch (ServerError se) {
-            die("Failed to query/update OMERO [server]: " + se.getMessage(), se);
+            die("Failed to query/update OMERO [server]: " + se.message, se);
         } catch (IOException ioe) {
             die("Failed to query/update OMERO [io]: " + ioe.getMessage(), ioe);
         } catch (CannotCreateSessionException ccse) {
