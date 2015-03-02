@@ -100,6 +100,9 @@ public class DefaultFileReaderController implements FileReaderController {
 
             case project:
             case dataset:
+            case screen:
+            case plate:
+            case plateacquisition:
                 result = getFileReaderService().readFromRemoteFileAnnotation(
                                 experimenterId,
                                 containerId,
@@ -109,7 +112,8 @@ public class DefaultFileReaderController implements FileReaderController {
 
             default:
                 throw new UnsupportedOperationException(
-                    "FileAttachment lookup on containers other than project/dataset not supported");
+                    "FileAttachment lookup on containers other than project/dataset "
+                  + "or screen/plate/plateacquisition not supported");
         }
 
         rejectIfRemoteFileNotFound(containerId, fileContainerType, fileName, result);

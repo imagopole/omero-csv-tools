@@ -168,7 +168,7 @@ public class DefaultFileReaderService implements FileReaderService {
             ContainerType fileContainerType,
             String attachedFileName) throws ServerError {
 
-        Check.notNull(containerId, "projectId");
+        Check.notNull(containerId, "containerId");
         Check.notNull(fileContainerType, "fileContainerType");
         Check.notEmpty(attachedFileName, "attachedFileName");
 

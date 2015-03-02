@@ -28,7 +28,7 @@ import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.impl.blitz.AnnotationBlitzService;
-import org.imagopole.omero.tools.impl.blitz.ContainersBlitzService;
+import org.imagopole.omero.tools.impl.blitz.ShimContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.FileBlitzService;
 import org.imagopole.omero.tools.impl.blitz.QueryBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateBlitzService;
@@ -161,6 +161,7 @@ public class CsvAnnotator {
         LinksData linksData = annotationController.buildAnnotationsByTypes(
                 experimenterId,
                 containerId,
+                fileContainerType,
                 annotationType,
                 annotatedType,
                 csvData);
@@ -197,6 +198,7 @@ public class CsvAnnotator {
             metadataController.listEntitiesPlusAnnotations(
                 experimenterId,
                 containerId,
+                fileContainerType,
                 annotationType,
                 annotatedType);
 
@@ -223,10 +225,12 @@ public class CsvAnnotator {
         Charset charset = lookupCharsetOrFail(config.getCsvCharsetName());
 
         //-- omero/blitz common "layer"
+        // note: ContainersBlitzService is replaced with an intercepting implementation until support
+        //       for SPW data makes it into server-side OMERO implementations (QueryDefinitions and DataObject)
         OmeroAnnotationService annotationService = new AnnotationBlitzService(session);
         OmeroFileService fileService = new FileBlitzService(session);
         OmeroUpdateService updateService = new UpdateBlitzService(session);
-        OmeroContainerService containerService = new ContainersBlitzService(session);
+        OmeroContainerService containerService = new ShimContainersBlitzService(session);
 
         CsvAnnotationController annotationController =
             buildAnnotationController(session, config, annotationService, containerService, updateService);

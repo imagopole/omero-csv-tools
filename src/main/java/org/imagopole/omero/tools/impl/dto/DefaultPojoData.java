@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.util.Check;
+import org.imagopole.omero.tools.util.PlateAcquisitionsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +15,8 @@ import pojos.AnnotationData;
 import pojos.DataObject;
 import pojos.DatasetData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 
 /**
  * Simple adapter intended to wrap OMERO model pojos under a uniform data type.
@@ -82,6 +85,41 @@ public class DefaultPojoData implements PojoData {
         Check.notEmpty(dataObject.getName(), "name");
 
         return new DefaultPojoData(dataObject.getName(), dataObject, dataObject.getAnnotations());
+    }
+
+    /**
+     * Static factory method for <code>omero.model.PlateData</code> pojos.
+     *
+     * Note: _none_ of the <code>pojos.AnnotationData</code> already set on the <code>dataObject</code>
+     * argument are copied/exposed via the <code>getAnnotations</code> method.
+     *
+     * @param dataObject the underlying adapted object
+     * @return the wrapped object
+     */
+    public static PojoData fromPlateData(PlateData dataObject) {
+        Check.notNull(dataObject, "dataObject");
+        Check.notEmpty(dataObject.getName(), "name");
+
+        return new DefaultPojoData(dataObject.getName(), dataObject, null);
+    }
+
+    /**
+     * Static factory method for <code>omero.model.PlateAcquisitionData</code> pojos.
+     *
+     * Note: _none_ of the <code>pojos.AnnotationData</code> already set on the <code>dataObject</code>
+     * argument are copied/exposed via the <code>getAnnotations</code> method.
+     *
+     * @param dataObject the underlying adapted object
+     * @return the wrapped object
+     */
+    public static PojoData fromPlateAcquisitionData(PlateAcquisitionData dataObject) {
+        Check.notNull(dataObject, "dataObject");
+
+        // Note: the name attribute is nullable for PlateAcquisitions, hence clients need to
+        //       generate a default label for display (usually in the form of 'Run <id>').
+        String pojoName = PlateAcquisitionsUtil.getOrInferName(dataObject);
+
+        return new DefaultPojoData(pojoName, dataObject, null);
     }
 
     /**

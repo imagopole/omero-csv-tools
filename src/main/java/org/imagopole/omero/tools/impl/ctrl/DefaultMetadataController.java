@@ -10,6 +10,7 @@ import omero.ServerError;
 
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.ctrl.MetadataController;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.api.logic.MetadataService;
@@ -45,23 +46,25 @@ public class DefaultMetadataController implements MetadataController {
     public Collection<PojoData> listEntitiesPlusAnnotations(
             Long experimenterId,
             Long containerId,
+            ContainerType containerType,
             AnnotationType annotationType,
             AnnotatedType annotatedType) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(annotationType, "annotationType");
         Check.notNull(annotatedType, "annotatedType");
 
         Collection<PojoData> result = Collections.emptyList();
 
-        //TODO: introduce containerType parameter?
         switch(annotationType) {
 
             case tag:
                 result = listEntitiesPlusTags(
                             experimenterId,
                             containerId,
+                            containerType,
                             annotationType,
                             annotatedType);
                 break;
@@ -82,11 +85,13 @@ public class DefaultMetadataController implements MetadataController {
     private Collection<PojoData> listEntitiesPlusTags(
                     Long experimenterId,
                     Long containerId,
+                    ContainerType containerType,
                     AnnotationType annotationType,
                     AnnotatedType annotatedType) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(annotationType, "annotationType");
         Check.notNull(annotatedType, "annotatedType");
 
@@ -95,64 +100,35 @@ public class DefaultMetadataController implements MetadataController {
         switch(annotatedType) {
 
             case dataset:
-                result = listDatasetsPlusTagsWithinProject(
-                            experimenterId,
-                            containerId,
-                            annotationType,
-                            annotatedType);
+                result =
+                    getMetadataService().listDatasetsPlusAnnotationsByExperimenterAndProject(
+                         experimenterId, containerId, annotationType, annotatedType);
                 break;
 
             case image:
-                result = listImagesPlusTagsWithinDataset(
-                            experimenterId,
-                            containerId,
-                            annotationType,
-                            annotatedType);
+                result =
+                    getMetadataService().listImagesPlusAnnotationsByExperimenterAndContainer(
+                         experimenterId, containerId, containerType, annotationType, annotatedType);
+                break;
+
+            case plate:
+                result =
+                    getMetadataService().listPlatesPlusAnnotationsByExperimenterAndScreen(
+                         experimenterId, containerId, annotationType, annotatedType);
+                break;
+
+            case plateacquisition:
+                result =
+                    getMetadataService().listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
+                         experimenterId, containerId, annotationType, annotatedType);
                 break;
 
             default:
                 throw new UnsupportedOperationException(
-                          "Listing other containers than datasets/images not implemented");
+                    "Listing other containers than datasets/images "
+                  + "or plates/plateacquistions not implemented");
 
         }
-
-        return result;
-    }
-
-    private Collection<PojoData> listImagesPlusTagsWithinDataset(
-            Long experimenterId,
-            Long datasetId,
-            AnnotationType annotationType,
-            AnnotatedType annotatedType) throws ServerError {
-
-        Check.notNull(experimenterId, "experimenterId");
-        Check.notNull(datasetId, "datasetId");
-
-        Collection<PojoData> result =
-            getMetadataService().listImagesPlusAnnotationsByExperimenterAndDataset(
-                    experimenterId,
-                    datasetId,
-                    annotationType,
-                    annotatedType);
-
-        return result;
-    }
-
-    private Collection<PojoData> listDatasetsPlusTagsWithinProject(
-            Long experimenterId,
-            Long projectId,
-            AnnotationType annotationType,
-            AnnotatedType annotatedType) throws ServerError {
-
-        Check.notNull(experimenterId, "experimenterId");
-        Check.notNull(projectId, "projectId");
-
-        Collection<PojoData> result =
-            getMetadataService().listDatasetsPlusAnnotationsByExperimenterAndProject(
-                    experimenterId,
-                    projectId,
-                    annotationType,
-                    annotatedType);
 
         return result;
     }

@@ -7,6 +7,7 @@ import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
 
@@ -25,15 +26,17 @@ public interface CsvAnnotationController {
      *
      * @param experimenterId the experimenter
      * @param containerId the container ID used to locate the file (local or remote)
+     * @param containerType the container type used to locate the file (eg. project, screen, dataset, plate)
      * @param annotationType the type of annotation to use (eg. tag, comment)
      * @param annotatedType the target of the annotation link (eg. dataset, image)
      * @param csvData the CSV content
-     * @return
+     * @return a list of link model entities
      * @throws ServerError OMERO client or server failure
      */
     LinksData buildAnnotationsByTypes(
                     Long experimenterId,
                     Long containerId,
+                    ContainerType containerType,
                     AnnotationType annotationType,
                     AnnotatedType annotatedType,
                     CsvData csvData) throws ServerError;

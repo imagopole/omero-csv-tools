@@ -46,26 +46,25 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
     public LinksData buildAnnotationsByTypes(
             Long experimenterId,
             Long containerId,
+            ContainerType containerType,
             AnnotationType annotationType,
             AnnotatedType annotatedType,
             CsvData csvData) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(annotationType, "annotationType");
         Check.notNull(annotatedType, "annotatedType");
         Check.notNull(csvData, "csvData");
 
         LinksData result = null;
 
-        // TODO: also take the ContainerType into account to allow annotations of data spanning more
-        // than one container hierarchy (eg. tag images within project or dataset, or tag datasets
-        // either within project or across group)
         switch(annotationType) {
 
             case tag:
-                result =
-                    buildTagsByAnnotatedType(experimenterId, containerId, annotatedType, csvData);
+                result = buildTagsByAnnotatedTypeWithinContainer(
+                            experimenterId, containerId, containerType, annotatedType, csvData);
                 break;
 
             default:
@@ -87,14 +86,16 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
         return getCsvAnnotationService().saveAllAnnotationLinks(linksData);
     }
 
-    private LinksData buildTagsByAnnotatedType(
+    private LinksData buildTagsByAnnotatedTypeWithinContainer(
                     Long experimenterId,
                     Long containerId,
+                    ContainerType containerType,
                     AnnotatedType annotatedType,
                     CsvData csvData) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(annotatedType, "annotatedType");
         Check.notNull(csvData, "csvData");
 
@@ -103,18 +104,61 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
         switch(annotatedType) {
 
             case dataset:
-                result = linkTagsToDatasetsWithinProject(experimenterId, containerId, csvData);
+                result = linkTagsToDatasetsWithinProject(
+                            experimenterId, containerId, containerType, csvData);
+                break;
+
+            case plate:
+                result = linkTagsToPlatesWithinScreen(
+                            experimenterId, containerId, containerType, csvData);
+                break;
+
+            case plateacquisition:
+                result = linkTagsToPlateAcquisitionsWithinPlate(
+                            experimenterId, containerId, containerType, csvData);
                 break;
 
             case image:
-                // also check for the container type? this would allow to tag images both within
-                // project and dataset. For now, assume tagging happens per dataset.
-                result = linkTagsToImagesWithinDataset(experimenterId, containerId, csvData);
+                result = linkTagsToImagesWithinSupportedContainerType(
+                            experimenterId, containerId, containerType, csvData);
                 break;
 
             default:
                 throw new UnsupportedOperationException(
-                          "Tagging other containers than datasets/images not implemented");
+                          "Tagging other types than datasets/images "
+                        + "or plate/plateacquisition not implemented");
+
+        }
+
+        return result;
+    }
+
+    private LinksData linkTagsToImagesWithinSupportedContainerType(
+                    Long experimenterId,
+                    Long containerId,
+                    ContainerType containerType,
+                    CsvData csvData) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
+        Check.notNull(csvData, "csvData");
+
+        LinksData result = null;
+
+        switch(containerType) {
+
+            case dataset:
+            case plate:
+            case plateacquisition:
+                result = linkTagsToImagesWithinContainer(
+                            experimenterId, containerId, containerType, csvData);
+                break;
+
+            default:
+                throw new UnsupportedOperationException(
+                          "Tagging within other containers than datasets "
+                        + "or plates/plateacquisitions not implemented");
 
         }
 
@@ -123,52 +167,114 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
 
     private LinksData linkTagsToDatasetsWithinProject(
             Long experimenterId,
-            Long projectId,
+            Long containerId,
+            ContainerType containerType,
             CsvData csvData) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
-        Check.notNull(projectId, "projectId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(csvData, "csvData");
 
-        final String csvContent = csvData.getFileContent();
-        rejectIfEmptyFile(ContainerType.project, projectId, csvContent);
-
-        // massage input csv file into shape:
-        // - merge duplicate line keys (ie. datasets names)
-        // - merge duplicate column values (ie. tags names)
-        Multimap<String, String> uniqueLines = getCsvReaderService().readUniqueRecords(csvContent);
+        // read and de-duplicate csv file
+        Multimap<String, String> uniqueLines = parseCsvData(containerId, containerType, csvData);
 
         // convert csv file into bulk annotations
         LinksData linksData = getCsvAnnotationService().saveTagsAndLinkNestedDatasets(
                 experimenterId,
-                projectId,
+                containerId,
                 uniqueLines);
 
         return linksData;
     }
 
-    private LinksData linkTagsToImagesWithinDataset(
+    private LinksData linkTagsToPlatesWithinScreen(
+            Long experimenterId,
+            Long containerId,
+            ContainerType containerType,
+            CsvData csvData) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
+        Check.notNull(csvData, "csvData");
+
+        // read and de-duplicate csv file
+        Multimap<String, String> uniqueLines = parseCsvData(containerId, containerType, csvData);
+
+        // convert csv file into bulk annotations
+        LinksData linksData =
+            getCsvAnnotationService().saveTagsAndLinkNestedPlates(
+                    experimenterId,
+                    containerId,
+                    uniqueLines);
+
+        return linksData;
+    }
+
+    private LinksData linkTagsToPlateAcquisitionsWithinPlate(
+            Long experimenterId,
+            Long containerId,
+            ContainerType containerType,
+            CsvData csvData) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
+        Check.notNull(csvData, "csvData");
+
+        // read and de-duplicate csv file
+        Multimap<String, String> uniqueLines = parseCsvData(containerId, containerType, csvData);
+
+        // convert csv file into bulk annotations
+        LinksData linksData =
+            getCsvAnnotationService().saveTagsAndLinkNestedPlateAcquisitions(
+                    experimenterId,
+                    containerId,
+                    uniqueLines);
+
+        return linksData;
+    }
+
+    private LinksData linkTagsToImagesWithinContainer(
                     Long experimenterId,
-                    Long datasetId,
+                    Long containerId,
+                    ContainerType containerType,
                     CsvData csvData) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
-        Check.notNull(datasetId, "datasetId");
+        Check.notNull(containerId, "datasetId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(csvData, "csvData");
 
+        // read and de-duplicate csv file
+        Multimap<String, String> uniqueLines = parseCsvData(containerId, containerType, csvData);
+
+        // convert csv file into bulk annotations
+        LinksData linksData =
+            getCsvAnnotationService().saveTagsAndLinkNestedImages(
+                    experimenterId,
+                    containerId,
+                    containerType,
+                    uniqueLines);
+
+        return linksData;
+    }
+
+    private Multimap<String, String> parseCsvData(
+            Long containerId,
+            ContainerType containerType,
+            CsvData csvData) {
+
         final String csvContent = csvData.getFileContent();
-        rejectIfEmptyFile(ContainerType.dataset, datasetId, csvContent);
+        rejectIfEmptyFile(containerType, containerId, csvContent);
 
         // massage input csv file into shape:
-        // - merge duplicate line keys (ie. datasets names)
+        // - merge duplicate line keys (ie. datasets/plates/images/etc. names)
         // - merge duplicate column values (ie. tags names)
         Multimap<String, String> uniqueLines = getCsvReaderService().readUniqueRecords(csvContent);
 
-        // convert csv file into bulk annotations
-        LinksData linksData = getCsvAnnotationService().saveTagsAndLinkNestedImages(
-                        experimenterId, datasetId, uniqueLines);
-
-        return linksData;
+        return uniqueLines;
     }
 
     private void rejectIfEmptyFile(ContainerType containerType, Long containerId, String csvContent) {

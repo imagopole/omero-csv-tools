@@ -9,6 +9,7 @@ import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.blitz.OmeroQueryService;
 import org.imagopole.omero.tools.util.Check;
+import org.imagopole.omero.tools.util.ShimsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +55,8 @@ public class QueryBlitzService implements OmeroQueryService {
 
          if (null != entityObject) {
 
-             result = DataObject.asPojo(entityObject);
+             // wrap pojos.DataObject#asPojo() to handle currently unsupported model types conversion
+             result = ShimsUtil.asPojo(entityObject);
 
          }
 

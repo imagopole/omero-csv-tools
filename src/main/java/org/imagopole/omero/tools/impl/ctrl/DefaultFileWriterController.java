@@ -115,6 +115,9 @@ public class DefaultFileWriterController implements FileWriterController {
 
             case project:
             case dataset:
+            case screen:
+            case plate:
+            case plateacquisition:
                 result = getFileWriterService().writeToRemoteFileAnnotation(
                             experimenterId,
                             containerId,
@@ -127,7 +130,8 @@ public class DefaultFileWriterController implements FileWriterController {
 
             default:
                 throw new UnsupportedOperationException(
-                    "FileAttachment onto containers other than project/dataset not supported");
+                    "FileAttachment onto containers other than project/dataset "
+                  + "or screen/plate/plateacquisition not supported");
         }
 
         return result;

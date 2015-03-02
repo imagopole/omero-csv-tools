@@ -3,14 +3,17 @@
  */
 package org.imagopole.omero.tools.api.cli;
 
-import com.google.common.base.Charsets;
-
 import omero.model.Annotation;
 import omero.model.Dataset;
 import omero.model.IObject;
 import omero.model.Image;
+import omero.model.Plate;
+import omero.model.PlateAcquisition;
 import omero.model.Project;
+import omero.model.Screen;
 import omero.model.TagAnnotation;
+
+import com.google.common.base.Charsets;
 
 /**
  * Command line arguments supported by the CSV Annotation Tool.
@@ -80,7 +83,13 @@ public class Args {
         dataset,
 
         /** Represents an <code>omero.model.Image</code>. */
-        image;
+        image,
+
+        /** Represents a <code>omero.model.Plate</code>. */
+        plate,
+
+        /** Represents a <code>omero.model.PlateAquisition</code>. */
+        plateacquisition;
 
         /**
          * The OMERO model class for this argument.
@@ -97,6 +106,14 @@ public class Args {
 
                 case image:
                     clazz = Image.class;
+                    break;
+
+                case plate:
+                    clazz = Plate.class;
+                    break;
+
+                case plateacquisition:
+                    clazz = PlateAcquisition.class;
                     break;
 
                 default:
@@ -124,7 +141,16 @@ public class Args {
         project,
 
         /** Represents a <code>omero.model.Dataset</code>. */
-        dataset;
+        dataset,
+
+        /** Represents a <code>omero.model.Screen</code>. */
+        screen,
+
+        /** Represents a <code>omero.model.Plate</code>. */
+        plate,
+
+        /** Represents a <code>omero.model.PlateAquisition</code>. */
+        plateacquisition;
 
         /**
          * The OMERO model class for this argument.
@@ -141,6 +167,18 @@ public class Args {
 
                 case dataset:
                     clazz = Dataset.class;
+                    break;
+
+                case screen:
+                    clazz = Screen.class;
+                    break;
+
+                case plate:
+                    clazz = Plate.class;
+                    break;
+
+                case plateacquisition:
+                    clazz = PlateAcquisition.class;
                     break;
 
                 case local:

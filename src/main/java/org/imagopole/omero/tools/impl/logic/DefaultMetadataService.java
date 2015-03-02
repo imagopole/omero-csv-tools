@@ -21,12 +21,16 @@ import org.imagopole.omero.tools.util.Check;
 import org.imagopole.omero.tools.util.DatasetsUtil;
 import org.imagopole.omero.tools.util.FunctionsUtil;
 import org.imagopole.omero.tools.util.ImagesUtil;
+import org.imagopole.omero.tools.util.PlateAcquisitionsUtil;
+import org.imagopole.omero.tools.util.PlatesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import pojos.AnnotationData;
 import pojos.DatasetData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 
 import com.google.common.collect.Collections2;
 
@@ -90,7 +94,59 @@ public class DefaultMetadataService implements MetadataService {
      * {@inheritDoc}
      */
     @Override
+    @Deprecated
     public Collection<PojoData> listImagesPlusAnnotationsByExperimenterAndDataset(
+            Long experimenterId,
+            Long containerId,
+            AnnotationType annotationType,
+            AnnotatedType annotatedType) throws ServerError {
+
+        return listImagesPlusAnnotationsByExperimenterAndContainer(
+                    experimenterId, containerId, ContainerType.dataset, annotationType, annotatedType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<PojoData> listImagesPlusAnnotationsByExperimenterAndContainer(
+            Long experimenterId,
+            Long containerId,
+            ContainerType containerType,
+            AnnotationType annotationType,
+            AnnotatedType annotatedType) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
+        Check.notNull(annotationType, "annotationType");
+        Check.notNull(annotatedType, "annotatedType");
+
+        // -- (i) lookup model objects: images *within* the given container
+        Collection<ImageData> experimenterImages =
+            getContainerService().listImagesByExperimenterAndContainer(
+                    experimenterId,
+                    containerId,
+                    containerType.getModelClass());
+
+        // -- wrap omero model entities into an internal representation for processing
+        Collection<PojoData> experimenterPojos = ImagesUtil.toPojos(experimenterImages);
+
+        // -- no image found - no further processing
+        rejectIfEmpty(containerType, annotatedType, containerId, experimenterPojos);
+
+       // -- (ii) common processing: lookup tags/annotations linked to the pojos
+        Collection<PojoData> result =
+            loadLinkedPojosAnnotations(experimenterPojos, experimenterId, annotationType, annotatedType);
+
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<PojoData> listPlatesPlusAnnotationsByExperimenterAndScreen(
             Long experimenterId,
             Long containerId,
             AnnotationType annotationType,
@@ -101,15 +157,17 @@ public class DefaultMetadataService implements MetadataService {
         Check.notNull(annotationType, "annotationType");
         Check.notNull(annotatedType, "annotatedType");
 
-        // -- (i) lookup model objects: images *within* the given dataset
-        Collection<ImageData> experimenterImages =
-            getContainerService().listImagesByExperimenterAndDataset(experimenterId, containerId);
+        // -- (i) lookup model objects: plates *within* the given screen
+        Collection<PlateData> experimenterPlates =
+            getContainerService().listPlatesByExperimenterAndScreen(
+                    experimenterId,
+                    containerId);
 
         // -- wrap omero model entities into an internal representation for processing
-        Collection<PojoData> experimenterPojos = ImagesUtil.toPojos(experimenterImages);
+        Collection<PojoData> experimenterPojos = PlatesUtil.toPojos(experimenterPlates);
 
-        // -- no image found - no further processing
-        rejectIfEmpty(ContainerType.dataset, annotatedType, containerId, experimenterPojos);
+        // -- no plate found - no further processing
+        rejectIfEmpty(ContainerType.screen, annotatedType, containerId, experimenterPojos);
 
        // -- (ii) common processing: lookup tags/annotations linked to the pojos
         Collection<PojoData> result =
@@ -118,7 +176,38 @@ public class DefaultMetadataService implements MetadataService {
         return result;
     }
 
-    private Collection<PojoData> loadLinkedPojosAnnotations(
+    @Override
+    public Collection<PojoData> listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
+            Long experimenterId,
+            Long containerId,
+            AnnotationType annotationType,
+            AnnotatedType annotatedType) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(annotationType, "annotationType");
+        Check.notNull(annotatedType, "annotatedType");
+
+        // -- (i) lookup model objects: plateacquisitions *within* the given plate
+        Collection<PlateAcquisitionData> experimenterPlateRuns =
+            getContainerService().listPlateAcquisitionsByExperimenterAndPlate(
+                    experimenterId,
+                    containerId);
+
+        // -- wrap omero model entities into an internal representation for processing
+        Collection<PojoData> experimenterPojos = PlateAcquisitionsUtil.toPojos(experimenterPlateRuns);
+
+        // -- no plateacquisition found - no further processing
+        rejectIfEmpty(ContainerType.plate, annotatedType, containerId, experimenterPojos);
+
+       // -- (ii) common processing: lookup tags/annotations linked to the pojos
+        Collection<PojoData> result =
+            loadLinkedPojosAnnotations(experimenterPojos, experimenterId, annotationType, annotatedType);
+
+        return result;
+    }
+
+    protected Collection<PojoData> loadLinkedPojosAnnotations(
             Collection<PojoData> experimenterPojos,
             Long experimenterId,
             AnnotationType annotationType,

@@ -17,6 +17,8 @@ import pojos.AnnotationData;
 import pojos.DatasetData;
 import pojos.FileAnnotationData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 import pojos.TagAnnotationData;
 
 import com.google.common.base.Function;
@@ -75,6 +77,40 @@ public final class FunctionsUtil {
 
             if (null != input) {
                 result = DefaultPojoData.fromImageData(input);
+            }
+
+            return result;
+        }
+
+    };
+
+    public static final Function<PlateData, PojoData> plateToPojo =
+                    new Function<PlateData, PojoData>() {
+
+        @Override
+        @Nullable
+        public PojoData apply(@Nullable PlateData input) {
+            PojoData result = null;
+
+            if (null != input) {
+                result = DefaultPojoData.fromPlateData(input);
+            }
+
+            return result;
+        }
+
+    };
+
+    public static final Function<PlateAcquisitionData, PojoData> plateAcquisitionToPojo =
+                    new Function<PlateAcquisitionData, PojoData>() {
+
+        @Override
+        @Nullable
+        public PojoData apply(@Nullable PlateAcquisitionData input) {
+            PojoData result = null;
+
+            if (null != input) {
+                result = DefaultPojoData.fromPlateAcquisitionData(input);
             }
 
             return result;

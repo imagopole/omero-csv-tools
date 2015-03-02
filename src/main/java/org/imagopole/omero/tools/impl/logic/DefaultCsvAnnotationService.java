@@ -20,17 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Collections2;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.MapDifference.ValueDifference;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
-
 import omero.ServerError;
 import omero.model.IObject;
 
@@ -39,6 +28,7 @@ import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
 import org.imagopole.omero.tools.api.blitz.OmeroContainerService;
 import org.imagopole.omero.tools.api.blitz.OmeroUpdateService;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.api.logic.CsvAnnotationService;
@@ -50,6 +40,8 @@ import org.imagopole.omero.tools.util.DatasetsUtil;
 import org.imagopole.omero.tools.util.FunctionsUtil;
 import org.imagopole.omero.tools.util.ImagesUtil;
 import org.imagopole.omero.tools.util.MultimapsUtil;
+import org.imagopole.omero.tools.util.PlateAcquisitionsUtil;
+import org.imagopole.omero.tools.util.PlatesUtil;
 import org.imagopole.omero.tools.util.PojosUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +49,20 @@ import org.slf4j.LoggerFactory;
 import pojos.AnnotationData;
 import pojos.DatasetData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 import pojos.TagAnnotationData;
+
+import com.google.common.collect.Collections2;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.MapDifference;
+import com.google.common.collect.MapDifference.ValueDifference;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 
 /**
  * Service layer to the annotations processing application logic.
@@ -152,10 +157,6 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         Collection<DatasetData> experimenterDatasets =
             getContainerService().listDatasetsByExperimenterAndProject(experimenterId, projectId);
 
-        // -- (ii) lookup db state and index for processing: known tags owned by experimenter
-        Collection<TagAnnotationData> experimenterTags =
-            getAnnotationService().listTagsByExperimenter(experimenterId);
-
         // -- wrap omero model entities into an internal representation for processing
         // currently only containers (datasets/images) are converted from omero pojos to internal pojos
         // (omero tag pojos are handled as is)
@@ -164,7 +165,6 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         // -- common processing logic for datasets/images/pojos tagging
         return saveTagsAndLinkPojos(experimenterId,
                                     experimenterPojos,
-                                    experimenterTags,
                                     uniqueLines,
                                     AnnotatedType.dataset);
     }
@@ -203,7 +203,8 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
      * </pre>
      *
      * @param experimenterId the experimenter
-     * @param datasetId the dataset to which images must belong
+     * @param containerId the container to which images must belong
+     * @param containerType the type of container to which images must belong
      * @param uniqueLines the CSV line data in multivalue map format with key=image name and
      *        values = list of tags names. Both images names and tags names are expected to
      *        be unique by this implementation (no exception thrown if not - undefined behaviour).
@@ -214,11 +215,13 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
     @Override
     public LinksData saveTagsAndLinkNestedImages(
             Long experimenterId,
-            Long datasetId,
+            Long containerId,
+            ContainerType containerType,
             Multimap<String, String> uniqueLines) throws ServerError {
 
         Check.notNull(experimenterId, "experimenterId");
-        Check.notNull(datasetId, "datasetId");
+        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType");
         Check.notNull(uniqueLines, "uniqueLines");
         Check.notEmpty(uniqueLines.asMap(), "uniqueLines");
 
@@ -227,13 +230,12 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         //    - (i) all of his/her images -> index by name
         //    - (ii) all of his/her tags -> index by value
 
-        // -- (i) lookup db state and index for processing: known images *within* the given dataset
+        // -- (i) lookup db state and index for processing: known images *within* the given container
         Collection<ImageData> experimenterImages =
-            getContainerService().listImagesByExperimenterAndDataset(experimenterId, datasetId);
-
-        // -- (ii) lookup db state and index for processing: known tags owned by experimenter
-        Collection<TagAnnotationData> experimenterTags =
-            getAnnotationService().listTagsByExperimenter(experimenterId);
+            getContainerService().listImagesByExperimenterAndContainer(
+                    experimenterId,
+                    containerId,
+                    containerType.getModelClass());
 
         // -- wrap omero model entities into an internal representation for processing
         // currently only containers (datasets/images) are converted from omero pojos to internal pojos
@@ -243,9 +245,68 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         // -- common processing logic for datasets/images/pojos tagging
         return saveTagsAndLinkPojos(experimenterId,
                                     experimenterPojos,
-                                    experimenterTags,
                                     uniqueLines,
                                     AnnotatedType.image);
+    }
+
+    @Override
+    public LinksData saveTagsAndLinkNestedPlates(
+            Long experimenterId,
+            Long screenId,
+            Multimap<String, String> uniqueLines) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(screenId, "screenId");
+        Check.notNull(uniqueLines, "uniqueLines");
+        Check.notEmpty(uniqueLines.asMap(), "uniqueLines");
+
+        // -------- step (0)
+        // -- load current state from database for experimenter:
+        //    - (i) all of his/her plates -> index by name
+        //    - (ii) all of his/her tags -> index by value
+
+        // -- (i) lookup db state and index for processing: known plates *within* the given screen
+        Collection<PlateData> experimenterPlates =
+            getContainerService().listPlatesByExperimenterAndScreen(experimenterId, screenId);
+
+        // -- wrap omero model entities into an internal representation for processing
+        Collection<PojoData> experimenterPojos = PlatesUtil.toPojos(experimenterPlates);
+
+        // -- common processing logic for datasets/images/pojos tagging
+        return saveTagsAndLinkPojos(experimenterId,
+                                    experimenterPojos,
+                                    uniqueLines,
+                                    AnnotatedType.plate);
+    }
+
+    @Override
+    public LinksData saveTagsAndLinkNestedPlateAcquisitions(
+            Long experimenterId,
+            Long plateId,
+            Multimap<String, String> uniqueLines) throws ServerError {
+
+        Check.notNull(experimenterId, "experimenterId");
+        Check.notNull(plateId, "plateId");
+        Check.notNull(uniqueLines, "uniqueLines");
+        Check.notEmpty(uniqueLines.asMap(), "uniqueLines");
+
+        // -------- step (0)
+        // -- load current state from database for experimenter:
+        //    - (i) all of his/her datasets -> index by name
+        //    - (ii) all of his/her tags -> index by value
+
+        // -- (i) lookup db state and index for processing: known plateacquisitions *within* the given plate
+        Collection<PlateAcquisitionData> experimenterPlateRuns =
+            getContainerService().listPlateAcquisitionsByExperimenterAndPlate(experimenterId, plateId);
+
+        // -- wrap omero model entities into an internal representation for processing
+        Collection<PojoData> experimenterPojos = PlateAcquisitionsUtil.toPojos(experimenterPlateRuns);
+
+        // -- common processing logic for datasets/images/pojos tagging
+        return saveTagsAndLinkPojos(experimenterId,
+                                    experimenterPojos,
+                                    uniqueLines,
+                                    AnnotatedType.plateacquisition);
     }
 
     /**
@@ -312,11 +373,10 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
      *
      * @param experimenterId the experimenter
      * @param experimenterPojos database state for experimenter's current datasets/images pojos
-     * @param experimenterTags database state for experimenter's current tags
      * @param uniqueLines the CSV line data in multivalue map format with key=pojo name and
      *        values = list of tags names. Both pojos names and tags names are expected to
      *        be unique by this implementation (no exception thrown if not - undefined behaviour).
-     * @param annotatedType
+     * @param annotatedType the type of annotated entities (ie. targets for annotation)
      * @return the model entities to be persisted, split into two sublists: newly created (persistent)
      *         tags and known (persistent) tags. Both are linked to persistent pojos.
      * @throws ServerError OMERO client or server failure
@@ -324,7 +384,6 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
     private LinksData saveTagsAndLinkPojos(
                     Long experimenterId,
                     Collection<PojoData> experimenterPojos,
-                    Collection<TagAnnotationData> experimenterTags,
                     Multimap<String, String> uniqueLines,
                     AnnotatedType annotatedType) throws ServerError {
 
@@ -333,7 +392,16 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         Check.notNull(uniqueLines, "uniqueLines");
         Check.notEmpty(uniqueLines.asMap(), "uniqueLines");
         Check.notNull(experimenterPojos, "experimenterPojos");
-        Check.notNull(experimenterTags, "experimenterTags");
+
+        // -------- step (0)
+        // -- load current state from database for experimenter:
+        //    - (i) [received from method argument: all of his/her containers] -> index by name
+        //    - (ii) all of his/her tags -> index by value
+
+        // -- (ii) lookup db state and index for processing: known tags owned by experimenter
+        Collection<TagAnnotationData> experimenterTags =
+            getAnnotationService().listTagsByExperimenter(experimenterId);
+
 
         // -------- step (1)
         // -- from the current state loaded from database for experimenter:

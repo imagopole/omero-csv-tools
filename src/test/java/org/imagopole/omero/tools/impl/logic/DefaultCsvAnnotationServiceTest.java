@@ -1,6 +1,10 @@
 package org.imagopole.omero.tools.impl.logic;
 
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +28,7 @@ import org.imagopole.omero.tools.TestsUtil.Groups;
 import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
 import org.imagopole.omero.tools.api.blitz.OmeroContainerService;
 import org.imagopole.omero.tools.api.blitz.OmeroUpdateService;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.impl.blitz.AnnotationBlitzService;
 import org.imagopole.omero.tools.impl.blitz.ContainersBlitzService;
@@ -43,10 +48,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
 
@@ -93,19 +94,28 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void saveTagsAndLinkNestedImagesShouldRejectNullExperimenter() throws ServerError {
-        csvAnnotationService.saveTagsAndLinkNestedImages(null, 1L, TestsUtil.emptyStringMultimap());
+        csvAnnotationService.saveTagsAndLinkNestedImages(
+            null, 1L, ContainerType.dataset, TestsUtil.emptyStringMultimap());
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
-    public void saveTagsAndLinkNestedImagesShouldRejectNullProject() throws ServerError {
-        csvAnnotationService.saveTagsAndLinkNestedImages(1L, null, TestsUtil.emptyStringMultimap());
+    public void saveTagsAndLinkNestedImagesShouldRejectNullContainerId() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedImages(1L, null,
+            ContainerType.dataset, TestsUtil.emptyStringMultimap());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedImagesShouldRejectNullContainerType() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedImages(1L, 1L,
+            null, TestsUtil.emptyStringMultimap());
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void saveTagsAndLinkNestedImagesShouldRejectNullLines() throws ServerError {
-        csvAnnotationService.saveTagsAndLinkNestedImages(1L, 1L, null);
+        csvAnnotationService.saveTagsAndLinkNestedImages(1L, 1L, ContainerType.dataset, null);
     }
 
 
@@ -421,6 +431,7 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
             csvAnnotationService.saveTagsAndLinkNestedImages(
                             DbUnit.EXPERIMENTER_ID,
                             Csv.Images.DATASET_ID,
+                            ContainerType.dataset,
                             lines);
 
         assertNotNull(data, "Non-null result expected");
