@@ -1,5 +1,10 @@
 package org.imagopole.omero.tools.impl.blitz;
 
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -9,8 +14,13 @@ import omero.api.ServiceFactoryPrx;
 import omero.model.Dataset;
 import omero.model.DatasetI;
 import omero.model.ImageI;
+import omero.model.Plate;
+import omero.model.PlateAcquisitionI;
+import omero.model.PlateI;
 import omero.model.Project;
 import omero.model.ProjectI;
+import omero.model.Screen;
+import omero.model.ScreenI;
 
 import org.imagopole.omero.tools.TestsUtil;
 import org.imagopole.omero.tools.util.BlitzUtil;
@@ -23,14 +33,10 @@ import org.unitils.mock.Mock;
 
 import pojos.DatasetData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 
 import com.google.common.collect.Lists;
-
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
-
-import static com.google.common.collect.Iterables.getOnlyElement;
 
 public class ContainerServiceBlitzTest extends UnitilsTestNG {
 
@@ -236,5 +242,224 @@ public class ContainerServiceBlitzTest extends UnitilsTestNG {
                              Lists.newArrayList(1L),
                              BlitzUtil.byExperimenter(1L));
     }
+
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listPlatesByExperimenterAndScreenShouldRejectNullExpParam() throws ServerError {
+        containerService.listPlatesByExperimenterAndScreen(null, 1L);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listPlatesByExperimenterAndScreenShouldRejectNullScreenParam() throws ServerError {
+        containerService.listPlatesByExperimenterAndScreen(1L, null);
+    }
+
+    @Test
+    public void listPlatesByExperimenterAndScreenShouldConvertNullsToEmpty() throws ServerError {
+        // fixture behavior
+        containerPrxMock.returns(null)
+                        .loadContainerHierarchy(
+                             Screen.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<PlateData> result =
+            containerService.listPlatesByExperimenterAndScreen(1L, 1L);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked()
+                        .loadContainerHierarchy(
+                             Screen.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+    @Test
+    public void listPlatesByExperimenterAndScreenWithNoPlateShouldReturnEmptyResult() throws ServerError {
+
+        // fixture data: a supposedly existing screen, with no plate children
+        List<ScreenI> expected = Lists.newArrayList(new ScreenI(1, true));
+
+        // fixture behavior
+        containerPrxMock.returns(expected)
+                        .loadContainerHierarchy(
+                             Screen.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<PlateData> result =
+            containerService.listPlatesByExperimenterAndScreen(1L, 1L);
+        log.debug("{}", result);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked()
+                        .loadContainerHierarchy(
+                             Screen.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+    @Test
+    public void listPlatesByExperimenterAndScreenWithPlates() throws ServerError {
+
+        // fixture data: a supposedly existing screen,
+        // with one plate child
+        ScreenI screen = new ScreenI(1, true);
+
+        PlateI plate = new PlateI(1, true);
+        plate.setName(omero.rtypes.rstring("plate.one"));
+        screen.linkPlate(plate);
+
+        List<ScreenI> expected = Lists.newArrayList(screen);
+
+        // fixture behavior
+        containerPrxMock.returns(expected)
+                        .loadContainerHierarchy(
+                             Screen.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<PlateData> result =
+            containerService.listPlatesByExperimenterAndScreen(1L, 1L);
+        log.debug("{}", result);
+
+        assertNotNull(result, "Non-null results expected");
+        assertEquals(result.size(), 1, "1 result expected");
+
+        PlateData pojo = getOnlyElement(result);
+        assertEquals(pojo.getId(), 1L, "Wrong pojo id");
+        assertEquals(pojo.getName(), "plate.one", "Wrong pojo name");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked()
+                        .loadContainerHierarchy(
+                             Screen.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listPlateAcquisitionsByExperimenterAndPlateShouldRejectNullExpParam() throws ServerError {
+        containerService.listPlateAcquisitionsByExperimenterAndPlate(null, 1L);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listPlateAcquisitionsByExperimenterAndPlateShouldRejectNullPlateParam() throws ServerError {
+        containerService.listPlateAcquisitionsByExperimenterAndPlate(1L, null);
+    }
+
+    @Test
+    public void listPlateAcquisitionsByExperimenterAndPlateShouldConvertNullsToEmpty() throws ServerError {
+        // fixture behavior
+        containerPrxMock.returns(null)
+                        .loadContainerHierarchy(
+                             Plate.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<PlateAcquisitionData> result =
+            containerService.listPlateAcquisitionsByExperimenterAndPlate(1L, 1L);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked()
+                        .loadContainerHierarchy(
+                             Plate.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+    @Test
+    public void listPlateAcquisitionsByExperimenterAndPlateWithNoPlateRunShouldReturnEmptyResult() throws ServerError {
+
+        // fixture data: a supposedly existing plate, with no plate run children
+        List<PlateI> expected = Lists.newArrayList(new PlateI(1, true));
+
+        // fixture behavior
+        containerPrxMock.returns(expected)
+                        .loadContainerHierarchy(
+                             Plate.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<PlateAcquisitionData> result =
+            containerService.listPlateAcquisitionsByExperimenterAndPlate(1L, 1L);
+        log.debug("{}", result);
+
+        assertNotNull(result, "Non-null results expected");
+        assertTrue(result.isEmpty(), "Empty results expected");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked()
+                      .loadContainerHierarchy(
+                             Plate.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+    }
+
+    @Test
+    public void listPlateAcquisitionsByExperimenterAndPlateWithPlates() throws ServerError {
+
+        // fixture data: a supposedly existing plate,
+        // with one plate acquisition child
+        PlateI plate = new PlateI(1, true);
+
+        PlateAcquisitionI plateRun = new PlateAcquisitionI(1, true);
+        plateRun.setName(omero.rtypes.rstring("plate.acquisition.one"));
+        plate.addPlateAcquisition(plateRun);
+
+        List<PlateI> expected = Lists.newArrayList(plate);
+
+        // fixture behavior
+        containerPrxMock.returns(expected)
+                        .loadContainerHierarchy(
+                             Plate.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+
+        // test
+        Collection<PlateAcquisitionData> result =
+            containerService.listPlateAcquisitionsByExperimenterAndPlate(1L, 1L);
+        log.debug("{}", result);
+
+        assertNotNull(result, "Non-null results expected");
+        assertEquals(result.size(), 1, "1 result expected");
+
+        PlateAcquisitionData pojo = getOnlyElement(result);
+        assertEquals(pojo.getId(), 1L, "Wrong pojo id");
+        assertEquals(pojo.getName(), "plate.acquisition.one", "Wrong pojo name");
+
+        // check invocations
+        sessionMock.assertInvoked().getContainerService();
+        containerPrxMock.assertInvoked()
+                        .loadContainerHierarchy(
+                             Plate.class.getName(),
+                             Lists.newArrayList(1L),
+                             BlitzUtil.byExperimenter(1L));
+      }
 
 }

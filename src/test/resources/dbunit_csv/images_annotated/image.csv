@@ -1,2 +1,6 @@
 id,name,acquisitiondate,permissions,creation_id,update_id,group_id,owner_id
 1001,DbUnit.images_annotated-Image,2013-01-01 00:00:00.00,-40,888999,888999,801,802
+1002,DbUnit.images_annotated-HCS.Image.P-W-WS-I[w1i0],2013-01-01 00:00:00.00,-40,888999,888999,801,802
+1003,DbUnit.images_annotated-HCS.Image.P-W-WS-I[w2i0],2013-01-01 00:00:00.00,-40,888999,888999,801,802
+1004,DbUnit.images_annotated-HCS.Image.P-W-PA-WS-I[w1i0],2013-01-01 00:00:00.00,-40,888999,888999,801,802
+1005,DbUnit.images_annotated-HCS.Image.P-W-PA-WS-I[w1i1],2013-01-01 00:00:00.00,-40,888999,888999,801,802

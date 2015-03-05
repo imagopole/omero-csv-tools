@@ -19,6 +19,8 @@ import org.unitils.mock.core.MockObject;
 import pojos.AnnotationData;
 import pojos.DatasetData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 
 public class DefaultPojoDataTest {
 
@@ -72,6 +74,62 @@ public class DefaultPojoDataTest {
         image.setName("    ");
 
         DefaultPojoData.fromImageData(image);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void pojoDataShouldRejectNullPlate() {
+        DefaultPojoData.fromPlateData(null);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void pojoDataShouldRejectNullPlateName() {
+        Mock<PlateData> plateMock = new MockObject<PlateData>(PlateData.class, null);
+        plateMock.returns(null).getName();
+
+        DefaultPojoData.fromPlateData(plateMock.getMock());
+
+        plateMock.assertInvoked().getName();
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void pojoDataShouldRejectEmptyPlateName() {
+        PlateData plate = new PlateData();
+        plate.setName("    ");
+
+        DefaultPojoData.fromPlateData(plate);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void pojoDataShouldRejectNullPlateAcquisition() {
+        DefaultPojoData.fromPlateAcquisitionData(null);
+    }
+
+    @Test
+    public void pojoDataShouldConvertNullPlateAcquisitionNameToDefault() {
+        Mock<PlateAcquisitionData> paMock = new MockObject<PlateAcquisitionData>(PlateAcquisitionData.class, null);
+        paMock.returns(null).getName();
+
+        PojoData pojo = DefaultPojoData.fromPlateAcquisitionData(paMock.getMock());
+
+        assertNotNull(pojo, "Non-null result expected");
+        assertEquals(pojo.getName(), "Run " + pojo.getId(), "Incorrect pojo name");
+
+        paMock.assertInvoked().getName();
+    }
+
+    @Test
+    public void pojoDataShouldConvertEmptyPlateAcquisitionNameToDefault() {
+        PlateAcquisitionData pa = new PlateAcquisitionData();
+        pa.setName("    ");
+
+        PojoData pojo = DefaultPojoData.fromPlateAcquisitionData(pa);
+
+        assertNotNull(pojo, "Non-null result expected");
+        assertEquals(pojo.getName(), "Run " + pojo.getId(), "Incorrect pojo name");
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },

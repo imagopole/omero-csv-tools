@@ -13,6 +13,8 @@ tests:
       - org.imagopole.omero.tools.util.ImagesUtilTest
       - org.imagopole.omero.tools.util.FunctionsUtilTest
       - org.imagopole.omero.tools.util.ParseUtilTest
+      - org.imagopole.omero.tools.util.PlateAcquisitionsUtilTest
+      - org.imagopole.omero.tools.util.PlatesUtilTest
       - org.imagopole.omero.tools.util.PojosUtilTest
 
   - name: DTO
@@ -33,6 +35,7 @@ tests:
       - org.imagopole.omero.tools.impl.blitz.AnnotationLinkersTest
       - org.imagopole.omero.tools.impl.blitz.AnnotationBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.ContainerServiceBlitzTest
+      - org.imagopole.omero.tools.impl.blitz.ShimContainersBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.FileBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.QueryBlitzServiceTest
       - org.imagopole.omero.tools.impl.blitz.UpdateBlitzServiceTest

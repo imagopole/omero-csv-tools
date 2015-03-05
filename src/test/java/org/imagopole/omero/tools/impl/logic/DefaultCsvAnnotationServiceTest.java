@@ -17,6 +17,8 @@ import omero.model.Annotation;
 import omero.model.DatasetAnnotationLink;
 import omero.model.IObject;
 import omero.model.ImageAnnotationLinkI;
+import omero.model.PlateAcquisitionAnnotationLinkI;
+import omero.model.PlateAnnotationLinkI;
 import omero.model.TagAnnotation;
 
 import org.imagopole.omero.tools.AbstractBlitzClientTest;
@@ -31,7 +33,7 @@ import org.imagopole.omero.tools.api.blitz.OmeroUpdateService;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.impl.blitz.AnnotationBlitzService;
-import org.imagopole.omero.tools.impl.blitz.ContainersBlitzService;
+import org.imagopole.omero.tools.impl.blitz.ShimContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateBlitzService;
 import org.imagopole.omero.tools.util.BlitzUtil;
 import org.imagopole.support.unitils.dbunit.annotation.UnloadDataSet;
@@ -61,7 +63,7 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
     protected void setUpAfterIceConnection(ServiceFactoryPrx session) {
         log.debug("setUpAfterIceConnection with session {}", session);
 
-        OmeroContainerService containerService = new ContainersBlitzService(session);
+        OmeroContainerService containerService = new ShimContainersBlitzService(session);
         OmeroAnnotationService annotationService = new AnnotationBlitzService(session);
         OmeroUpdateService updateService = new UpdateBlitzService(session);
 
@@ -116,6 +118,44 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void saveTagsAndLinkNestedImagesShouldRejectNullLines() throws ServerError {
         csvAnnotationService.saveTagsAndLinkNestedImages(1L, 1L, ContainerType.dataset, null);
+    }
+
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedPlatesShouldRejectNullExperimenter() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedPlates(null, 1L, TestsUtil.emptyStringMultimap());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedPlatesShouldRejectNullScreen() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedPlates(1L, null, TestsUtil.emptyStringMultimap());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedPlatesShouldRejectNullLines() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedPlates(1L, 1L, null);
+    }
+
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedPlateAcquisitionsShouldRejectNullExperimenter() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedPlateAcquisitions(null, 1L, TestsUtil.emptyStringMultimap());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedPlateAcquisitionsShouldRejectNullPlate() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedPlateAcquisitions(1L, null, TestsUtil.emptyStringMultimap());
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void saveTagsAndLinkNestedPlateAcquisitionsShouldRejectNullLines() throws ServerError {
+        csvAnnotationService.saveTagsAndLinkNestedPlateAcquisitions(1L, 1L, null);
     }
 
 
@@ -421,7 +461,7 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
     @DataSet(value= { DataSets.Csv.IMAGES }, factory = SingleSchemaCsvDataSetFactory.class)
     @UnloadDataSet
     @Test(groups = { Groups.INTEGRATION })
-    public void saveTagsAndLinkNestedImagesTest() throws ServerError, IOException {
+    public void saveTagsAndLinkNestedImagesWithinDatasetTest() throws ServerError, IOException {
         Multimap<String, String> lines = HashMultimap.create();
         lines.put(Csv.Images.IMAGE_NAME, "DbUnit.Tag");
 
@@ -449,6 +489,174 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
         assertEquals(imageTagLinks.size(), 1, "One new link saved expected");
 
         //clean up test side effects (remove the created tag and its association to the image)
+        ImageAnnotationLinkI imageTagLink = (ImageAnnotationLinkI) Iterables.getOnlyElement(imageTagLinks);
+        Annotation createdTag = imageTagLink.getChild();
+        super.getSession().getUpdateService().deleteObject(imageTagLink);
+        super.getSession().getUpdateService().deleteObject(createdTag);
+    }
+
+
+    @DataSet(value= { DataSets.Csv.ORPHANS }, factory = SingleSchemaCsvDataSetFactory.class)
+    @UnloadDataSet
+    @Test(groups = { Groups.INTEGRATION },
+          expectedExceptions = { IllegalStateException.class },
+          expectedExceptionsMessageRegExp = "None of the requested CSV target names exist for experimenter")
+    public void saveTagsAndLinkNestedPlatesShouldRejectOrphanedPlates() throws ServerError, IOException {
+        Multimap<String, String> lines = HashMultimap.create();
+        lines.put(Csv.Orphans.PLATE_NAME, "DbUnit.Tag");
+
+        // the specified plate is not nested within a screen, therefore will be ignored from the
+        // tagging
+        csvAnnotationService.saveTagsAndLinkNestedPlates(DbUnit.EXPERIMENTER_ID, DbUnit.SCREEN_ID, lines);
+    }
+
+    @DataSet(value= { DataSets.Csv.ANNOTATED }, factory = SingleSchemaCsvDataSetFactory.class)
+    @UnloadDataSet
+    @Test(groups = { Groups.INTEGRATION })
+    public void saveTagsAndLinkNestedPlatesTest() throws ServerError, IOException {
+        Multimap<String, String> lines = HashMultimap.create();
+        lines.put(Csv.Annotated.PLATE_NAME, "DbUnit.Tag");
+
+        // the specified plate is nested within a screen
+        // the method should create the new tag but not link it to the plate
+        LinksData data =
+            csvAnnotationService.saveTagsAndLinkNestedPlates(
+                            DbUnit.EXPERIMENTER_ID,
+                            DbUnit.SCREEN_ID,
+                            lines);
+
+        assertNotNull(data, "Non-null result expected");
+
+        Collection<IObject> knowns = data.getKnownAnnotationLinks();
+        assertTrue((null == knowns || knowns.isEmpty()), "No knowns expected");
+
+        Collection<IObject> news = data.getNewAnnotationLinks();
+        assertNotNull(news, "Non-null news expected");
+        assertEquals(news.size(), 1, "One new tag saved expected");
+
+        // persist the tag association
+        Collection<IObject> plateTagLinks = csvAnnotationService.saveAllAnnotationLinks(data);
+        assertNotNull(plateTagLinks, "Non-null links expected");
+        assertEquals(plateTagLinks.size(), 1, "One new link saved expected");
+
+        //clean up test side effects (remove the created tag and its association to the plate)
+        PlateAnnotationLinkI plateTagLink = (PlateAnnotationLinkI) Iterables.getOnlyElement(plateTagLinks);
+        Annotation createdTag = plateTagLink.getChild();
+        super.getSession().getUpdateService().deleteObject(plateTagLink);
+        super.getSession().getUpdateService().deleteObject(createdTag);
+    }
+
+
+    @DataSet(value= { DataSets.Csv.ANNOTATED }, factory = SingleSchemaCsvDataSetFactory.class)
+    @UnloadDataSet
+    @Test(groups = { Groups.INTEGRATION })
+    public void saveTagsAndLinkNestedPlateAcquisitionsTests() throws ServerError, IOException {
+        Multimap<String, String> lines = HashMultimap.create();
+        lines.put(Csv.Annotated.PLATE_ACQUISITION_NAME, Csv.Annotated.TAG_NAME_LINKED);
+        lines.put(Csv.Annotated.PLATE_ACQUISITION_NAME, "DbUnit.Tag");
+
+        // the specified plateacquisition is nested within a plate
+        // the method should: create the new tag but not link it to the plateacquisition
+        LinksData data =
+            csvAnnotationService.saveTagsAndLinkNestedPlateAcquisitions(
+                            DbUnit.EXPERIMENTER_ID,
+                            Csv.Annotated.PLATE_ID_WITH_RUNS,
+                            lines);
+
+        assertNotNull(data, "Non-null result expected");
+
+        Collection<IObject> knowns = data.getKnownAnnotationLinks();
+        assertTrue((null == knowns || knowns.isEmpty()), "No knowns expected");
+
+        Collection<IObject> news = data.getNewAnnotationLinks();
+        assertNotNull(news, "Non-null news expected");
+        assertEquals(news.size(), 1, "One new tag expected");
+
+        // persist the tag association
+        Collection<IObject> plateAcquisitionTagLinks = csvAnnotationService.saveAllAnnotationLinks(data);
+        assertNotNull(plateAcquisitionTagLinks, "Non-null links expected");
+        assertEquals(plateAcquisitionTagLinks.size(), 1, "One new link saved expected");
+
+        //clean up test side effects (remove the created tag and its association to the plate)
+        PlateAcquisitionAnnotationLinkI plateAcquisitionTagLink =
+            (PlateAcquisitionAnnotationLinkI) Iterables.getOnlyElement(plateAcquisitionTagLinks);
+        Annotation createdTag = plateAcquisitionTagLink.getChild();
+        super.getSession().getUpdateService().deleteObject(plateAcquisitionTagLink);
+        super.getSession().getUpdateService().deleteObject(createdTag);
+    }
+
+
+    @DataSet(value= { DataSets.Csv.IMAGES_ANNOTATED }, factory = SingleSchemaCsvDataSetFactory.class)
+    @UnloadDataSet
+    @Test(groups = { Groups.INTEGRATION })
+    public void saveTagsAndLinkNestedImagesWithinPlateAcquisitionTest() throws ServerError, IOException {
+        Multimap<String, String> lines = HashMultimap.create();
+        lines.put(Csv.ImagesAnnotated.IMAGE_NAME_PWPAWSI_w1i0, "DbUnit.Tag.One");
+        lines.put(Csv.ImagesAnnotated.IMAGE_NAME_PWPAWSI_w1i0, "DbUnit.Tag.Two");
+
+        // the specified image is nested within a plateacquisition
+        // the method should create the new tag but not link it to the image
+        LinksData data =
+            csvAnnotationService.saveTagsAndLinkNestedImages(
+                            DbUnit.EXPERIMENTER_ID,
+                            Csv.ImagesAnnotated.PLATE_ACQUISITION_ID,
+                            ContainerType.plateacquisition,
+                            lines);
+
+        assertNotNull(data, "Non-null result expected");
+
+        Collection<IObject> knowns = data.getKnownAnnotationLinks();
+        assertTrue((null == knowns || knowns.isEmpty()), "No knowns expected");
+
+        Collection<IObject> news = data.getNewAnnotationLinks();
+        assertNotNull(news, "Non-null news expected");
+        assertEquals(news.size(), 2, "Two new tags expected");
+
+        // persist the tag associations
+        Collection<IObject> imageTagLinks = csvAnnotationService.saveAllAnnotationLinks(data);
+        assertNotNull(imageTagLinks, "Non-null links expected");
+        assertEquals(imageTagLinks.size(), 2, "Two new links saved expected");
+
+        //clean up test side effects (remove the created tags and their association to the image)
+        for (IObject linkObject: imageTagLinks) {
+            ImageAnnotationLinkI imageTagLink = (ImageAnnotationLinkI) linkObject;
+            Annotation createdTag = imageTagLink.getChild();
+            super.getSession().getUpdateService().deleteObject(imageTagLink);
+            super.getSession().getUpdateService().deleteObject(createdTag);
+        }
+    }
+
+    @DataSet(value= { DataSets.Csv.IMAGES_ANNOTATED }, factory = SingleSchemaCsvDataSetFactory.class)
+    @UnloadDataSet
+    @Test(groups = { Groups.INTEGRATION })
+    public void saveTagsAndLinkNestedImagesWithinPlateTest() throws ServerError, IOException {
+        Multimap<String, String> lines = HashMultimap.create();
+        lines.put(Csv.ImagesAnnotated.IMAGE_NAME_PWWSI_w1i0, "DbUnit.Tag");
+
+        // the specified image is nested within a plate without runs
+        // the method should create the new tag but not link it to the image
+        LinksData data =
+            csvAnnotationService.saveTagsAndLinkNestedImages(
+                            DbUnit.EXPERIMENTER_ID,
+                            Csv.ImagesAnnotated.PLATE_ID,
+                            ContainerType.plate,
+                            lines);
+
+        assertNotNull(data, "Non-null result expected");
+
+        Collection<IObject> knowns = data.getKnownAnnotationLinks();
+        assertTrue((null == knowns || knowns.isEmpty()), "No knowns expected");
+
+        Collection<IObject> news = data.getNewAnnotationLinks();
+        assertNotNull(news, "Non-null news expected");
+        assertEquals(news.size(), 1, "One new tag expected");
+
+        // persist the tag associations
+        Collection<IObject> imageTagLinks = csvAnnotationService.saveAllAnnotationLinks(data);
+        assertNotNull(imageTagLinks, "Non-null links expected");
+        assertEquals(imageTagLinks.size(), 1, "One new link saved expected");
+
+        //clean up test side effects (remove the created tags and their association to the image)
         ImageAnnotationLinkI imageTagLink = (ImageAnnotationLinkI) Iterables.getOnlyElement(imageTagLinks);
         Annotation createdTag = imageTagLink.getChild();
         super.getSession().getUpdateService().deleteObject(imageTagLink);

@@ -1,5 +1,11 @@
 dataset
 project
+plate
+plateacquisition
+screen
 annotation
-projectdatasetlink
 datasetannotationlink
+projectdatasetlink
+screenplatelink
+plateannotationlink
+plateacquisitionannotationlink

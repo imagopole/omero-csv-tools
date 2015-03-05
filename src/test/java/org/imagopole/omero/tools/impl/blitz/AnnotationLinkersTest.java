@@ -17,7 +17,10 @@ import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers.DatasetAnnotationLinker;
 import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers.ImageAnnotationLinker;
+import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers.PlateAcquisitionAnnotationLinker;
+import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers.PlateAnnotationLinker;
 import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers.ProjectAnnotationLinker;
+import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers.ScreenAnnotationLinker;
 import org.testng.annotations.Test;
 
 
@@ -45,6 +48,22 @@ public class AnnotationLinkersTest {
         assertTrue(result instanceof ImageAnnotationLinker, "Incorrect linker type");
     }
 
+    @Test
+    public void forAnnotatedTypeShouldSupportPlates() {
+        AnnotationLinker result = AnnotationLinkers.forAnnotatedType(AnnotatedType.plate);
+
+        assertNotNull(result, "Non-null result expected");
+        assertTrue(result instanceof PlateAnnotationLinker, "Incorrect linker type");
+    }
+
+    @Test
+    public void forAnnotatedTypeShouldSupportPlateAcquisitions() {
+        AnnotationLinker result = AnnotationLinkers.forAnnotatedType(AnnotatedType.plateacquisition);
+
+        assertNotNull(result, "Non-null result expected");
+        assertTrue(result instanceof PlateAcquisitionAnnotationLinker, "Incorrect linker type");
+    }
+
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void forContainerTypeShouldRejectNulls() {
@@ -52,7 +71,7 @@ public class AnnotationLinkersTest {
     }
 
     @Test
-    public void forAnnotatedTypeShouldSupportProjects() {
+    public void forContainerTypeShouldSupportProjects() {
         AnnotationLinker result = AnnotationLinkers.forContainerType(ContainerType.project);
 
         assertNotNull(result, "Non-null result expected");
@@ -65,6 +84,30 @@ public class AnnotationLinkersTest {
 
         assertNotNull(result, "Non-null result expected");
         assertTrue(result instanceof DatasetAnnotationLinker, "Incorrect linker type");
+    }
+
+    @Test
+    public void forContainerTypeShouldSupportScreens() {
+        AnnotationLinker result = AnnotationLinkers.forContainerType(ContainerType.screen);
+
+        assertNotNull(result, "Non-null result expected");
+        assertTrue(result instanceof ScreenAnnotationLinker, "Incorrect linker type");
+    }
+
+    @Test
+    public void forContainerTypeShouldSupportPlates() {
+        AnnotationLinker result = AnnotationLinkers.forContainerType(ContainerType.plate);
+
+        assertNotNull(result, "Non-null result expected");
+        assertTrue(result instanceof PlateAnnotationLinker, "Incorrect linker type");
+    }
+
+    @Test
+    public void forContainerTypeShouldSupportPlateAcquisitions() {
+        AnnotationLinker result = AnnotationLinkers.forContainerType(ContainerType.plateacquisition);
+
+        assertNotNull(result, "Non-null result expected");
+        assertTrue(result instanceof PlateAcquisitionAnnotationLinker, "Incorrect linker type");
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },

@@ -17,6 +17,8 @@ import org.unitils.reflectionassert.ReflectionComparatorMode;
 import pojos.DatasetData;
 import pojos.FileAnnotationData;
 import pojos.ImageData;
+import pojos.PlateAcquisitionData;
+import pojos.PlateData;
 import pojos.ProjectData;
 import pojos.TagAnnotationData;
 
@@ -84,6 +86,36 @@ public class TestsUtil {
         img.setName(DEFAULT_NAME_PREFIX + id);
 
         return img;
+    }
+
+    public static final PlateData newPlate(String name) {
+        PlateData plate = new PlateData();
+        plate.setName(name);
+
+        return plate;
+    }
+
+    public static final PlateData newPlate(Long id) {
+        PlateData plate = new PlateData();
+        plate.setId(id);
+        plate.setName(DEFAULT_NAME_PREFIX + id);
+
+        return plate;
+    }
+
+    public static final PlateAcquisitionData newPlateAcquisition(String name) {
+        PlateAcquisitionData pa = new PlateAcquisitionData();
+        pa.setName(name);
+
+        return pa;
+    }
+
+    public static final PlateAcquisitionData newPlateAcquisition(Long id) {
+        PlateAcquisitionData pa = new PlateAcquisitionData();
+        pa.setId(id);
+        pa.setName(DEFAULT_NAME_PREFIX + id);
+
+        return pa;
     }
 
     public static final FileAnnotationData newAttachment(String name) {
@@ -191,18 +223,30 @@ public class TestsUtil {
                 public final static String IMAGES_ANNOTATED =  DBUNIT_CSV_PREFIX + "images_annotated/";
 
                 public final static class Linked {
-                    public final static Long DATASET_ID = 805L;
+                    public final static Long DATASET_ID = 806L;
+                    public final static Long PLATE_ID = 906L;
+                    public final static Long PLATE_ID_WITH_RUNS = 907L;
                     public final static String DATASET_NAME = "DbUnit.linked-Dataset";
+                    public final static String PLATE_NAME = "DbUnit.linked-Plate";
+                    public final static String PLATE_NAME_WITH_RUNS = "DbUnit.linked-Plate-With-Runs";
+                    public final static String PLATE_ACQUISITION_NAME = "DbUnit.linked-PlateAcquisition";
+                    public final static String PLATE_ACQUISITION_NAME_DEFAULT = "Run 914";
                 }
 
                 public final static class Orphans {
-                    public final static Long DATASET_ID = 806L;
+                    public final static Long DATASET_ID = 805L;
+                    public final static Long PLATE_ID = 905L;
                     public final static String DATASET_NAME = "DbUnit.orphans-Orphan-Dataset";
+                    public final static String PLATE_NAME = "DbUnit.orphans-Plate";
                 }
 
                 public final static class Annotated {
                     public final static Long DATASET_ID = 807L;
+                    public final static Long PLATE_ID = 907L;
+                    public final static Long PLATE_ID_WITH_RUNS = 908L;
                     public final static String DATASET_NAME = "DbUnit.annotated-Dataset";
+                    public final static String PLATE_NAME = "DbUnit.annotated-Plate";
+                    public final static String PLATE_ACQUISITION_NAME = "DbUnit.annotated-PlateAcquisition";
                     public final static String TAG_NAME_LINKED = "DbUnit.annotated-Tag.Linked";
                     public final static String TAG_NAME_UNLINKED = "DbUnit.annotated-Tag.Unlinked";
                 }
@@ -219,13 +263,35 @@ public class TestsUtil {
 
                 public final static class Images {
                     public final static Long DATASET_ID = 810L;
+                    /** Plate with no plateacquisition children. 2 wells. 1 image per well at index 0. */
+                    public final static Long PLATE_ID = 910L;
+                    /** Plate with 1 plateacquisition child. 1 well. 2 images in well at indices 0 and 1. */
+                    public final static Long PLATE_ID_WITH_RUNS= 911L;
+                    public final static Long PLATE_ACQUISITION_ID = 920911L;
                     public final static String IMAGE_NAME = "DbUnit.images-Image";
+                    /** Image at index 0 for well 1 of plate without runs. */
+                    public final static String IMAGE_NAME_PWWSI_w1i0 = "DbUnit.images-HCS.Image.P-W-WS-I[w1i0]";
+                    /** Image at index 0 for well 2 of plate without runs. */
+                    public final static String IMAGE_NAME_PWWSI_w2i0 = "DbUnit.images-HCS.Image.P-W-WS-I[w2i0]";
+                    /** Image at index 0 for well 1 of plate with single run. */
+                    public final static String IMAGE_NAME_PWPAWSI_w1i0 = "DbUnit.images-HCS.Image.P-W-PA-WS-I[w1i0]";
+                    /** Image at index 1 for well 1 of plate with single run. */
+                    public final static String IMAGE_NAME_PWPAWSI_w1i1 = "DbUnit.images-HCS.Image.P-W-PA-WS-I[w1i1]";
                 }
 
                 public final static class ImagesAnnotated {
                     public final static Long DATASET_ID = 811L;
+                    /** Plate with no plateacquisition children. 2 wells. 1 image per well at index 0. */
+                    public final static Long PLATE_ID = 1010L;
+                    /** Plate with 1 plateacquisition child. 1 well. 2 images in well at indices 0 and 1. */
+                    public final static Long PLATE_ID_WITH_RUNS= 1011L;
+                    public final static Long PLATE_ACQUISITION_ID = 9201011L;
                     public final static String DATASET_NAME = "DbUnit.images_annotated-Dataset";
                     public final static String IMAGE_NAME = "DbUnit.images_annotated-Image";
+                    public final static String IMAGE_NAME_PWWSI_w1i0 = "DbUnit.images_annotated-HCS.Image.P-W-WS-I[w1i0]";
+                    public final static String IMAGE_NAME_PWWSI_w2i0 = "DbUnit.images_annotated-HCS.Image.P-W-WS-I[w2i0]";
+                    public final static String IMAGE_NAME_PWPAWSI_w1i0 = "DbUnit.images_annotated-HCS.Image.P-W-PA-WS-I[w1i0]";
+                    public final static String IMAGE_NAME_PWPAWSI_w1i1 = "DbUnit.images_annotated-HCS.Image.P-W-PA-WS-I[w1i1]";
                     public final static String TAG_NAME_LINKED = "DbUnit.images_annotated-Tag.Linked";
                     public final static String TAG_NAME_UNLINKED = "DbUnit.images_annotated-Tag.Unlinked";
                 }
@@ -269,6 +335,7 @@ public class TestsUtil {
         public final static Long GROUP_ID = 801L;
         public final static Long EXPERIMENTER_ID = 802L;
         public final static Long PROJECT_ID = 803L;
+        public final static Long SCREEN_ID = 903L;
         public final static String EMPTY_ORIGINAL_FILE_NAME = "dbunit_tag.csv";
     }
 

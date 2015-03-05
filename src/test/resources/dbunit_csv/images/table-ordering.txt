@@ -1,3 +1,7 @@
 dataset
 image
 datasetimagelink
+plate
+plateacquisition
+well
+wellsample

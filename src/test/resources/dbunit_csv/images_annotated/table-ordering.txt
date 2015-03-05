@@ -1,5 +1,9 @@
 dataset
 image
 annotation
+plate
+plateacquisition
+well
+wellsample
 datasetimagelink
 imageannotationlink
