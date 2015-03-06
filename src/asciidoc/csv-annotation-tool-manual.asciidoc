@@ -1,5 +1,6 @@
 = OMERO.csvtools User Documentation
 Imagopole
+:icons: font
 :artifact_version: 0.2.2
 :bintray_artifact_url: https://bintray.com/imagopole/omero/omero-csv-tools/
 :bintray_examples_dist_url: https://dl.bintray.com/imagopole/omero/omero-csv-tools/dist/omero-csv-tools-{artifact_version}-examples.zip
@@ -137,8 +138,8 @@ MyOmeroGroup
         +-- PlateAcquisition-PA2
 ----
 
-<1> No run for +Plate-P1+
-<2> One or more runs for +Plate-PN+
+<1> No run for `Plate-P1`
+<2> One or more runs for `Plate-PN`
 
 The available tagging combinations would be:
 
@@ -147,12 +148,12 @@ The available tagging combinations would be:
 [width="100%", cols="3", options="header"]
 |============================================================================================================
 |CSV attachment                 2+|Candidates for tagging
-|+dataset_tag_P0.csv+             |All datasets within +Project-P0+                   |+Dataset-D1+
-|                                 |                                                   |+Dataset-D2+
-|+image_tag_D1.csv+               |All images within +Dataset-D1+                     |+Image-D1.1+
-|                                 |                                                   |+Image-D1.2+
-|+image_tag_DN.csv+               |All images within +Dataset-DN+                     |+Image-DN.1+
-|                                 |                                                   |+Image-DN.2+
+|`dataset_tag_P0.csv`             |All datasets within `Project-P0`                   |`Dataset-D1`
+|                                 |                                                   |`Dataset-D2`
+|`image_tag_D1.csv`               |All images within `Dataset-D1`                     |`Image-D1.1`
+|                                 |                                                   |`Image-D1.2`
+|`image_tag_DN.csv`               |All images within `Dataset-DN`                     |`Image-DN.1`
+|                                 |                                                   |`Image-DN.2`
 |============================================================================================================
 
 ===== For Screen / Plate / Well / Image data
@@ -160,14 +161,14 @@ The available tagging combinations would be:
 [width="100%", cols="3", options="header"]
 |============================================================================================================
 |CSV attachment                 2+|Candidates for tagging
-|+plate_tag_S0.csv+               |All plates within +Screen-S0+                      |+Plate-P1+
-|                                 |                                                   |+Plate-P2+
-|+image_tag_P1.csv+               |All images within +Plate-P1+                       |+Image-P1.1+
-|                                 |                                                   |+Image-P1.2+
-|+plateacquisition_tag_PN.csv+    |All plate acquisitions within +Plate-PN+           |+PlateAcquisition-PA1+
-|                                 |                                                   |+PlateAcquisition-PA2+
-|+image_tag_PA1.csv+              |All images within +PlateAcquisition-PA1+           |+Image-PA1.1+
-|                                 |                                                   |+Image-PA1.2+
+|`plate_tag_S0.csv`               |All plates within `Screen-S0`                      |`Plate-P1`
+|                                 |                                                   |`Plate-P2`
+|`image_tag_P1.csv`               |All images within `Plate-P1`                       |`Image-P1.1`
+|                                 |                                                   |`Image-P1.2`
+|`plateacquisition_tag_PN.csv`    |All plate acquisitions within `Plate-PN`           |`PlateAcquisition-PA1`
+|                                 |                                                   |`PlateAcquisition-PA2`
+|`image_tag_PA1.csv`              |All images within `PlateAcquisition-PA1`           |`Image-PA1.1`
+|                                 |                                                   |`Image-PA1.2`
 |============================================================================================================
 
 WARNING: It is recommended to explicitly define a name for plate acquisitions/runs prior to tagging.
@@ -185,13 +186,13 @@ If you don't use a specific file name, a default naming scheme is applied.
 
 ===== In annotate mode
 
-In _annotate mode_, the default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+annotated-type+* and
-*+annotation-type+* being the supported script arguments.
+In _annotate mode_, the default name will be: `*<annotated-type>_<annotation-type>.csv*`, with `*annotated-type*` and
+`*annotation-type*` being the supported script arguments.
 
 ===== In export mode
 
 In _export mode_, the conventional name will be generated with an additional ``.export`` suffix appended to the
-default name: *+<annotated-type>_<annotation-type>.export.csv+*.
+default name: `*<annotated-type>_<annotation-type>.export.csv*`.
 
 Example default file names:
 
@@ -289,13 +290,13 @@ adjusting the selected script parameters before launching is recommended.
 
 All packages are downloadable from {bintray_artifact_url}, including a version of this manual and examples:
 
-[width="100%", options="header"]
+[width="100%", cols="40,30,15,15", options="header"]
 |===================================================================================================================================================================
 |Distribution file name                                           |Description                                       |Includes documentation | Includes CSV samples
-|+omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-standalone.zip+        |Full package for single jar file installation     |Y                      |Y
-|+omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-with-dependencies.zip+ |Full package for multiple jar files installation  |Y                      |Y
-|+omero-csv-tools-<VERSION>-docs-with-examples.zip+               |Documentation package with sample data            |Y                      |Y
-|+omero-csv-tools-<VERSION>-examples.zip+                         |Example CSV data only                             |N                      |Y
+|`omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-standalone.zip`        |Full package for single jar file installation     |Y                      |Y
+|`omero-csv-tools-<VERSION>-<OMERO_FLAVOR>-with-dependencies.zip` |Full package for multiple jar files installation  |Y                      |Y
+|`omero-csv-tools-<VERSION>-docs-with-examples.zip`               |Documentation package with sample data            |Y                      |Y
+|`omero-csv-tools-<VERSION>-examples.zip`                         |Example CSV data only                             |N                      |Y
 |===================================================================================================================================================================
 
 === Sample datasets
