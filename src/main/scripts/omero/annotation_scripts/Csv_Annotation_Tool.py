@@ -43,8 +43,10 @@ SINGLE_ARGUMENT_FORMAT = "--{0}='{1}'"
 # process invocation
 ##
 ANNOTATED_TYPES_ENUM = [
+    rstring("Image"),
     rstring("Dataset"),
-    rstring("Image")
+    rstring("PlateAcquisition"),
+    rstring("Plate")
 ]
 
 # Keep UI minimal at this point - to be added later if extra annotation types are introduced
@@ -54,7 +56,10 @@ ANNOTATED_TYPES_ENUM = [
 
 CONTAINER_TYPES_ENUM = [
     rstring("Project"),
-    rstring("Dataset")
+    rstring("Dataset"),
+    rstring("Screen"),
+    rstring("Plate"),
+    rstring("PlateAcquisition")
 ]
 
 ##
@@ -300,10 +305,10 @@ def run_as_script():
     "Csv_Annotation_Tool.py",
 
     """
-    Bulk annotate your data in an unattended manner using definitions retrieved from a CSV file.
+    Bulk annotate your data using definitions retrieved from a CSV file.
 
-    In order to tag datasets within a project, attach the CSV file to the project.
-    In order to tag images within a dataset, attach the CSV file to the dataset.
+    In order to tag datasets [plates] within a project [screen], attach the CSV file to the project [screen].
+    In order to tag images within a dataset [plate run], attach the CSV file to the dataset [plate run].
 
     A detailed user guide is available in the distributed "csv-annotation-tool-manual".
     """,
@@ -313,7 +318,7 @@ def run_as_script():
         Labels.DATA_TYPE,
         optional = False,
         grouping = "1",
-        description = "The data type (eg. project or dataset) bearing the attached CSV file (and 'parent' of the data you want to annotate)",
+        description = "The data type (eg. project, dataset, screen or plate/plateacquisition) bearing the attached CSV file (and 'parent' of the data you want to annotate)",
         values = CONTAINER_TYPES_ENUM
         ),
 
@@ -337,7 +342,7 @@ def run_as_script():
         Labels.ANNOTATED_TYPE,
         optional = False,
         grouping = "1",
-        description = "The type of data you want to annotate (eg. dataset or image)",
+        description = "The type of data you want to annotate (eg. image, dataset or plate/plateacquisition)",
         values = ANNOTATED_TYPES_ENUM
         ),
 
