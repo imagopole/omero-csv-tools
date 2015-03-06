@@ -278,7 +278,7 @@ task withDepsDistZip(type: Zip) { zipTask ->
         from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
     }
     from configurations.runtime.allArtifacts.files
-    from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
+    from fileTree("$projectDir").include(["*.md", "LICENSE.txt", "NOTICE.txt"])
 }
 
 /** Create a distribution bundle with a standalone fat jar + shell scripts included */
@@ -299,7 +299,7 @@ task standaloneDistZip(type: Zip) { zipTask ->
         from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
     }
     from fileTree("$libsDir").include("*-standalone.jar")
-    from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
+    from fileTree("$projectDir").include(["*.md", "LICENSE.txt", "NOTICE.txt"])
 }
 
 /** Create a documentation only bundle with user manual and CSV files samples */
@@ -310,7 +310,7 @@ task docsDistZip(type: Zip) { zipTask ->
     classifier = 'docs-with-examples'
 
     from "$buildDir/asciidoc"
-    from fileTree("$projectDir").include(["*.md", "LICENSE.txt"])
+    from fileTree("$projectDir").include(["*.md", "LICENSE.txt", "NOTICE.txt"])
 }
 
 /** Create an examples only bundle with CSV files samples */

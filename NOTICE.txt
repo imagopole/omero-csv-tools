@@ -1,0 +1,18 @@
+ =========================================================================
+ ==  NOTICE file for software distribution                              ==
+ ==  OMERO.csvtools                                                     ==
+ =========================================================================
+
+This software makes use of/includes third-party code/libraries.
+
+Alphanumeric string comparison support is provided by the com.eekboom.utils package,
+under a BSD license.
+Copyright (c) 2006, Stephen Kelvin Friedrich, All rights reserved.
+The original software and list of conditions are available from:
+      http://www.eekboom.com/java/compareNatural/src/com/eekboom/utils/Strings.java
+
+Alternative string comparison support is included in the com.davekeolle.utils package,
+under a GNU LGPL license.
+Copyright (c), David Koelle, All rights reserved.
+The original software and list of conditions are available from:
+      http://www.davekoelle.com/files/AlphanumComparator.java
