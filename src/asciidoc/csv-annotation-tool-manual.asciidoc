@@ -23,12 +23,12 @@ annotations ecosystem.
 
 Examples of how you can annotate your data as an OMERO user:
 
-* Tag, rate or comment on your projects / datasets / images individually using the graphical user
-  interface in OMERO.insight or OMERO.web.
+* Tag, rate or comment on your projects / datasets / images (or screens / plates / images) individually
+  using the graphical user interface in OMERO.insight or OMERO.web.
 * Let the webtagging tool automatically suggest tags from your image names for you to review and
   apply interactively in OMERO.web.
-* Bulk annotate your datasets and images in an unattended manner using the CSV tool script in
-  OMERO.insight or OMERO.web.
+* Bulk annotate your datasets and images (or plates / plate acquisitions (a.k.a runs) / images) in an unattended manner
+  using the CSV tool script in OMERO.insight or OMERO.web.
 
 [[overview-omero-annotations]]
 === OMERO insight annotations
@@ -48,8 +48,8 @@ http://www.openmicroscopy.org/site/support/partner/omero.webtagging
 Workflow outline (details below):
 
 . Optionally export your current data to a seed CSV file.
-. Attach the tag definitions in CSV format to your OMERO project or dataset.
-. Run the CSV annotation tool script on the project or dataset.
+. Attach the tag definitions in CSV format to your OMERO project / dataset (or screen / plate / plate acquisition).
+. Run the CSV annotation tool script on the project / dataset (or screen / plate / plate acquisition).
 
 
 [[main-omero-cat]]
@@ -58,6 +58,8 @@ Workflow outline (details below):
 [[synopsis-omero-cat]]
 === Synopsis for the impatient
 
+==== For Project / Dataset / Image data
+
 [format="csv", options="header"]
 |===
 In order to tag, Attach CSV file to, Default file name will be, Default separator will be, CSV header will be ignored?
@@ -65,53 +67,114 @@ images, dataset, image_tag.csv, comma, yes
 datasets, project, dataset_tag.csv, comma, yes
 |===
 
+==== For Screen / Plate / Well / Image data
+
+[format="csv", options="header"]
+|===
+In order to tag, Attach CSV file to, Default file name will be, Default separator will be, CSV header will be ignored?
+images, plate (no run), image_tag.csv, comma, yes
+images, plate acquisition (one or more runs), image_tag.csv, comma, yes
+plate acquisitions/runs, plate, plateacquisition_tag.csv, comma, yes
+plates, screen, plate_tag.csv, comma, yes
+|===
+
 [[supported-omero-cat]]
 === Supported features
 
 The annotation tool relies on the file attachment mechanism provided by OMERO to retrieve the CSV file remotely.
 
-In its current form, it follows OMERO's hierarchical Project / Dataset / Image organisation scheme to relate
-the CSV file to the candidates for annotation.
+In its current form, it follows OMERO's hierarchical Project /Dataset / Image or Screen / Plate / Well / Image organisation
+schemes to relate the CSV file to the candidates for annotation.
 The tool currently allows:
 
-* tagging and exporting *datasets* nested _within_ a *project* (ie. ``orphans`` or ``top-level`` datasets are
+==== For Project / Dataset / Image data
+
+  ** tagging and exporting *datasets* nested _within_ a *project* (ie. ``orphans`` or ``top-level`` datasets are
   currently not supported, but may be at a later stage)
-* tagging and exporting *images* nested _within_ a *dataset* (whether the dataset is nested within a project or not)
-* attaching the CSV file to a *project* or a *dataset* (in order to export _datasets_ and _images_,
+  ** tagging and exporting *images* nested _within_ a *dataset* (whether the dataset is nested within a project or not)
+  ** attaching the CSV file to a *project* or a *dataset* (in order to export _datasets_ and _images_,
   respectively)
 
+==== For Screen / Plate / Well / Image data
+
+  ** tagging and exporting *plates* nested _within_ a *screen* (ie. ``orphans`` or ``top-level`` plates are
+  currently not supported, but may be at a later stage)
+  ** tagging and exporting *plate acquisitions (runs)* nested _within_ a *plate*
+  ** tagging and exporting *images* nested _within_ a *plate* _without runs_ (whether the plate is nested within a screen or not)
+  ** tagging and exporting *images* nested _within_ a *plate acquisition/run* (for plates with _at least one run_)
+  ** attaching the CSV file to a *screen*, a *plate* or a *plate acquisition* (in order to export _plates_,
+   _plate acquisitions_ and _images_, respectively).
+
 ==== Example data layout
+
+NOTE: CSV attachments names below have been customized to reflect the project, dataset, screen or plate they are
+linked to for readability only - in practice, using the default naming for all ranks in the hierarchy
+would work equally.
 
 Assuming the following hierarchy and CSV attachments:
 
 ----
 MyOmeroGroup
-  +-- Project-P0  .................  dataset_tag_P0.csv
-  |     +-- Dataset-D1  ...........  image_tag_D1.csv
+  |
+  +-- Project-P0  ...................  dataset_tag_P0.csv
+  |     +-- Dataset-D1  .............  image_tag_D1.csv
   |     |     +-- Image-D1.1
   |     |     +-- Image-D1.2
   |     +-- Dataset-D2
-  +-- Dataset-DN  .................  image_tag_DN.csv
-        +-- Image-DN1.1
-        +-- Image-DN1.2
+  +-- Dataset-DN  ...................  image_tag_DN.csv
+  |     +-- Image-DN1.1
+  |     +-- Image-DN1.2
+  |
+  +-- Screen-S0  ....................  plate_tag_S0.csv
+  |     +-- Plate-P1  ...............  image_tag_P1.csv                <1>
+  |     |     +-- Image-P1.1
+  |     |     +-- Image-P1.2
+  |     +-- Plate-P2
+  +-- Plate-PN  ......................  plateacquisition_tag_PN.csv    <2>
+        +-- PlateAcquisition-PA1  ....  image_tag_PA1.csv
+        |     +-- Image-PA1.1
+        |     +-- Image-PA1.2
+        +-- PlateAcquisition-PA2
 ----
+
+<1> No run for +Plate-P1+
+<2> One or more runs for +Plate-PN+
 
 The available tagging combinations would be:
 
-[width="100%", cols="3", options="header"]
-|========================================================================
-|CSV attachment         2+|Candidates for tagging
-|+dataset_tag_P0.csv+    |All datasets within +Project-P0+ |+Dataset-D1+
-|                        |                                 |+Dataset-D2+
-|+image_tag_D1.csv+      |All images within +Dataset-D1+   |+Image-D1.1+
-|                        |                                 |+Image-D1.2+
-|+image_tag_DN.csv+      |All images within +Dataset-DN+   |+Image-DN.1+
-|                        |                                 |+Image-DN.2+
-|========================================================================
+===== For Project / Dataset / Image data
 
-NOTE: CSV attachments names above have been customized to reflect the project or dataset they are
-linked to for readability only - in practice, using the default naming for all ranks in the hierarchy
-would work equally.
+[width="100%", cols="3", options="header"]
+|============================================================================================================
+|CSV attachment                 2+|Candidates for tagging
+|+dataset_tag_P0.csv+             |All datasets within +Project-P0+                   |+Dataset-D1+
+|                                 |                                                   |+Dataset-D2+
+|+image_tag_D1.csv+               |All images within +Dataset-D1+                     |+Image-D1.1+
+|                                 |                                                   |+Image-D1.2+
+|+image_tag_DN.csv+               |All images within +Dataset-DN+                     |+Image-DN.1+
+|                                 |                                                   |+Image-DN.2+
+|============================================================================================================
+
+===== For Screen / Plate / Well / Image data
+
+[width="100%", cols="3", options="header"]
+|============================================================================================================
+|CSV attachment                 2+|Candidates for tagging
+|+plate_tag_S0.csv+               |All plates within +Screen-S0+                      |+Plate-P1+
+|                                 |                                                   |+Plate-P2+
+|+image_tag_P1.csv+               |All images within +Plate-P1+                       |+Image-P1.1+
+|                                 |                                                   |+Image-P1.2+
+|+plateacquisition_tag_PN.csv+    |All plate acquisitions within +Plate-PN+           |+PlateAcquisition-PA1+
+|                                 |                                                   |+PlateAcquisition-PA2+
+|+image_tag_PA1.csv+              |All images within +PlateAcquisition-PA1+           |+Image-PA1.1+
+|                                 |                                                   |+Image-PA1.2+
+|============================================================================================================
+
+WARNING: It is recommended to explicitly define a name for plate acquisitions/runs prior to tagging.
+Since the OMERO model doesn't require plate runs to have a name, OMERO.web and insight will generate a default
+label for display, based on the run's start and end times if available, or on the run's identifier.
+To avoid locale-related discrepancies in timestamp handling when tagging nameless plate runs, OMERO.csvtools
+will consider the plate acquisition ID _only_, such that the display label will be formatted as: ``Run <run-id>``.
 
 [[conventions-omero-cat]]
 === Data management conventions
@@ -120,10 +183,14 @@ would work equally.
 
 If you don't use a specific file name, a default naming scheme is applied.
 
+===== In annotate mode
+
 In _annotate mode_, the default name will be: *+<annotated-type>_<annotation-type>.csv+*, with *+annotated-type+* and
 *+annotation-type+* being the supported script arguments.
 
-In _export mode_, the conventional name will be identified as such via an additional suffix appended to the
+===== In export mode
+
+In _export mode_, the conventional name will be generated with an additional ``.export`` suffix appended to the
 default name: *+<annotated-type>_<annotation-type>.export.csv+*.
 
 Example default file names:
@@ -196,13 +263,9 @@ Use the attachments interface
 
 image::images/attach-file.png[Attach file]
 
-==== Tagging datasets
+==== Tagging data
 
-Attach your tag file to your OMERO project, either with the default name or a name of your choice.
-
-==== Tagging images
-
-Attach your tag file to your OMERO dataset, either with the default name or a name of your choice.
+Attach your tag file to your OMERO project, dataset, screen, plate or plate run - either with the default name or a name of your choice.
 
 ==== Start the CSV annotation tool
 
@@ -214,6 +277,10 @@ image::images/script-menu.png[Script menu]
 
 image::images/script-ui.png[Script GUI]
 
+TIP: The OMERO.scripts framework usually matches the ``Data Type`` to be pre-selected in the script window
+with the currently active item in the left navigation menu.
+This is not currently the case when the active item is a *plate acquisition/run* - therefore reviewing and
+adjusting the selected script parameters before launching is recommended.
 
 [[appendices]]
 == Appendices
@@ -230,3 +297,17 @@ All packages are downloadable from {bintray_artifact_url}, including a version o
 |+omero-csv-tools-<VERSION>-docs-with-examples.zip+               |Documentation package with sample data            |Y                      |Y
 |+omero-csv-tools-<VERSION>-examples.zip+                         |Example CSV data only                             |N                      |Y
 |===================================================================================================================================================================
+
+=== Sample datasets
+
+For testing purposes, sample microscopy or screening data is available from the locations below:
+
+* OME-XML and OME-TIFF
+  ** https://www.openmicroscopy.org/site/support/ome-model/developers/sample-files.html
+  ** https://www.openmicroscopy.org/site/support/ome-model/ome-tiff/data.html
+  ** http://www.openmicroscopy.org/Schemas/Samples/
+* Misc. formats
+  ** http://downloads.openmicroscopy.org/images/
+  ** http://loci.wisc.edu/software/sample-data
+  ** http://imagej.nih.gov/ij/images/
+  ** http://imagej.net/Image5D#Sample_data
