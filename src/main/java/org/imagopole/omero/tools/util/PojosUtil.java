@@ -6,6 +6,7 @@ package org.imagopole.omero.tools.util;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
@@ -96,21 +97,47 @@ public final class PojosUtil {
     }
 
     /**
-     * Builds a list of CSV lines from a list pojos.
-     *
-     * Lines are sorted by natural String order.
+     * Builds a list of pojos by ordered by name value using the specified comparator.
      *
      * @param pojos the pojos to be mapped to CSV lines
      * @return list of pojos as CSV lines, or an empty list
      */
-    public static List<CsvAnnotationLine> toSortedCsvAnnotationLines(Collection<PojoData> pojos) {
+    public static List<PojoData> toOrderedPojoNames(
+            Collection<PojoData> pojos,
+            Comparator<String> nameComparator) {
+
+        Check.notNull(nameComparator, "nameComparator");
+
+        List<PojoData> result = new ArrayList<PojoData>();
+
+        if (null != pojos) {
+
+            result = Lists.newArrayList(pojos);
+            Collections.sort(result, Ordering.from(nameComparator).onResultOf(FunctionsUtil.toPojoName));
+
+        }
+
+        return result;
+    }
+
+    /**
+     * Builds a list of CSV lines from a list pojos ordered using using the specified comparator.
+     *
+     * @param pojos the pojos to be mapped to CSV lines
+     * @return list of pojos as CSV lines, or an empty list
+     */
+    public static List<CsvAnnotationLine> toSortedCsvAnnotationLines(
+            Collection<PojoData> pojos,
+            Comparator<String> nameComparator) {
+
+        Check.notNull(nameComparator, "nameComparator");
+
         List<CsvAnnotationLine> result = new ArrayList<CsvAnnotationLine>();
 
         if (null != pojos) {
 
             // sort the "outer" (main) list on entity name
-            List<PojoData> orderedPojos = Lists.newArrayList(pojos);
-            Collections.sort(orderedPojos, Ordering.natural().onResultOf(FunctionsUtil.toPojoName));
+            List<PojoData> orderedPojos = toOrderedPojoNames(pojos, nameComparator);
 
             // pseudo line number based on list index from the re-ordered input pojos
             long lineNumber = 1L;
@@ -121,7 +148,7 @@ public final class PojosUtil {
 
                 // sort the "inner" (annotations) list on annotation name/value
                 List<String> annotationsValues =
-                    AnnotationsUtil.toOrderedAnnotationValues(annotations);
+                    AnnotationsUtil.toOrderedAnnotationValues(annotations, nameComparator);
 
                 CsvAnnotationLine line =
                     SimpleAnnotationLine.createLenient(lineNumber, targetName, annotationsValues);
@@ -134,6 +161,7 @@ public final class PojosUtil {
         }
 
         return result;
+
     }
 
 }

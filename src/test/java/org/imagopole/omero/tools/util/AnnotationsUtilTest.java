@@ -13,6 +13,7 @@ import static org.unitils.reflectionassert.ReflectionComparatorMode.LENIENT_ORDE
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import pojos.TagAnnotationData;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 
@@ -240,9 +242,16 @@ public class AnnotationsUtilTest {
                                file2Values, LENIENT_ORDER);
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void toOrderedAnnotationValuesShouldRejectNullComparatorParam() {
+        AnnotationsUtil.toOrderedAnnotationValues(new ArrayList<AnnotationData>(), null);
+    }
+
     @Test
     public void toOrderedAnnotationValuesShouldConvertNullEmptyResult() {
-        List<String> result = AnnotationsUtil.toOrderedAnnotationValues(null);
+        Comparator<String> naturalOrdering = Ordering.natural();
+        List<String> result = AnnotationsUtil.toOrderedAnnotationValues(null, naturalOrdering);
 
         assertNotNull(result, "Non-null results expected");
         assertTrue(result.isEmpty(), "Empty results expected");
@@ -250,27 +259,37 @@ public class AnnotationsUtilTest {
 
     @Test
     public void toOrderedAnnotationValuesTests() {
+        Comparator<String> naturalOrdering = Ordering.natural();
+        Comparator<String> alphanumOrdering = AnnotationsUtil.EXPORT_LINE_COMPARATOR;
+
         List<String> emptyResult =
-            AnnotationsUtil.toOrderedAnnotationValues(new ArrayList<AnnotationData>());
+            AnnotationsUtil.toOrderedAnnotationValues(new ArrayList<AnnotationData>(), naturalOrdering);
 
         assertNotNull(emptyResult, "Non-null results expected");
         assertTrue(emptyResult.isEmpty(), "Empty results expected");
 
         List<TagAnnotationData> tags = Lists.newArrayList(
-                newTag("tag.z1"), newTag("TAG.z1"),
+                newTag("tag.z1"), newTag("TAG.z1"), newTag("TAG.z10"),
                 newTag("tag.a2"), newTag("tag.a1"),
-                newTag("tag.2"), newTag("tag.1"),
+                newTag("tag.2"), newTag("tag.1"), newTag("tag.11"),
                 newTag("TAG.2"), newTag("TAG.1"));
 
-        List<String> result = AnnotationsUtil.toOrderedAnnotationValues(tags);
+        List<String> resultDefaultOrder = AnnotationsUtil.toOrderedAnnotationValues(tags, naturalOrdering);
+        List<String> resultAlphanumOrder = AnnotationsUtil.toOrderedAnnotationValues(tags, alphanumOrdering);
 
-        assertNotNull(result, "Non-null results expected");
-        log.trace("{}", result);
+        assertNotNull(resultDefaultOrder, "Non-null results expected");
+        assertNotNull(resultAlphanumOrder, "Non-null results expected");
+        log.trace("default: {}", resultDefaultOrder);
+        log.trace("alphanum: {}", resultAlphanumOrder);
 
-        List<String> expected = Lists.newArrayList(
-            "TAG.1", "TAG.2", "TAG.z1","tag.1", "tag.2", "tag.a1", "tag.a2", "tag.z1");
+        List<String> expectedDefaultOrder = Lists.newArrayList(
+            "TAG.1", "TAG.2", "TAG.z1", "TAG.z10", "tag.1", "tag.11", "tag.2", "tag.a1", "tag.a2", "tag.z1");
 
-        assertReflectionEquals("Wrong ordering", expected, result, TestsUtil.DEFAULT_COMPARATOR_MODE);
+        List<String> expectedAlphanumOrder = Lists.newArrayList(
+            "TAG.1", "TAG.2", "TAG.z1", "TAG.z10", "tag.1", "tag.2", "tag.11", "tag.a1", "tag.a2", "tag.z1");
+
+        assertReflectionEquals("Wrong ordering", expectedDefaultOrder, resultDefaultOrder, TestsUtil.DEFAULT_COMPARATOR_MODE);
+        assertReflectionEquals("Wrong ordering", expectedAlphanumOrder, resultAlphanumOrder, TestsUtil.DEFAULT_COMPARATOR_MODE);
     }
 
 }

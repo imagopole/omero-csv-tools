@@ -9,8 +9,10 @@ import static org.testng.Assert.assertTrue;
 import static org.unitils.reflectionassert.ReflectionAssert.assertReflectionEquals;
 import static org.unitils.reflectionassert.ReflectionComparatorMode.LENIENT_ORDER;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +29,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multiset;
+import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 
 
@@ -93,38 +96,97 @@ public class PojosUtilTest {
     }
 
     @Test
-    public void toSortedCsvAnnotationLinesShouldIgnoreNullParams() {
-        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(null);
+    public void toSortedCsvAnnotationLinesShouldIgnoreNullPojoParam() {
+        Ordering<String> naturalOrdering = Ordering.natural();
+        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(null, naturalOrdering);
 
         assertNotNull(result, "Non-null results expected");
         assertTrue(result.isEmpty(), "Empty results expected");
     }
 
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void toSortedCsvAnnotationLinesShouldRejectNullComparatorParam() {
+        PojosUtil.toSortedCsvAnnotationLines(new ArrayList<PojoData>(), null);
+    }
+
     @Test
-    public void toSortedCsvAnnotationLinesNodesOnlyTests() {
+    public void toSortedCsvAnnotationLinesByNaturalOrderNodesOnlyTests() {
         Collection<DatasetData> datasets = Lists.newArrayList(
-                newDataset("ds.z1"), newDataset("ds.a1"),
-                newDataset("ds.a2"), newDataset("DS.2"), newDataset("DS.1"));
+                newDataset("002007000.flex [Well B-10; Field #10]"),
+                newDataset("002007000.flex [Well B-10; Field #1]"),
+                newDataset("002007000.flex [Well B-10; Field #11]"),
+                newDataset("002007000.flex [Well B-2; Field #1]"),
+                newDataset("002007000.flex [Well B-1; Field #1]"),
+                newDataset("ds.z1"),
+                newDataset("ds.a1"),
+                newDataset("ds.a2"),
+                newDataset("DS.2"),
+                newDataset("DS.1"));
+
         Collection<PojoData> pojos = DatasetsUtil.toPojos(datasets);
 
-        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(pojos);
+        Comparator<String> naturalOrdering = Ordering.natural();
+        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(pojos, naturalOrdering);
 
         assertNotNull(result, "Non-null results expected");
         log.trace("{}", result);
 
         List<String> emptyAnnotations =  Collections.emptyList();
         List<CsvAnnotationLine> expected = Lists.newArrayList(
-                createLenient(1L, "DS.1", emptyAnnotations),
-                createLenient(2L, "DS.2", emptyAnnotations),
-                createLenient(3L, "ds.a1", emptyAnnotations),
-                createLenient(4L, "ds.a2", emptyAnnotations),
-                createLenient(5L, "ds.z1", emptyAnnotations));
+                createLenient(1L, "002007000.flex [Well B-10; Field #10]", emptyAnnotations),
+                createLenient(2L, "002007000.flex [Well B-10; Field #11]", emptyAnnotations),
+                createLenient(3L, "002007000.flex [Well B-10; Field #1]", emptyAnnotations),
+                createLenient(4L, "002007000.flex [Well B-1; Field #1]", emptyAnnotations),
+                createLenient(5L, "002007000.flex [Well B-2; Field #1]", emptyAnnotations),
+                createLenient(6L, "DS.1", emptyAnnotations),
+                createLenient(7L, "DS.2", emptyAnnotations),
+                createLenient(8L, "ds.a1", emptyAnnotations),
+                createLenient(9L, "ds.a2", emptyAnnotations),
+                createLenient(10L, "ds.z1", emptyAnnotations));
 
         assertReflectionEquals("Wrong ordering", expected, result, TestsUtil.DEFAULT_COMPARATOR_MODE);
     }
 
     @Test
-    public void toSortedCsvAnnotationLinesNodesPlusAnnotationsTests() {
+    public void toSortedCsvAnnotationLinesByAlphanumericOrderNodesOnlyTests() {
+        Collection<DatasetData> datasets = Lists.newArrayList(
+                newDataset("002007000.flex [Well B-10; Field #10]"),
+                newDataset("002007000.flex [Well B-10; Field #1]"),
+                newDataset("002007000.flex [Well B-10; Field #11]"),
+                newDataset("002007000.flex [Well B-2; Field #1]"),
+                newDataset("002007000.flex [Well B-1; Field #1]"),
+                newDataset("ds.z1"),
+                newDataset("ds.a1"),
+                newDataset("ds.a2"),
+                newDataset("DS.2"),
+                newDataset("DS.1"));
+        Collection<PojoData> pojos = DatasetsUtil.toPojos(datasets);
+
+        Comparator<String> alphanumOrdering = AnnotationsUtil.EXPORT_LINE_COMPARATOR;
+        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(pojos, alphanumOrdering);
+
+        assertNotNull(result, "Non-null results expected");
+        log.trace("{}", result);
+
+        List<String> emptyAnnotations =  Collections.emptyList();
+        List<CsvAnnotationLine> expected = Lists.newArrayList(
+                 createLenient(1L, "002007000.flex [Well B-1; Field #1]", emptyAnnotations),
+                 createLenient(2L, "002007000.flex [Well B-2; Field #1]", emptyAnnotations),
+                 createLenient(3L, "002007000.flex [Well B-10; Field #1]", emptyAnnotations),
+                 createLenient(4L, "002007000.flex [Well B-10; Field #10]", emptyAnnotations),
+                 createLenient(5L, "002007000.flex [Well B-10; Field #11]", emptyAnnotations),
+                 createLenient(6L, "DS.1", emptyAnnotations),
+                 createLenient(7L, "DS.2", emptyAnnotations),
+                 createLenient(8L, "ds.a1", emptyAnnotations),
+                 createLenient(9L, "ds.a2", emptyAnnotations),
+                 createLenient(10L, "ds.z1", emptyAnnotations));
+
+        assertReflectionEquals("Wrong ordering", expected, result, TestsUtil.DEFAULT_COMPARATOR_MODE);
+    }
+
+    @Test
+    public void toSortedCsvAnnotationLinesByNaturalOrderNodesPlusAnnotationsTests() {
         DatasetData ds1 = newDataset("ds.1");
         ds1.setAnnotations(Sets.newHashSet(newTag("tag.003"), newTag("tag.01")));
 
@@ -134,13 +196,38 @@ public class PojosUtilTest {
         Collection<DatasetData> datasets = Lists.newArrayList(ds1, ds2);
         Collection<PojoData> pojos = DatasetsUtil.toPojos(datasets);
 
-        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(pojos);
+        Comparator<String> naturalOrdering = Ordering.natural();
+        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(pojos, naturalOrdering);
 
         assertNotNull(result, "Non-null results expected");
         log.trace("{}", result);
 
         List<CsvAnnotationLine> expected = Lists.newArrayList(
                 createLenient(1L, "ds.1",  Lists.newArrayList("tag.003", "tag.01")),
+                createLenient(2L, "ds.12", Lists.newArrayList("Atag", "Ztag")));
+
+        assertReflectionEquals("Wrong ordering", expected, result, TestsUtil.DEFAULT_COMPARATOR_MODE);
+    }
+
+    @Test
+    public void toSortedCsvAnnotationLinesByAlphanumericOrderNodesPlusAnnotationsTests() {
+        DatasetData ds1 = newDataset("ds.1");
+        ds1.setAnnotations(Sets.newHashSet(newTag("tag.003"), newTag("tag.01")));
+
+        DatasetData ds2 = newDataset("ds.12");
+        ds2.setAnnotations(Sets.newHashSet(newTag("Ztag"), newTag("Atag")));
+
+        Collection<DatasetData> datasets = Lists.newArrayList(ds1, ds2);
+        Collection<PojoData> pojos = DatasetsUtil.toPojos(datasets);
+
+        Comparator<String> alphanumOrdering = AnnotationsUtil.EXPORT_LINE_COMPARATOR;
+        List<CsvAnnotationLine> result = PojosUtil.toSortedCsvAnnotationLines(pojos, alphanumOrdering);
+
+        assertNotNull(result, "Non-null results expected");
+        log.trace("{}", result);
+
+        List<CsvAnnotationLine> expected = Lists.newArrayList(
+                createLenient(1L, "ds.1",  Lists.newArrayList("tag.01", "tag.003")),
                 createLenient(2L, "ds.12", Lists.newArrayList("Atag", "Ztag")));
 
         assertReflectionEquals("Wrong ordering", expected, result, TestsUtil.DEFAULT_COMPARATOR_MODE);

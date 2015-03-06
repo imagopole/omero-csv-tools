@@ -5,6 +5,7 @@ package org.imagopole.omero.tools.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +20,7 @@ import pojos.AnnotationData;
 import pojos.FileAnnotationData;
 import pojos.TagAnnotationData;
 
+import com.eekboom.utils.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Collections2;
@@ -39,7 +41,7 @@ public final class AnnotationsUtil {
     /** Application logs */
     private static final Logger LOG = LoggerFactory.getLogger(AnnotationsUtil.class);
 
-    /** Default appliocation's MIME type. */
+    /** Default application's MIME type. */
     public static final String CSV_MIME_TYPE = "text/csv";
 
     /** Root application namespace for annotations filtering. */
@@ -58,6 +60,10 @@ public final class AnnotationsUtil {
      *  </ol>
      *  */
     public static final String EXPORT_DESCRIPTION_FORMAT = "CSV export for %s %s";
+
+    /** Comparator for pojos names and annotations values ordering before CSV export.
+     *  Uses alphanumeric string comparisons by default. */
+    public static final Comparator<String> EXPORT_LINE_COMPARATOR = Strings.getNaturalComparatorAscii();
 
     /**
      * Private constructor.
@@ -193,14 +199,17 @@ public final class AnnotationsUtil {
     }
 
     /**
-     * Builds a list of annotations by string value.
-     *
-     * Values are sorted by natural String order.
+     * Builds a list of annotations by string value ordered according to the specified comparator.
      *
      * @param annotations the annotations to be converted/sorted
      * @return list of annotations values, or an empty list
      */
-    public static List<String> toOrderedAnnotationValues(Collection<? extends AnnotationData> annotations) {
+    public static List<String> toOrderedAnnotationValues(
+            Collection<? extends AnnotationData> annotations,
+            Comparator<String> valueComparator) {
+
+        Check.notNull(valueComparator, "valueComparator");
+
         List<String> result = new ArrayList<String>();
 
         if (null != annotations) {
@@ -208,7 +217,7 @@ public final class AnnotationsUtil {
             Collection<String> annotationsValues =
                     Collections2.transform(annotations, FunctionsUtil.toAnnotationStringContent);
 
-            result = Ordering.natural().sortedCopy(annotationsValues);
+            result = Ordering.from(valueComparator).sortedCopy(annotationsValues);
 
         }
 

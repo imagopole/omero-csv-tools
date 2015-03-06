@@ -6,6 +6,10 @@ tests:
     classes:
       - org.imagopole.omero.tools.DbUnitInitializerTest
 
+  - name: ThirdParty
+    classes:
+      - com.eekboom.utils.TestStrings
+
   - name: Util
     classes:
       - org.imagopole.omero.tools.util.AnnotationsUtilTest
