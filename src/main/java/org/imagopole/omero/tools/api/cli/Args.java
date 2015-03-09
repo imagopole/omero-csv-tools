@@ -14,6 +14,7 @@ import omero.model.Screen;
 import omero.model.TagAnnotation;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 
 /**
  * Command line arguments supported by the CSV Annotation Tool.
@@ -22,6 +23,9 @@ import com.google.common.base.Charsets;
  *
  */
 public class Args {
+
+    /** Separator for dumped enumeration values. */
+    private static final String ENUM_SEPARATOR = ",";
 
     /**
      * Private constructor
@@ -43,6 +47,14 @@ public class Args {
 
         // to be reintroduced later if needed
         //comment;
+
+        /**
+         * Formats the enumeration values array to string.
+         * @return the enum values as a comma separated string
+         */
+        public static String dump() {
+            return Joiner.on(ENUM_SEPARATOR).join(values());
+        }
 
         /**
          * The OMERO model class for this argument.
@@ -90,6 +102,14 @@ public class Args {
 
         /** Represents a <code>omero.model.PlateAquisition</code>. */
         plateacquisition;
+
+        /**
+         * Formats the enumeration values array to string.
+         * @return the enum values as a comma separated string
+         */
+        public static String dump() {
+            return Joiner.on(ENUM_SEPARATOR).join(values());
+        }
 
         /**
          * The OMERO model class for this argument.
@@ -153,6 +173,14 @@ public class Args {
         plateacquisition;
 
         /**
+         * Formats the enumeration values array to string.
+         * @return the enum values as a comma separated string
+         */
+        public static String dump() {
+            return Joiner.on(ENUM_SEPARATOR).join(values());
+        }
+
+        /**
          * The OMERO model class for this argument.
          * @return the implementation class
          */
@@ -191,6 +219,49 @@ public class Args {
 
             return clazz;
         }
+
+        /**
+         * The {@link AnnotatedType} directly below this container type in the OMERO hierarchy.
+         *
+         * @return the nested child type below this container
+         */
+        public AnnotatedType getChildAnnotatedType() {
+            AnnotatedType childType = null;
+
+            switch (this) {
+
+                case project:
+                    childType = AnnotatedType.dataset;
+                    break;
+
+                case dataset:
+                    childType = AnnotatedType.image;
+                    break;
+
+                case screen:
+                    childType = AnnotatedType.plate;
+                    break;
+
+                case plate:
+                    childType = AnnotatedType.plateacquisition;
+                    break;
+
+                case plateacquisition:
+                    childType = AnnotatedType.image;
+                    break;
+
+                case local:
+                    throw new IllegalArgumentException(
+                        "Non-hierarchical/OME model related container type local");
+
+                default:
+                    throw new IllegalArgumentException("Unknown container type");
+
+            }
+
+            return childType;
+        }
+
     }
 
     /**

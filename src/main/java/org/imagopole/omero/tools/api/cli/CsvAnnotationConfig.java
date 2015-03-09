@@ -7,6 +7,8 @@ import static org.imagopole.omero.tools.util.ParseUtil.empty;
 
 import com.google.common.base.Objects;
 
+import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.Args.Defaults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,7 @@ public class CsvAnnotationConfig {
     private String username;
     private String password;
     private String sessionKey;
-    private String annotatedTypeArg;
+    private String annotatedTypeArg; //-- now optional: if empty, defaults to implicit "child" mode
     private String annotationTypeArg;
     private String csvContainerTypeArg;
     private Long containerId;
@@ -62,13 +64,41 @@ public class CsvAnnotationConfig {
             return configuredFilename;
         }
 
-        // otherwise use the naming convention
+        // otherwise use the naming convention (based on the _effective_ annotation target)
         String inferredFileName =
-            NamingConventions.build(getAnnotatedTypeArg(), getAnnotationTypeArg(), getExportMode());
+            NamingConventions.build(
+                getOrInferEffectiveAnnotatedType().name(), getAnnotationTypeArg(), getExportMode());
         log.info("Inferring csv filename from container & annotation types: {}", inferredFileName);
 
         return inferredFileName;
      }
+
+    /**
+     * Determines the effective annotated type: when the default ('child') annotated is enabled,
+     * lookup the actual type one level down the OMERO hierarchy starting from the selected container.
+     *
+     * @return the effective annotated type to be used for processing
+     *
+     * @see ContainerType#getChildAnnotatedType()
+     */
+    public AnnotatedType getOrInferEffectiveAnnotatedType() {
+        // get CLI argument as configured if available
+        String configuredType = getAnnotatedTypeArg();
+
+        // if no annotation target defined, infer from the implicit OMERO data model container hierarchy
+        if (empty(configuredType)) {
+            ContainerType containerTypeParameter = ContainerType.valueOf(getCsvContainerTypeArg());
+            AnnotatedType effectiveAnnotatedType = containerTypeParameter.getChildAnnotatedType();
+            log.info("Inferring effective annotated type from arg and container type: {}", effectiveAnnotatedType);
+
+            return effectiveAnnotatedType;
+        } else {
+            AnnotatedType configuredAnnotatedType = AnnotatedType.valueOf(getAnnotatedTypeArg());
+            log.info("Reusing annotated type from configured argument: {}", configuredAnnotatedType);
+
+            return configuredAnnotatedType;
+        }
+    }
 
      public String dump() {
         return Objects.toStringHelper(this)

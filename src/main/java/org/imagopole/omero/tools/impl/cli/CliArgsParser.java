@@ -6,6 +6,9 @@ package org.imagopole.omero.tools.impl.cli;
 import static org.imagopole.omero.tools.util.ParseUtil.empty;
 import gnu.getopt.LongOpt;
 
+import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,25 +48,27 @@ public class CliArgsParser extends AbstractArgsParser {
             + "  -u, --username                  OMERO experimenter username \n"
             + "  -w, --password                  OMERO experimenter password \n"
             + "\n"
-            + "      --annotated-type            Type of annotated objects (eg. project, dataset, "
-            +                                    "image being linked to). \n"
-            + "                                  Valid values: 'dataset' \n"    // TODO: 'image', 'project?'
-            + "\n"
             + "      --annotation-type           Type of annotation. \n"
-            + "                                  Valid values: 'tag' \n"
+            + "                                  Valid values: " + AnnotationType.dump() + "\n"
             + "\n"
             + "      --csv-container-type        Type of object used to source the csv file from. \n"
-            + "                                  Valid values: 'project', 'local' \n"
+            + "                                  Valid values: " + ContainerType.dump() + " \n"
             + "\n"
             + "      --csv-container-id          Identifier of the remote top-level container. \n"
             + "                                  Serves as a parent to filter the specified "
             +                                    "annotated-type targets. \n"
             + "                                  If 'csv-container-type' is set to a 'remote' "
             +                                    "container type such as 'project', 'dataset' or "
-            +                                    "'image', also serves as the csv file attachment "
+            +                                    "'screen', also serves as the csv file attachment "
             +                                    "bearing container. \n "
             + "\n"
             + "Optional arguments:"
+            + "\n"
+            + "      --annotated-type            Type of annotated objects (eg. dataset, plate,"
+            +                                    "image being linked to). When empty, defaults to "
+            +                                    "the child data type within the selected "
+            +                                    "csv-container-type.\n"
+            + "                                  Valid values: " + AnnotatedType.dump() + "\n"
             + "\n"
             + "  -h, --help                      Display this help \n"
             + "\n"
@@ -72,7 +77,7 @@ public class CliArgsParser extends AbstractArgsParser {
             + "\n"
             + "      --csv-file-name             Name of CSV file \n"
             + "                                  Default value: as per naming convention: "
-            +                                    "{annotated-type}_{annotation-type}.csv"
+            +                                    "{annotated-type}_{annotation-type}.csv \n"
             + "                                  Eg. dataset_tag.csv, image_comment.csv \n"
             + "\n"
             + "      --csv-delimiter             CSV file delimiter character. \n"
@@ -139,7 +144,7 @@ public class CliArgsParser extends AbstractArgsParser {
         new LongOpt("password", LongOpt.REQUIRED_ARGUMENT, null, 'w'),
 
         //   -- app-specific args
-        new LongOpt("annotated-type",     LongOpt.REQUIRED_ARGUMENT, null, 01),
+        new LongOpt("annotated-type",     LongOpt.OPTIONAL_ARGUMENT, null, 01), //-- now optional
         new LongOpt("annotation-type",    LongOpt.REQUIRED_ARGUMENT, null, 02),
         new LongOpt("csv-container-type", LongOpt.REQUIRED_ARGUMENT, null, 03),
         new LongOpt("csv-container-id",   LongOpt.REQUIRED_ARGUMENT, null, 04),
@@ -196,7 +201,6 @@ public class CliArgsParser extends AbstractArgsParser {
         if (empty(config.getUsername()))            { valid = false; validationMessages.append("\n username ");          }
         if (empty(config.getPassword()))            { valid = false; validationMessages.append("\n password");           }
 
-        if (empty(config.getAnnotatedTypeArg()))    { valid = false; validationMessages.append("\n annotated-type");     }
         if (empty(config.getAnnotationTypeArg()))   { valid = false; validationMessages.append("\n annotation-type");    }
         if (empty(config.getCsvContainerTypeArg())) { valid = false; validationMessages.append("\n csv-container-type"); }
         if (null == config.getContainerId())        { valid = false; validationMessages.append("\n csv-container-id");   }

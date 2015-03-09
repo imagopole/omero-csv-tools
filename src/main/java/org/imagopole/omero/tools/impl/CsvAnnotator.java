@@ -142,11 +142,10 @@ public class CsvAnnotator {
         // convert cli arguments to valid enum values or fail
         final String containerTypeArg = config.getCsvContainerTypeArg();
         final String annotationTypeArg = config.getAnnotationTypeArg();
-        final String annotatedTypeArg = config.getAnnotatedTypeArg();
 
         final ContainerType fileContainerType = ContainerType.valueOf(containerTypeArg);
         final AnnotationType annotationType = AnnotationType.valueOf(annotationTypeArg);
-        final AnnotatedType annotatedType = AnnotatedType.valueOf(annotatedTypeArg);
+        final AnnotatedType annotatedType = config.getOrInferEffectiveAnnotatedType();
 
         // read CSV content from input source (local file or remote file annotation)
         // and decode into string data
@@ -187,11 +186,10 @@ public class CsvAnnotator {
         // convert cli arguments to valid enum values or fail
         final String containerTypeArg = config.getCsvContainerTypeArg();
         final String annotationTypeArg = config.getAnnotationTypeArg();
-        final String annotatedTypeArg = config.getAnnotatedTypeArg();
 
         final ContainerType fileContainerType = ContainerType.valueOf(containerTypeArg);
         final AnnotationType annotationType = AnnotationType.valueOf(annotationTypeArg);
-        final AnnotatedType annotatedType = AnnotatedType.valueOf(annotatedTypeArg);
+        final AnnotatedType annotatedType = config.getOrInferEffectiveAnnotatedType();
 
         // lookup the (annotated) OMERO data hierarchy for export
         Collection<PojoData> entitiesPlusAnnotations =
