@@ -37,12 +37,20 @@ COMMAND_PATH_FORMAT = "{0} --hostname='localhost' --session-key='{1}' {2} --anno
 SINGLE_ARGUMENT_FORMAT = "--{0}='{1}'"
 
 ##
+# Default value for the optional annotated type parameter.
+# Using an empty character string causes the annotation target to be defined as
+# the data type nested one level below the selected container (eg. Project -> Dataset, Dataset -> Image).
+##
+DEFAULT_ANNOTATED_TYPE = ""
+
+##
 # OMERO script enumeration values for combo-boxes
 # All values follow the script style guidelines for data binding and
 # are converted to their lowercase equivalent before the external
 # process invocation
 ##
 ANNOTATED_TYPES_ENUM = [
+    rstring(DEFAULT_ANNOTATED_TYPE),
     rstring("Image"),
     rstring("Dataset"),
     rstring("PlateAcquisition"),
@@ -237,8 +245,11 @@ def format_external_parameters(parameters_map):
     formatted_params = []
     for key in parameters_map:
         param_value = parameters_map[key]
-        param = SINGLE_ARGUMENT_FORMAT.format(key, param_value)
-        formatted_params.append(param)
+        if param_value:
+            param = SINGLE_ARGUMENT_FORMAT.format(key, param_value)
+            formatted_params.append(param)
+        else:
+            log("format_external_parameters: skipping key '{0}' with empty value".format(key))
 
     log("format_external_parameters: {0}".format(formatted_params))
 
@@ -340,10 +351,12 @@ def run_as_script():
 
     scripts.String(
         Labels.ANNOTATED_TYPE,
-        optional = False,
+        optional = True,
         grouping = "1",
-        description = "The type of data you want to annotate (eg. image, dataset or plate/plateacquisition)",
-        values = ANNOTATED_TYPES_ENUM
+        description = """The type of data you want to annotate (eg. image, dataset or plate/plateacquisition).
+        Leave empty to use the default 'child' convention (ie. pick the selected container's direct children as annotation targets).""",
+        values = ANNOTATED_TYPES_ENUM,
+        default = DEFAULT_ANNOTATED_TYPE
         ),
 
     #---- Optional arguments
