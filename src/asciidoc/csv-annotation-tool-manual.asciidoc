@@ -84,8 +84,22 @@ plates, screen, plate_tag.csv, comma, yes
 
 The annotation tool relies on the file attachment mechanism provided by OMERO to retrieve the CSV file remotely.
 
-In its current form, it follows OMERO's hierarchical Project /Dataset / Image or Screen / Plate / Well / Image organisation
-schemes to relate the CSV file to the candidates for annotation.
+In its current form, it follows OMERO's hierarchical _Project / Dataset / Image_ and _Screen / Plate / Well / Image_
+organisation structures to infer the candidates for annotation and CSV file location.
+
+NOTE: The underlying approach follows the convention to *annotate _direct descendants_* in the OMERO data hierarchy,
+and to *attach* the CSV file to the annotation targets' *_direct ancestor_*, as illustrated in the table below.
+
+[width="80%", format="csv", options="header"]
+|===
+Ancestor type / _Attachment target_, Default descendant type / _Annotation target_
+Project,Dataset
+Dataset,Image
+Screen,Plate
+Plate,PlateAcquisition
+PlateAcquisition,Image
+|===
+
 The tool currently allows:
 
 ==== For Project / Dataset / Image data

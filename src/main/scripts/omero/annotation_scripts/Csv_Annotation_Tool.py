@@ -318,10 +318,11 @@ def run_as_script():
     """
     Bulk annotate your data using definitions retrieved from a CSV file.
 
-    In order to tag datasets [plates] within a project [screen], attach the CSV file to the project [screen].
-    In order to tag images within a dataset [plate run], attach the CSV file to the dataset [plate run].
+    Attach the CSV file to the parent container for the data you wish to annotate - eg.
+    - in order to tag datasets within a project: attach the file to the project.
+    - in order to tag images within a plate run: attach the file to the plate run.
 
-    A detailed user guide is available in the distributed "csv-annotation-tool-manual".
+    A detailed user guide is available in the distributed manual.
     """,
 
     #---- Required arguments
