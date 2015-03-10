@@ -29,7 +29,7 @@ public interface FileReaderService {
      *
      * @param experimenterId the experimenter
      * @param containerId the container ID used to lookup the attached file from
-     * @param fileContainerType the type of container used to locate the atatched file (eg. project, dataset)
+     * @param containerType the type of container used to locate the attached file (eg. project, dataset)
      * @param fileName the file name
      * @return the CSV content as String
      * @throws ServerError OMERO client or server failure
@@ -38,7 +38,7 @@ public interface FileReaderService {
     CsvData readFromRemoteFileAnnotation(
                     Long experimenterId,
                     Long containerId,
-                    ContainerType fileContainerType,
+                    ContainerType containerType,
                     String fileName) throws ServerError, IOException;
 
 }

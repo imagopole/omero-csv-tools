@@ -154,9 +154,6 @@ public class Args {
      */
     public static enum ContainerType {
 
-        /** Represents a local file on the filesystem (no OMERO model counterpart). */
-        local,
-
         /** Represents a <code>omero.model.Project</code>. */
         project,
 
@@ -209,9 +206,6 @@ public class Args {
                     clazz = PlateAcquisition.class;
                     break;
 
-                case local:
-                    throw new IllegalArgumentException("No model class for container of type local");
-
                 default:
                     throw new IllegalArgumentException("Unknown container type");
 
@@ -250,16 +244,36 @@ public class Args {
                     childType = AnnotatedType.image;
                     break;
 
-                case local:
-                    throw new IllegalArgumentException(
-                        "Non-hierarchical/OME model related container type local");
-
                 default:
                     throw new IllegalArgumentException("Unknown container type");
 
             }
 
             return childType;
+        }
+
+    }
+
+    /**
+     * Enumeration for the --csv-file-type argument.
+     *
+     * @author seb
+     *
+     */
+    public static enum FileType {
+
+        /** Represents a local file on the filesystem (no OMERO model counterpart). */
+        local,
+
+        /** Represents a <code>omero.model.FileAnnotation</code> attachment linked to an OMERO container. */
+        remote;
+
+        /**
+         * Formats the enumeration values array to string.
+         * @return the enum values as a comma separated string
+         */
+        public static String dump() {
+            return Joiner.on(ENUM_SEPARATOR).join(values());
         }
 
     }
@@ -277,6 +291,7 @@ public class Args {
         public static final String    UTF_8_CHARSET     =  Charsets.UTF_8.name();
         public static final Boolean   SKIP_HEADER_ON    =  Boolean.TRUE;
         public static final Boolean   EXPORT_MODE_OFF   =  Boolean.FALSE;
+        public static final String    FILE_TYPE_REMOTE  =  FileType.remote.name();
 
         private Defaults() {
             super();

@@ -50,7 +50,7 @@ public interface FileWriterService {
      *
      * @param experimenterId the experimenter
      * @param containerId the container ID used to lookup the attached file from
-     * @param fileContainerType the type of container used to locate the attached file (eg. project, dataset)
+     * @param containerType the type of container used to locate the attached file (eg. project, dataset)
      * @param fileName the file name
      * @param contentType the file MIME type
      * @param fileContent the CSV content as String
@@ -62,7 +62,7 @@ public interface FileWriterService {
     Long writeToRemoteFileAnnotation(
                     Long experimenterId,
                     Long containerId,
-                    ContainerType fileContainerType,
+                    ContainerType containerType,
                     String fileName,
                     MimeType contentType,
                     String fileContent,

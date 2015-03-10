@@ -18,6 +18,7 @@ import org.imagopole.omero.tools.api.blitz.OmeroUpdateService;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
+import org.imagopole.omero.tools.api.cli.Args.FileType;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.imagopole.omero.tools.api.ctrl.CsvAnnotationController;
 import org.imagopole.omero.tools.api.ctrl.CsvExportController;
@@ -28,9 +29,9 @@ import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.impl.blitz.AnnotationBlitzService;
-import org.imagopole.omero.tools.impl.blitz.ShimContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.FileBlitzService;
 import org.imagopole.omero.tools.impl.blitz.QueryBlitzService;
+import org.imagopole.omero.tools.impl.blitz.ShimContainersBlitzService;
 import org.imagopole.omero.tools.impl.blitz.UpdateBlitzService;
 import org.imagopole.omero.tools.impl.ctrl.DefaultCsvAnnotationController;
 import org.imagopole.omero.tools.impl.ctrl.DefaultCsvExportController;
@@ -140,10 +141,12 @@ public class CsvAnnotator {
         final String csvFileName = config.getOrInferCsvFilename();
 
         // convert cli arguments to valid enum values or fail
+        final String fileTypeArg = config.getCsvFileTypeArg();
         final String containerTypeArg = config.getCsvContainerTypeArg();
         final String annotationTypeArg = config.getAnnotationTypeArg();
 
-        final ContainerType fileContainerType = ContainerType.valueOf(containerTypeArg);
+        final FileType fileType = FileType.valueOf(fileTypeArg);
+        final ContainerType containerType = ContainerType.valueOf(containerTypeArg);
         final AnnotationType annotationType = AnnotationType.valueOf(annotationTypeArg);
         final AnnotatedType annotatedType = config.getOrInferEffectiveAnnotatedType();
 
@@ -153,14 +156,15 @@ public class CsvAnnotator {
             fileReaderController.readByFileContainerType(
                     experimenterId,
                     containerId,
-                    fileContainerType,
+                    containerType,
+                    fileType,
                     csvFileName);
 
         // process CSV string to OMERO model object annotation links
         LinksData linksData = annotationController.buildAnnotationsByTypes(
                 experimenterId,
                 containerId,
-                fileContainerType,
+                containerType,
                 annotationType,
                 annotatedType,
                 csvData);
@@ -184,10 +188,12 @@ public class CsvAnnotator {
         final String csvFileName = config.getOrInferCsvFilename();
 
         // convert cli arguments to valid enum values or fail
+        final String fileTypeArg = config.getCsvFileTypeArg();
         final String containerTypeArg = config.getCsvContainerTypeArg();
         final String annotationTypeArg = config.getAnnotationTypeArg();
 
-        final ContainerType fileContainerType = ContainerType.valueOf(containerTypeArg);
+        final FileType fileType = FileType.valueOf(fileTypeArg);
+        final ContainerType containerType = ContainerType.valueOf(containerTypeArg);
         final AnnotationType annotationType = AnnotationType.valueOf(annotationTypeArg);
         final AnnotatedType annotatedType = config.getOrInferEffectiveAnnotatedType();
 
@@ -196,7 +202,7 @@ public class CsvAnnotator {
             metadataController.listEntitiesPlusAnnotations(
                 experimenterId,
                 containerId,
-                fileContainerType,
+                containerType,
                 annotationType,
                 annotatedType);
 
@@ -207,7 +213,8 @@ public class CsvAnnotator {
         fileWriterController.writeByFileContainerType(
                 experimenterId,
                 containerId,
-                fileContainerType,
+                containerType,
+                fileType,
                 csvFileName,
                 fileContent);
     }

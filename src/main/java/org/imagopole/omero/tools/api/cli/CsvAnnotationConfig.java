@@ -38,6 +38,7 @@ public class CsvAnnotationConfig {
     private String csvFileName;
 
     // -- optional
+    private String csvFileTypeArg  = Defaults.FILE_TYPE_REMOTE;
     private Character csvDelimiter = Defaults.COMMA_DELIMITER;
     private Boolean csvSkipHeader  = Defaults.SKIP_HEADER_ON;
     private String csvCharsetName  = Defaults.UTF_8_CHARSET;
@@ -93,7 +94,7 @@ public class CsvAnnotationConfig {
 
             return effectiveAnnotatedType;
         } else {
-            AnnotatedType configuredAnnotatedType = AnnotatedType.valueOf(getAnnotatedTypeArg());
+            AnnotatedType configuredAnnotatedType = AnnotatedType.valueOf(configuredType);
             log.info("Reusing annotated type from configured argument: {}", configuredAnnotatedType);
 
             return configuredAnnotatedType;
@@ -112,6 +113,7 @@ public class CsvAnnotationConfig {
             .add("csv-container-type", getCsvContainerTypeArg())
             .add("csv-container-id", getContainerId())
             .add("csv-file-name", getCsvFileName())
+            .add("csv-file-type", getCsvFileTypeArg())
             .add("csv-delimiter", getCsvDelimiter())
             .add("csv-skip-header", getCsvSkipHeader())
             .add("csv-charset", getCsvCharsetName())
@@ -364,6 +366,25 @@ public class CsvAnnotationConfig {
      */
     public void setExportMode(Boolean exportMode) {
         this.exportMode = exportMode;
+    }
+
+    /**
+     * Returns csvfileTypeArg.
+     * @return the csvfileTypeArg
+     */
+    public String getCsvFileTypeArg() {
+        return csvFileTypeArg;
+    }
+
+    /**
+     * Sets csvfileTypeArg.
+     * @param csvfileTypeArg the csvfileTypeArg to set
+     */
+    public void setCsvFileTypeArg(String csvfileTypeArg) {
+        // prevent defaults overriding
+        if (null != csvSkipHeader) {
+            this.csvFileTypeArg = csvfileTypeArg;
+        }
     }
 
 }

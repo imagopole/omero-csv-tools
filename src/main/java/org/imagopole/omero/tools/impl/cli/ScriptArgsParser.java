@@ -6,10 +6,11 @@ package org.imagopole.omero.tools.impl.cli;
 import static org.imagopole.omero.tools.util.ParseUtil.empty;
 import gnu.getopt.LongOpt;
 
-import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
-import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
+import org.imagopole.omero.tools.api.cli.Args.FileType;
+import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,17 +57,15 @@ public class ScriptArgsParser extends AbstractArgsParser {
             + "      --csv-container-id          Identifier of the remote top-level container. \n"
             + "                                  Serves as a parent to filter the specified "
             +                                    "annotated-type targets. \n"
-            + "                                  If 'csv-container-type' is set to a 'remote' "
-            +                                    "container type such "
-            +                                    "as 'project', 'dataset' or 'screen', also serves "
+            + "                                  If csv-file-type is set to 'remote', also serves "
             +                                    "as the csv file attachment bearing container. \n "
             + "\n"
             + "Optional arguments:"
             + "\n"
             + "      --annotated-type            Type of annotated objects (eg. dataset, plate,"
-            +                                    "image being linked to). When empty, defaults to "
-            +                                    "the child data type within the selected "
-            +                                    "csv-container-type.\n"
+            +                                    "image being linked to). \n"
+            + "                                  When empty, defaults to the child data type "
+            +                                    "within the selected csv-container-type.\n"
             + "                                  Valid values: " + AnnotatedType.dump() + "\n"
             + "\n"
             + "  -p, --port                      OMERO server port \n"
@@ -76,6 +75,11 @@ public class ScriptArgsParser extends AbstractArgsParser {
             + "                                  Default value: as per naming convention: "
             +                                    "{annotated-type}_{annotation-type}.csv \n"
             + "                                  Eg. dataset_tag.csv, image_comment.csv \n"
+            + "\n"
+            + "      --csv-file-type             Type of CSV file (local filesystem or remote "
+            +                                    "server attachment)  \n"
+            + "                                  Valid values: " + FileType.dump() + "\n"
+            + "                                  Default value: remote \n"
             + "\n"
             + "      --csv-delimiter             CSV file delimiter character. \n"
             + "                                  Default value: comma (,) \n"
@@ -120,7 +124,8 @@ public class ScriptArgsParser extends AbstractArgsParser {
         new LongOpt("csv-delimiter",   LongOpt.OPTIONAL_ARGUMENT, null, 20),
         new LongOpt("csv-skip-header", LongOpt.OPTIONAL_ARGUMENT, null, 30),
         new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40),
-        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 50)
+        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 50),
+        new LongOpt("csv-file-type",   LongOpt.OPTIONAL_ARGUMENT, null, 60)
 
     };
 
@@ -164,6 +169,7 @@ public class ScriptArgsParser extends AbstractArgsParser {
         if (empty(config.getAnnotationTypeArg()))   { valid = false; validationMessages.append("\n annotation-type");    }
         if (empty(config.getCsvContainerTypeArg())) { valid = false; validationMessages.append("\n csv-container-type"); }
         if (null == config.getContainerId())        { valid = false; validationMessages.append("\n csv-container-id");   }
+        if (empty(config.getCsvFileTypeArg()))      { valid = false; validationMessages.append("\n csv-file-type");      }
         if (null == config.getCsvDelimiter())       { valid = false; validationMessages.append("\n csv-delimiter");      }
         if (null == config.getCsvSkipHeader())      { valid = false; validationMessages.append("\n csv-skip-header");    }
         if (null == config.getCsvCharsetName())     { valid = false; validationMessages.append("\n csv-charset");        }

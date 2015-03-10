@@ -131,6 +131,12 @@ public abstract class AbstractArgsParser implements ArgsParser {
                     config.setExportMode(parseBooleanOrNull(exportMode));
                     break;
 
+               // --csv-file-type : optional
+                case 60:
+                    String csvFileType = g.getOptarg();
+                    config.setCsvFileTypeArg(csvFileType);
+                    break;
+
                 // --hostname : required
                 case 's':
                     String hostname = g.getOptarg();

@@ -132,7 +132,7 @@ public class DefaultFileWriterService implements FileWriterService {
     public Long writeToRemoteFileAnnotation(
             Long experimenterId,
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String fileName,
             MimeType contentType,
             String fileContent,
@@ -140,7 +140,7 @@ public class DefaultFileWriterService implements FileWriterService {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
         Check.notEmpty(fileName, "fileName");
         Check.notNull(contentType, "contentType");
         Check.notEmpty(fileContent, "fileContent");
@@ -152,9 +152,9 @@ public class DefaultFileWriterService implements FileWriterService {
         // attach newly created OriginalFile to container
         if (null != fileId) {
             log.debug("Linking original file: {} - {} to container: {} of type {}",
-                      fileId, fileName, containerId, fileContainerType);
+                      fileId, fileName, containerId, containerType);
 
-            attachFileToContainer(fileId, fileContainerType, containerId, annotationInfo);
+            attachFileToContainer(fileId, containerType, containerId, annotationInfo);
         }
 
         return fileId;
@@ -186,25 +186,25 @@ public class DefaultFileWriterService implements FileWriterService {
 
     private void attachFileToContainer(
             Long fileId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             Long containerId,
             AnnotationInfo annotationInfo) throws ServerError {
 
         Check.notNull(fileId, "fileId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
         Check.notNull(annotationInfo, "annotationInfo");
 
         // lookup annotation target container
         DataObject containerPojo =
-            queryService.findById(fileContainerType.getModelClass(), containerId);
-        rejectIfNoContainerFound(containerPojo, fileContainerType, containerId);
+            queryService.findById(containerType.getModelClass(), containerId);
+        rejectIfNoContainerFound(containerPojo, containerType, containerId);
 
         // build transient FileAnnotation to be persisted
         AnnotationData fileAnnotationPojo = buildFileAnnotationPojo(fileId, annotationInfo);
 
         // lookup container-dependent annotation linker and build the container-annotation link
-        AnnotationLinker annotationLinker = AnnotationLinkers.forContainerType(fileContainerType);
+        AnnotationLinker annotationLinker = AnnotationLinkers.forContainerType(containerType);
         IObject linkObject = annotationLinker.link(fileAnnotationPojo, containerPojo);
 
         // create the FileAnnotation and ContainerAnnotationLink entities
@@ -214,10 +214,10 @@ public class DefaultFileWriterService implements FileWriterService {
         if (null != containerAnnotationLink) {
             Long linkId = containerAnnotationLink.getId().getValue();
             log.debug("Created attachment link: {} for original file: {} and container: {} of type {}",
-                      linkId, fileId, containerId, fileContainerType);
+                      linkId, fileId, containerId, containerType);
         } else {
             log.error("Unable to attach remote file {} to container {} of type {}",
-                      fileId, containerId, fileContainerType);
+                      fileId, containerId, containerType);
         }
     }
 
@@ -263,13 +263,13 @@ public class DefaultFileWriterService implements FileWriterService {
 
     private void rejectIfNoContainerFound(
             DataObject containerPojo,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             Long containerId) {
 
         if (null == containerPojo) {
             throw new IllegalArgumentException(
                String.format("No container of type %s found as attachment target with id: %s",
-                             fileContainerType, containerId));
+                             containerType, containerId));
         }
     }
 

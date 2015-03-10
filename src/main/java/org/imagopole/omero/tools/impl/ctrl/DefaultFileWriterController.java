@@ -15,6 +15,7 @@ import javax.activation.MimeType;
 import omero.ServerError;
 
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
+import org.imagopole.omero.tools.api.cli.Args.FileType;
 import org.imagopole.omero.tools.api.ctrl.FileWriterController;
 import org.imagopole.omero.tools.api.dto.AnnotationInfo;
 import org.imagopole.omero.tools.api.logic.FileWriterService;
@@ -51,33 +52,39 @@ public class DefaultFileWriterController implements FileWriterController {
     public void writeByFileContainerType(
             Long experimenterId,
             Long containerId,
-            ContainerType fileContainerType,
-            String fileName,
-            String fileContent) throws ServerError, IOException {
+            ContainerType containerType,
+            FileType fileType,
+            String fileName, String fileContent) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
+        Check.notNull(fileType, "fileType");
         Check.notEmpty(fileName, "fileName");
         Check.notEmpty(fileContent, "fileContent");
 
-        switch (fileContainerType) {
+        switch (fileType) {
 
             case local:
                 writeToLocalFile(experimenterId, fileName, fileContent);
                 break;
 
-            default:
+            case remote:
                 writeToRemoteFileAnnotation(
                                 experimenterId,
                                 containerId,
-                                fileContainerType,
+                                containerType,
                                 fileName,
                                 fileContent);
                 break;
+
+            default:
+                throw new UnsupportedOperationException(
+                   "File types write support currently limited to local and remote (attachment) only");
+
         }
 
-        log.debug("Written to: {} file: {}", fileContainerType, fileName);
+        log.debug("Written to: {} file: {}", containerType, fileName);
     }
 
     private void writeToLocalFile(
@@ -95,23 +102,23 @@ public class DefaultFileWriterController implements FileWriterController {
     private Long writeToRemoteFileAnnotation(
             Long experimenterId,
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String fileName,
             String fileContent) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
         Check.notEmpty(fileName, "fileName");
         Check.notEmpty(fileContent, "fileContent");
 
         MimeType contentType = parseContentTypeOrFail(CSV_MIME_TYPE);
-        AnnotationInfo annotationInfo = getExportModeAnnotationInfo(containerId, fileContainerType);
+        AnnotationInfo annotationInfo = getExportModeAnnotationInfo(containerId, containerType);
 
         Long result = null;
 
         // upload and attach to container as file annotation
-        switch (fileContainerType) {
+        switch (containerType) {
 
             case project:
             case dataset:
@@ -121,7 +128,7 @@ public class DefaultFileWriterController implements FileWriterController {
                 result = getFileWriterService().writeToRemoteFileAnnotation(
                             experimenterId,
                             containerId,
-                            fileContainerType,
+                            containerType,
                             fileName,
                             contentType,
                             fileContent,
@@ -137,9 +144,9 @@ public class DefaultFileWriterController implements FileWriterController {
         return result;
     }
 
-    private AnnotationInfo getExportModeAnnotationInfo(Long containerId, ContainerType fileContainerType) {
+    private AnnotationInfo getExportModeAnnotationInfo(Long containerId, ContainerType containerType) {
         String annotationDescription =
-            String.format(EXPORT_DESCRIPTION_FORMAT, fileContainerType, containerId);
+            String.format(EXPORT_DESCRIPTION_FORMAT, containerType, containerId);
 
         return DefaultAnnotationInfo.forInfo(EXPORT_NAMESPACE, annotationDescription);
     }

@@ -84,18 +84,18 @@ public class DefaultFileReaderService implements FileReaderService {
     public CsvData readFromRemoteFileAnnotation(
             Long experimenterId,
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String fileName) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
         Check.notEmpty(fileName, "fileName");
 
         // lookup projects which bear the relevant xxx_yyy.csv file with
         // the annotations definitions
         FileAnnotationData attachment =
-            findFileAttachmentOrNull(containerId, fileContainerType, fileName);
+            findFileAttachmentOrNull(containerId, containerType, fileName);
 
         CsvData result = null;
 
@@ -151,11 +151,11 @@ public class DefaultFileReaderService implements FileReaderService {
 
     private FileAnnotationData findFileAttachmentOrNull(
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String attachedFileName) throws ServerError {
 
         FileAnnotationData fileAttachment =
-            findFileAnnotationByNameAndContainer(containerId, fileContainerType, attachedFileName);
+            findFileAnnotationByNameAndContainer(containerId, containerType, attachedFileName);
 
         log.debug("fileAttachment for container: {} {}", containerId, fileAttachment);
 
@@ -165,16 +165,16 @@ public class DefaultFileReaderService implements FileReaderService {
     // may return null or fail if no attachment found (TBD)
     private FileAnnotationData findFileAnnotationByNameAndContainer(
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String attachedFileName) throws ServerError {
 
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
         Check.notEmpty(attachedFileName, "attachedFileName");
 
         FileAnnotationData result = null;
 
-        Class<? extends IObject> containerClass = fileContainerType.getModelClass();
+        Class<? extends IObject> containerClass = containerType.getModelClass();
         log.debug("Finding all attachments for container {} of type {}",
                   containerId, containerClass.getSimpleName());
 

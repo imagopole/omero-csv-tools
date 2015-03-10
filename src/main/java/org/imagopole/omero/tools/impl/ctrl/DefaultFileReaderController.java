@@ -8,6 +8,7 @@ import java.io.IOException;
 import omero.ServerError;
 
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
+import org.imagopole.omero.tools.api.cli.Args.FileType;
 import org.imagopole.omero.tools.api.ctrl.FileReaderController;
 import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.logic.FileReaderService;
@@ -43,32 +44,39 @@ public class DefaultFileReaderController implements FileReaderController {
     public CsvData readByFileContainerType(
             Long experimenterId,
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
+            FileType fileType,
             String fileName) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
+        Check.notNull(fileType, "fileType");
         Check.notEmpty(fileName, "fileName");
 
         CsvData result = null;
 
-        switch (fileContainerType) {
+        switch (fileType) {
 
             case local:
                 result = readFromLocalFile(experimenterId, fileName);
                 break;
 
-            default:
+            case remote:
                 result = readFromRemoteFileAnnotation(
                                 experimenterId,
                                 containerId,
-                                fileContainerType,
+                                containerType,
                                 fileName);
                 break;
+
+            default:
+                 throw new UnsupportedOperationException(
+                    "File types read support currently limited to local and remote (attachment) only");
+
         }
 
-        log.debug("Reading from {} file: {}", fileContainerType, fileName);
+        log.debug("Reading from {} file: {}", containerType, fileName);
 
         return result;
     }
@@ -86,17 +94,17 @@ public class DefaultFileReaderController implements FileReaderController {
     private CsvData readFromRemoteFileAnnotation(
             Long experimenterId,
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String fileName) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
-        Check.notNull(fileContainerType, "fileContainerType");
+        Check.notNull(containerType, "containerType");
         Check.notEmpty(fileName, "fileName");
 
         CsvData result = null;
 
-        switch (fileContainerType) {
+        switch (containerType) {
 
             case project:
             case dataset:
@@ -106,7 +114,7 @@ public class DefaultFileReaderController implements FileReaderController {
                 result = getFileReaderService().readFromRemoteFileAnnotation(
                                 experimenterId,
                                 containerId,
-                                fileContainerType,
+                                containerType,
                                 fileName);
                 break;
 
@@ -116,14 +124,14 @@ public class DefaultFileReaderController implements FileReaderController {
                   + "or screen/plate/plateacquisition not supported");
         }
 
-        rejectIfRemoteFileNotFound(containerId, fileContainerType, fileName, result);
+        rejectIfRemoteFileNotFound(containerId, containerType, fileName, result);
 
         return result;
     }
 
     private void rejectIfRemoteFileNotFound(
             Long containerId,
-            ContainerType fileContainerType,
+            ContainerType containerType,
             String fileName,
             CsvData result) {
 
@@ -131,7 +139,7 @@ public class DefaultFileReaderController implements FileReaderController {
 
             throw new IllegalStateException(String.format(
                 "No csv attachment found with name: %1s for container: %d of type: %s",
-                fileName, containerId, fileContainerType));
+                fileName, containerId, containerType));
 
         }
     }
