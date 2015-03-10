@@ -231,7 +231,11 @@ jacocoTestReport {
 }
 
 asciidoctor {
-    backends = [ "html5" ]
+    sourceDir  = file("$projectDir/src/asciidoc")
+    backends   = [ "html5", "pdf" ]
+    attributes = [
+                   'pagenums': '' // generate page numbers for PDF backend - see asciidoctor-pdf#41
+                 ]
 }
 
 shadowJar {
@@ -332,9 +336,10 @@ task distributionZip {
 
 buildscript {
     ext.pluginsVersions = [
-        asciidoctor : '1.5.0',
-        shadow      : '1.2.0',
-        artifactory : '2.2.5'
+        asciidoctor      : '1.5.2',
+        asciidoctorjPdf  : '1.5.0-alpha.6',
+        shadow           : '1.2.0',
+        artifactory      : '2.2.5'
     ]
 
     repositories {
@@ -344,6 +349,7 @@ buildscript {
 
     dependencies {
         classpath 'org.asciidoctor:asciidoctor-gradle-plugin:' + pluginsVersions.asciidoctor
+        classpath 'org.asciidoctor:asciidoctorj-pdf:' + pluginsVersions.asciidoctorjPdf
         classpath 'com.github.jengelman.gradle.plugins:shadow:' + pluginsVersions.shadow
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
     }
