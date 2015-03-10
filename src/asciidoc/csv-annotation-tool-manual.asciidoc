@@ -1,7 +1,7 @@
 = OMERO.csvtools User Documentation
 Imagopole
 :icons: font
-:artifact_version: 0.2.2
+:artifact_version: 0.3
 :bintray_artifact_url: https://bintray.com/imagopole/omero/omero-csv-tools/
 :bintray_examples_dist_url: https://dl.bintray.com/imagopole/omero/omero-csv-tools/dist/omero-csv-tools-{artifact_version}-examples.zip
 :toc:

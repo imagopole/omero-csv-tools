@@ -1,6 +1,17 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.3
+
+- Build/dependencies updates
+  * Gradle & plugins versions upgrade
+  * Pull external jars from central repositories (OME/Maven)
+- Tickets
+  * 12075 - Add CSV export mode
+  * 12702 - Add HCS data types
+  * 12074 - Default to container's child as annotation target
+
+
 ## 0.2.3
 
 - Build/packaging maintenance (server flavors)

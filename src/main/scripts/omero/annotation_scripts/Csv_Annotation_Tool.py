@@ -400,7 +400,7 @@ def run_as_script():
         ),
 
     #---- script metadata
-    version      = "0.2.3 [OMERO-5.0.x-ice34]",
+    version      = "0.3 [OMERO-5.0.x-ice34]",
     authors      = [ "S. Simard", "Imagopole" ],
     institutions = [ "Institut Pasteur" ],
     contact      = "ssimard@pasteur.fr"
