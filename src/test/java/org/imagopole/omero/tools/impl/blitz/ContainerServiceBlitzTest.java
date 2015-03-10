@@ -175,13 +175,13 @@ public class ContainerServiceBlitzTest extends UnitilsTestNG {
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listImagesByExperimenterAndDatasetShouldRejectNullExpParam() throws ServerError {
-        containerService.listImagesByExperimenterAndDataset(null, 1L);
+        containerService.listImagesByExperimenterAndContainer(null, 1L, Dataset.class);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listImagesByExperimenterAndDatasetShouldRejectNullProjParam() throws ServerError {
-        containerService.listImagesByExperimenterAndDataset(1L, null);
+        containerService.listImagesByExperimenterAndContainer(1L, null, Dataset.class);
     }
 
     @Test
@@ -194,7 +194,7 @@ public class ContainerServiceBlitzTest extends UnitilsTestNG {
 
         // test
         Collection<ImageData> result =
-            containerService.listImagesByExperimenterAndDataset(1L, 1L);
+            containerService.listImagesByExperimenterAndContainer(1L, 1L, Dataset.class);
 
         assertNotNull(result, "Non-null results expected");
         assertTrue(result.isEmpty(), "Empty results expected");
@@ -225,7 +225,7 @@ public class ContainerServiceBlitzTest extends UnitilsTestNG {
 
         // test
         Collection<ImageData> result =
-            containerService.listImagesByExperimenterAndDataset(1L, 1L);
+            containerService.listImagesByExperimenterAndContainer(1L, 1L, Dataset.class);
         log.debug("{}", result);
 
         assertNotNull(result, "Non-null results expected");

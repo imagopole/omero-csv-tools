@@ -94,21 +94,6 @@ public class DefaultMetadataService implements MetadataService {
      * {@inheritDoc}
      */
     @Override
-    @Deprecated
-    public Collection<PojoData> listImagesPlusAnnotationsByExperimenterAndDataset(
-            Long experimenterId,
-            Long containerId,
-            AnnotationType annotationType,
-            AnnotatedType annotatedType) throws ServerError {
-
-        return listImagesPlusAnnotationsByExperimenterAndContainer(
-                    experimenterId, containerId, ContainerType.dataset, annotationType, annotatedType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Collection<PojoData> listImagesPlusAnnotationsByExperimenterAndContainer(
             Long experimenterId,
             Long containerId,

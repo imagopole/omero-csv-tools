@@ -92,29 +92,36 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldRejectNullExperimenter() throws ServerError {
-        metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
-                null, 1L, AnnotationType.tag, AnnotatedType.image);
+        metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
+                null, 1L, ContainerType.dataset, AnnotationType.tag, AnnotatedType.image);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldRejectNullDataset() throws ServerError {
-        metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
-                1L, null, AnnotationType.tag, AnnotatedType.image);
+        metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
+                1L, null, ContainerType.dataset, AnnotationType.tag, AnnotatedType.image);
+    }
+
+    @Test(expectedExceptions = { IllegalArgumentException.class },
+          expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
+    public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldRejectNullContainerType() throws ServerError {
+        metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
+                1L, 1L, null, AnnotationType.tag, AnnotatedType.image);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldRejectNullAnnotationType() throws ServerError {
-        metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
-                1L, 1L, null, AnnotatedType.image);
+        metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
+                1L, 1L, ContainerType.dataset, null, AnnotatedType.image);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldRejectNullAnnotatedType() throws ServerError {
-        metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
-                1L, 1L, AnnotationType.tag, null);
+        metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
+                1L, 1L, ContainerType.dataset, AnnotationType.tag, null);
     }
 
 
@@ -350,9 +357,9 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
           expectedExceptions = { IllegalStateException.class },
           expectedExceptionsMessageRegExp = "No image records found within container \\d* of type dataset .*")
     public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldRejectEmptyDatasets() throws ServerError {
-        metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
+        metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
             DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.Orphans.DATASET_ID,
-            AnnotationType.tag, AnnotatedType.image);
+            ContainerType.dataset, AnnotationType.tag, AnnotatedType.image);
     }
 
     @DataSet(value= { DataSets.Csv.IMAGES }, factory = SingleSchemaCsvDataSetFactory.class)
@@ -360,9 +367,9 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
     @Test(groups = { Groups.INTEGRATION })
     public void listImagesPlusAnnotationsByExperimenterAndDatasetShouldSupportNestedImages() throws ServerError {
         Collection<PojoData> result =
-            metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
+            metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
                 DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.Images.DATASET_ID,
-                AnnotationType.tag, AnnotatedType.image);
+                ContainerType.dataset, AnnotationType.tag, AnnotatedType.image);
 
         assertNotNull(result, "Non-null result expected");
         assertEquals(result.size(), 1, "One nested dataset expected");
@@ -379,9 +386,9 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
     @Test(groups = { Groups.INTEGRATION })
     public void listImagesPlusAnnotationsByExperimenterAndDatasetTest() throws ServerError {
         Collection<PojoData> result =
-            metadataService.listImagesPlusAnnotationsByExperimenterAndDataset(
+            metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
                 DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.ImagesAnnotated.DATASET_ID,
-                AnnotationType.tag, AnnotatedType.image);
+                ContainerType.dataset, AnnotationType.tag, AnnotatedType.image);
 
         assertNotNull(result, "Non-null result expected");
         assertEquals(result.size(), 1, "One nested image expected");

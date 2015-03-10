@@ -11,7 +11,6 @@ import java.util.Set;
 
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
-import omero.model.Dataset;
 import omero.model.IObject;
 import omero.model.Image;
 import omero.model.Plate;
@@ -93,26 +92,6 @@ public class ContainersBlitzService implements OmeroContainerService {
 
          return result;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-     @Override
-     @Deprecated
-     public Collection<ImageData> listImagesByExperimenterAndDataset(
-             Long experimenterId,
-             Long datasetId) throws ServerError {
-
-         Check.notNull(experimenterId, "experimenterId");
-         Check.notNull(datasetId, "datasetId");
-
-         Collection<ImageData> result = listImagesByExperimenterAndContainer(
-                 experimenterId,
-                 datasetId,
-                 Dataset.class);
-
-        return result;
-     }
 
     /**
      * {@inheritDoc}

@@ -30,20 +30,6 @@ public interface OmeroContainerService {
                     Long projectId) throws ServerError;
 
     /**
-     * Retrieve all images owned by experimenter within the specified dataset.
-     *
-     * @param experimenterId the experimenter
-     * @param datasetId the dataset
-     * @return the images, or an empty list if none found
-     * @throws ServerError OMERO client or server failure
-     * @deprecated use {@link #listImagesByExperimenterAndContainer(Long, Long, Class)} instead
-     */
-    @Deprecated
-    Collection<ImageData> listImagesByExperimenterAndDataset(
-                    Long experimenterId,
-                    Long datasetId) throws ServerError;
-
-    /**
      * Retrieve all images owned by experimenter within the specified container.
      *
      * @param experimenterId the experimenter

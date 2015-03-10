@@ -35,25 +35,6 @@ public interface MetadataService {
                 AnnotatedType annotatedType) throws ServerError;
 
     /**
-     * Retrieves all images owned by experimenter within the specified dataset, together
-     * with their linked annotations if any.
-     *
-     * @param experimenterId the experimenter
-     * @param containerId the dataset ID
-     * @param annotationType the type of annotation to fetch (eg. tag, comment)
-     * @param annotatedType the target of the annotation link (ie. image)
-     * @return the images, plus any optional related annotations
-     * @throws ServerError OMERO client or server failure
-     * @deprecated Use {@link #listImagesPlusAnnotationsByExperimenterAndContainer(Long, Long, ContainerType, AnnotationType, AnnotatedType)}
-     */
-    @Deprecated
-    Collection<PojoData> listImagesPlusAnnotationsByExperimenterAndDataset(
-                Long experimenterId,
-                Long containerId,
-                AnnotationType annotationType,
-                AnnotatedType annotatedType) throws ServerError;
-
-    /**
      * Retrieves all images owned by experimenter within the specified container, together
      * with their linked annotations if any.
      *
