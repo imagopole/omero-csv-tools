@@ -24,7 +24,7 @@ def applyProfile(aProfile) {
 }
 
 /** usage: gradle build -Pprofile=omero500-ice34 */
-ext.profile = hasProperty("profile") ? profile : 'omero506-ice34' // default profile: omero-5.0.6 + ice-3.4.2
+ext.profile = hasProperty("profile") ? profile : 'omero508-ice34' // default profile: omero-5.0.8 + ice-3.4.2
 applyProfile(profile)
 
 
@@ -108,8 +108,8 @@ dependencies {
     // see http://www.openmicroscopy.org/site/support/omero5/developers/Java.html
     //      http://www.openmicroscopy.org/community/viewtopic.php?f=6&t=7573
     compile group: 'omero', name: 'blitz', version: versions.omero, transitive: false
-	compile 'zeroc:ice:' + versions.ice
-	compile 'zeroc:ice-glacier2:' + versions.ice
+    compile 'zeroc:ice:' + versions.ice
+    compile 'zeroc:ice-glacier2:' + versions.ice
 
     compile 'org.apache.commons:commons-csv:' + versions.commonsCsv
     compile 'gnu.getopt:java-getopt:' + versions.getopt
@@ -236,7 +236,7 @@ asciidoctor {
 
 shadowJar {
     classifier "standalone"
-	manifest = sharedManifest
+    manifest = sharedManifest
 
     exclude 'META-INF/*.txt'
     exclude 'META-INF/*.DSA'
@@ -350,5 +350,5 @@ buildscript {
 }
 
 task wrapper(type: Wrapper) {
-	gradleVersion = '2.2.1'
+    gradleVersion = '2.2.1'
 }
