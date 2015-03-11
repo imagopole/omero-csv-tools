@@ -185,6 +185,15 @@ artifacts {
 // archives distributionZip
 }
 
+sourceSets {
+    main {
+        resources {
+            // include scripts as resources for easier processing/filtering w/o project layout changes
+            srcDirs += "$projectDir/src/main/scripts"
+        }
+    }
+}
+
 
 /********************************/
 /**** Plugins configuration ****/
@@ -294,11 +303,11 @@ task withDepsDistZip(type: Zip) { zipTask ->
         from "$buildDir/asciidoc"
     }
     into ("bin") {
-        from "$projectDir/src/main/scripts/cli"
-        from fileTree("$projectDir/src/main/scripts/omero").include("*.sh")
+        from "$sourceSets.main.output.resourcesDir/cli"
+        from fileTree("$sourceSets.main.output.resourcesDir/omero").include("*.sh")
     }
     into ("scripts") {
-        from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
+        from fileTree("$sourceSets.main.output.resourcesDir").include("omero/**").exclude("**/*.sh")
     }
     from configurations.runtime.allArtifacts.files
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt", "NOTICE.txt"])
@@ -315,11 +324,11 @@ task standaloneDistZip(type: Zip) { zipTask ->
         from "$buildDir/asciidoc"
     }
     into ("bin") {
-        from "$projectDir/src/main/scripts/cli"
-        from fileTree("$projectDir/src/main/scripts/omero").include("*.sh")
+        from "$sourceSets.main.output.resourcesDir/cli"
+        from fileTree("$sourceSets.main.output.resourcesDir/omero").include("*.sh")
     }
     into ("scripts") {
-        from fileTree("$projectDir/src/main/scripts").include("omero/**").exclude("**/*.sh")
+        from fileTree("$sourceSets.main.output.resourcesDir").include("omero/**").exclude("**/*.sh")
     }
     from fileTree("$libsDir").include("*-standalone.jar")
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt", "NOTICE.txt"])
