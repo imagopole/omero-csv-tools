@@ -33,7 +33,8 @@ public class ScriptArgsParser extends AbstractArgsParser {
            + "Example usage: \n"
            + "\n"
            + "  %s -s localhost -k secret --annotated-type dataset "
-           +      "--annotation-type tag --csv-container-type local --csv-container-id 1234 \n"
+           +      "--annotation-type tag --csv-container-type project "
+           +      "--csv-file-type remote --csv-container-id 1234 \n"
            + "\n"
            + "Run: %s -h or --help for extended options";
 
