@@ -1,0 +1,23 @@
+/**
+ * Buildfile fragment used as a Maven-style profile to define specific OMERO dependencies
+ * for the 5.1.0-m4-ice34 server flavor.
+ **/
+
+ext.omeVersions = [
+    omeroRelease : '5.1.0-m4-ice34-b31',
+    qualifier    : 'ome51m4',            //-- short server flavor classifier for distribution packages
+]
+
+ext.iceVersions = [
+    main           : '3.4.2',           //--OMERO: ice33, 34 or 35
+    qualifier      : 'ice34'            //-- short server flavor classifier for distribution packages
+]
+
+/** Additional, per-profile dependencies */
+dependencies {
+
+    // note: the OME/OME-XML model being under active development, no release version has
+    // been published yet, hence the SNAPSHOT dependency
+    profileRuntime group: 'ome', name: 'ome-xml', version: '5.1.0-SNAPSHOT', transitive: false
+
+}

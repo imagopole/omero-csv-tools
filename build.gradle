@@ -15,6 +15,17 @@ apply plugin: 'artifactory'
 /********************************/
 /**** Profile configuration ****/
 
+/** Profile scopes/dependencies configuration boilerplate */
+configurations {
+    // additional profile-specific scopes
+    profileCompile
+    profileRuntime
+
+    // append profile dependencies to the base classpath
+    compile.extendsFrom profileCompile
+    runtime.extendsFrom profileRuntime
+}
+
 /** Profile loading boilerplate */
 def applyProfile(aProfile) {
     def profilesDir = relativePath('build-profiles')
