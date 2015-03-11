@@ -236,6 +236,14 @@ asciidoctor {
     attributes = [
                    'pagenums': '' // generate page numbers for PDF backend - see asciidoctor-pdf#41
                  ]
+    separateOutputDirs = false
+
+    resources {
+        from(sourceDir) {
+            include 'images/**'
+            include 'files/**'
+        }
+    }
 }
 
 shadowJar {
