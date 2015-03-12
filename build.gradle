@@ -81,6 +81,14 @@ ext.versions = [
                    ]
 ]
 
+ext.resourcesFilterTokens = [
+   'project_version_token' : project.version,
+   'omero_version_token'   : versions.omero,
+   'ice_version_token'     : versions.ice,
+   'script_version_token'  : sprintf("%s [%s-%s]", //eg. 0.3.1-SNAPSHOT [ome508-ice34]
+                                     project.version, omeVersions.qualifier, iceVersions.qualifier)
+]
+
 /*********************************/
 /**** Builfile configuration ****/
 
@@ -194,6 +202,9 @@ sourceSets {
     }
 }
 
+processResources {
+    filter(org.apache.tools.ant.filters.ReplaceTokens, tokens : resourcesFilterTokens)
+}
 
 /********************************/
 /**** Plugins configuration ****/

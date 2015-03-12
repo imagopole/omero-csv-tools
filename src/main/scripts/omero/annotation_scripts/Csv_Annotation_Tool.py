@@ -112,7 +112,7 @@ PARAMETERS_KEYS_MAPPING = {
 # - the external command arguments values
 #
 # key   = OMERO script input parameter key
-# value = single-arg function to be applied for conversion  
+# value = single-arg function to be applied for conversion
 #         between the OMERO script parameter value and its
 #         CSV tool counterpart.
 #         If None, considered pass-through.
@@ -400,7 +400,7 @@ def run_as_script():
         ),
 
     #---- script metadata
-    version      = "0.3 [OMERO-5.0.x-ice34]",
+    version      = "@script_version_token@",
     authors      = [ "S. Simard", "Imagopole" ],
     institutions = [ "Institut Pasteur" ],
     contact      = "ssimard@pasteur.fr"

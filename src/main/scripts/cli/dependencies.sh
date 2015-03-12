@@ -10,12 +10,12 @@
 BIN_DIR=`dirname $0`
 UNPACK_DIR=`readlink -e "$BIN_DIR/.."`
 JARS_DIR="$UNPACK_DIR/lib"
-CSV_TOOL_VERSION="0.3.1-SNAPSHOT"
-OMERO_VERSION="5.0.8-ice34-b60"
-ICE_VERSION="3.4.2"
+CSV_TOOL_VERSION="@project_version_token@"
+OMERO_VERSION="@omero_version_token@"
+ICE_VERSION="@ice_version_token@"
 
 ####
-# Dependencies provided by the "with-dependencies" distribution 
+# Dependencies provided by the "with-dependencies" distribution
 # (ie. with split individual classpath components)
 
 # SLF4J binding implementation jars
