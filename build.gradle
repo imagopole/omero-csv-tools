@@ -10,6 +10,7 @@ apply plugin: 'jacoco'         // gradle-1.9 incubating
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'artifactory'
+apply plugin: 'flyway'
 
 
 /********************************/
@@ -441,7 +442,8 @@ buildscript {
         asciidoctor      : '1.5.2',
         asciidoctorjPdf  : '1.5.0-alpha.6',
         shadow           : '1.2.0',
-        artifactory      : '2.2.5'
+        artifactory      : '2.2.5',
+        flyway           : '3.1'
     ]
 
     repositories {
@@ -454,6 +456,7 @@ buildscript {
         classpath 'org.asciidoctor:asciidoctorj-pdf:' + pluginsVersions.asciidoctorjPdf
         classpath 'com.github.jengelman.gradle.plugins:shadow:' + pluginsVersions.shadow
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
+        classpath 'org.flywaydb:flyway-gradle-plugin:' + pluginsVersions.flyway
     }
 }
 
