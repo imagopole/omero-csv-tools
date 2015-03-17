@@ -50,6 +50,10 @@ description = """OMERO CSV Annotation Tool"""
 /********************************/
 /**** Custom properties     ****/
 
+ext.buildConfig = [
+    generatedTestResourcesDir : "$buildDir/generated-resources/test"
+]
+
 ext.sharedManifest = manifest {
     attributes 'Implementation-Title': 'OMERO CSV Annotation Tool',
                'Implementation-Version': version,
@@ -199,6 +203,11 @@ sourceSets {
             srcDirs += "$projectDir/src/main/scripts"
         }
     }
+
+    test {
+        // register an output folder on the test SourceSet for inclusion on the classpath
+        output.dir(buildConfig.generatedTestResourcesDir, builtBy: 'generateTestResources')
+    }
 }
 
 processResources {
@@ -289,6 +298,12 @@ shadowJar {
 
 /*********************************************/
 /**** Custom tasks/project configuration ****/
+
+task generateTestResources {
+    doLast {
+        new File(buildConfig.generatedTestResourcesDir).mkdirs()
+    }
+}
 
 /** Refresh database state prior to integration tests */
 task integrationTestDbSetup(type: Test) {
