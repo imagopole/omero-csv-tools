@@ -4,6 +4,7 @@
  **/
 
 ext.omeVersions = [
+    baseline     : '51x',                //-- short baseline classifier (eg. for db migrations location)
     omeroRelease : '5.1.0-m4-ice34-b31',
     qualifier    : 'ome51m4',            //-- short server flavor classifier for distribution packages
 ]
