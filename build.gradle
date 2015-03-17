@@ -348,11 +348,39 @@ task generateTestResources {
         generatedOmeroConfig.text = sb.toString()
     }
 
+    /* A poor man's integration testing man page/script which outputs a bunch of commands for manual execution
+     * Ideally should be runnable in one fell gradle swoop, with sudo command prompt, etc... */
+    def generateIntegrationTestInfo = {
+        def generatedTestInfo = new File(buildConfig.generatedTestResourcesDir, "integration-tests.sh")
+
+        def sb = new StringBuilder("#!/bin/bash")
+        sb.append("\n##############################################################################\n")
+        sb.append(sprintf("/bin/bash $projectDir/src/test/resources/db/setup-db.sh %s %s %s \n",
+                          integrationTests.db.name, integrationTests.db.owner, integrationTests.db.pwd))
+        sb.append("./gradlew integrationTestDbMigrate -Pprofile=").append(profile).append("\n")
+        sb.append(sprintf("\$OMERO_PREFIX/bin/omero config def %s-%s \n", project.name, profile))
+        sb.append(sprintf("\$OMERO_PREFIX/bin/omero config load -q %s/%s \n",
+                          buildConfig.generatedTestResourcesDir,
+                          integrationTests.resources.omeroServerConfigFileName))
+        sb.append("mkdir -p ").append(integrationTests.resources.omeroServerDataDir).append("\n")
+        sb.append("\$OMERO_PREFIX/bin/omero admin start \n")
+        sb.append("./gradlew test -Pprofile=").append(profile).append("\n")
+        sb.append("\$OMERO_PREFIX/bin/omero admin stop \n")
+        sb.append("\$OMERO_PREFIX/bin/omero config def default \n")
+        sb.append(sprintf("/bin/bash $projectDir/src/test/resources/db/teardown-db.sh %s %s \n",
+                          integrationTests.db.name, integrationTests.db.owner))
+        sb.append("###############################################################################\n")
+
+        generatedTestInfo.text = sb.toString()
+        logger.info(generatedTestInfo.text)   // enable logging to console for copy/paste
+    }
+
     doLast {
         new File(buildConfig.generatedTestResourcesDir).mkdirs()
 
         generateUnitilsProperties()
         generateOmeroServerConfig()
+        generateIntegrationTestInfo()
     }
 }
 
