@@ -11,7 +11,7 @@
                 firstname="Db" lastname="Unit"
                 omename="dbunit" version="0"/>
 
-  <!-- [omero db password dbunit] -->
+  <!-- [omero db password dbunit] - See also ice-local.config -->
   <password experimenter_id="802" hash="BFFy/27DsZaHRAXWmNnwlw=="/>
 
   <!--

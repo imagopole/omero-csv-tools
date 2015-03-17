@@ -183,10 +183,9 @@ test {
 
     // for integration tests only
     // either one or the other:
-    // - ICE_CONFIG has priority
-    // - if not set, then fallback on a default 'ice.config.location' in $HOME/ice-local.config
-    systemProperty 'ICE_CONFIG',          System.getenv("ICE_CONFIG")
-    systemProperty 'ice.config.location', System.getProperty("user.home") + '/ice-local.config'
+    // - ICE_CONFIG has priority eg. ICE_CONFIG=~/ice-local.config ./gradlew test
+    // - if not set, then fallback on a default 'ice.config.location' in $buildDir
+    systemProperty 'ice.config.location', "$sourceSets.test.output.resourcesDir/ice-local.config"
 }
 
 artifacts {
