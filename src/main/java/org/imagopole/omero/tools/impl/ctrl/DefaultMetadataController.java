@@ -117,7 +117,7 @@ public class DefaultMetadataController implements MetadataController {
                          experimenterId, containerId, annotationType, annotatedType);
                 break;
 
-            case plateacquisition:
+            case platerun:
                 result =
                     getMetadataService().listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
                          experimenterId, containerId, annotationType, annotatedType);

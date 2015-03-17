@@ -62,7 +62,7 @@ public class AnnotationLinkers {
                 result = INSTANCE.new PlateAnnotationLinker();
                 break;
 
-            case plateacquisition:
+            case platerun:
                 result = INSTANCE.new PlateAcquisitionAnnotationLinker();
                 break;
 
@@ -109,7 +109,7 @@ public class AnnotationLinkers {
                 result = INSTANCE.new PlateAnnotationLinker();
                 break;
 
-            case plateacquisition:
+            case platerun:
                 result = INSTANCE.new PlateAcquisitionAnnotationLinker();
                 break;
 

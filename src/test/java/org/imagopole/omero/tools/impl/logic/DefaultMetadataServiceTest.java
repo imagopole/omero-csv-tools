@@ -158,21 +158,21 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlateShouldRejectNullExperimenter() throws ServerError {
         metadataService.listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
-                null, 1L, AnnotationType.tag, AnnotatedType.plateacquisition);
+                null, 1L, AnnotationType.tag, AnnotatedType.platerun);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlateShouldRejectNullPlate() throws ServerError {
         metadataService.listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
-                1L, null, AnnotationType.tag, AnnotatedType.plateacquisition);
+                1L, null, AnnotationType.tag, AnnotatedType.platerun);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
           expectedExceptionsMessageRegExp = TestsUtil.PRECONDITION_FAILED_REGEX)
     public void listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlateShouldRejectNullAnnotationType() throws ServerError {
         metadataService.listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
-                1L, 1L, null, AnnotatedType.plateacquisition);
+                1L, 1L, null, AnnotatedType.platerun);
     }
 
     @Test(expectedExceptions = { IllegalArgumentException.class },
@@ -293,11 +293,11 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
     @UnloadDataSet
     @Test(groups = { Groups.INTEGRATION },
           expectedExceptions = { IllegalStateException.class },
-          expectedExceptionsMessageRegExp = "No plateacquisition records found within container \\d* of type plate .*")
+          expectedExceptionsMessageRegExp = "No platerun records found within container \\d* of type plate .*")
     public void listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlateShouldRejectEmptyPlate() throws ServerError {
         metadataService.listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
                 DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.Orphans.PLATE_ID,
-                AnnotationType.tag, AnnotatedType.plateacquisition);
+                AnnotationType.tag, AnnotatedType.platerun);
     }
 
     @DataSet(value= { DataSets.Csv.LINKED }, factory = SingleSchemaCsvDataSetFactory.class)
@@ -307,7 +307,7 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
         Collection<PojoData> result =
             metadataService.listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
                 DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.Linked.PLATE_ID_WITH_RUNS,
-                AnnotationType.tag, AnnotatedType.plateacquisition);
+                AnnotationType.tag, AnnotatedType.platerun);
 
         assertNotNull(result, "Non-null result expected");
         assertEquals(result.size(), 2, "Two nested plateacquisitions expected");
@@ -333,7 +333,7 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
         Collection<PojoData> result =
             metadataService.listPlateAcquisitionsPlusAnnotationsByExperimenterAndPlate(
                 DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.Annotated.PLATE_ID_WITH_RUNS,
-                AnnotationType.tag, AnnotatedType.plateacquisition);
+                AnnotationType.tag, AnnotatedType.platerun);
 
         assertNotNull(result, "Non-null result expected");
         assertEquals(result.size(), 1, "One nested plateacquisition expected");
@@ -488,7 +488,7 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
         Collection<PojoData> result =
             metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
                 DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.Images.PLATE_ACQUISITION_ID,
-                ContainerType.plateacquisition, AnnotationType.tag, AnnotatedType.image);
+                ContainerType.platerun, AnnotationType.tag, AnnotatedType.image);
 
         assertNotNull(result, "Non-null result expected");
         assertEquals(result.size(), 2, "Two nested images expected");
@@ -515,7 +515,7 @@ public class DefaultMetadataServiceTest extends AbstractBlitzClientTest {
         Collection<PojoData> result =
             metadataService.listImagesPlusAnnotationsByExperimenterAndContainer(
                     DbUnit.EXPERIMENTER_ID, DbUnit.DataSets.Csv.ImagesAnnotated.PLATE_ACQUISITION_ID,
-                    ContainerType.plateacquisition, AnnotationType.tag, AnnotatedType.image);
+                    ContainerType.platerun, AnnotationType.tag, AnnotatedType.image);
 
         assertNotNull(result, "Non-null result expected");
         assertEquals(result.size(), 2, "Two nested images expected");

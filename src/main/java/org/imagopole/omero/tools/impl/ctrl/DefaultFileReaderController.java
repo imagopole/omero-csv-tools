@@ -110,7 +110,7 @@ public class DefaultFileReaderController implements FileReaderController {
             case dataset:
             case screen:
             case plate:
-            case plateacquisition:
+            case platerun:
                 result = getFileReaderService().readFromRemoteFileAnnotation(
                                 experimenterId,
                                 containerId,

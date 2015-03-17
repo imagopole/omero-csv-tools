@@ -600,7 +600,7 @@ public class DefaultCsvAnnotationServiceTest extends AbstractBlitzClientTest {
             csvAnnotationService.saveTagsAndLinkNestedImages(
                             DbUnit.EXPERIMENTER_ID,
                             Csv.ImagesAnnotated.PLATE_ACQUISITION_ID,
-                            ContainerType.plateacquisition,
+                            ContainerType.platerun,
                             lines);
 
         assertNotNull(data, "Non-null result expected");

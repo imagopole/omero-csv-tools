@@ -58,7 +58,7 @@ public class AnnotationLinkersTest {
 
     @Test
     public void forAnnotatedTypeShouldSupportPlateAcquisitions() {
-        AnnotationLinker result = AnnotationLinkers.forAnnotatedType(AnnotatedType.plateacquisition);
+        AnnotationLinker result = AnnotationLinkers.forAnnotatedType(AnnotatedType.platerun);
 
         assertNotNull(result, "Non-null result expected");
         assertTrue(result instanceof PlateAcquisitionAnnotationLinker, "Incorrect linker type");
@@ -104,7 +104,7 @@ public class AnnotationLinkersTest {
 
     @Test
     public void forContainerTypeShouldSupportPlateAcquisitions() {
-        AnnotationLinker result = AnnotationLinkers.forContainerType(ContainerType.plateacquisition);
+        AnnotationLinker result = AnnotationLinkers.forContainerType(ContainerType.platerun);
 
         assertNotNull(result, "Non-null result expected");
         assertTrue(result instanceof PlateAcquisitionAnnotationLinker, "Incorrect linker type");

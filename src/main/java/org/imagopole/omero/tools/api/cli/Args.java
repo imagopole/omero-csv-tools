@@ -100,8 +100,11 @@ public class Args {
         /** Represents a <code>omero.model.Plate</code>. */
         plate,
 
-        /** Represents a <code>omero.model.PlateAquisition</code>. */
-        plateacquisition;
+        /** Represents a <code>omero.model.PlateAquisition</code>.
+         *
+         * For ease of script parameters conversion and user consistency, this enum
+         * is named after the display label rather than the underlying data model entity. */
+        platerun;
 
         /**
          * Formats the enumeration values array to string.
@@ -132,7 +135,7 @@ public class Args {
                     clazz = Plate.class;
                     break;
 
-                case plateacquisition:
+                case platerun:
                     clazz = PlateAcquisition.class;
                     break;
 
@@ -166,8 +169,11 @@ public class Args {
         /** Represents a <code>omero.model.Plate</code>. */
         plate,
 
-        /** Represents a <code>omero.model.PlateAquisition</code>. */
-        plateacquisition;
+        /** Represents a <code>omero.model.PlateAquisition</code>.
+         *
+         * For ease of script parameters conversion and user consistency, this enum
+         * is named after the display label rather than the underlying data model entity. */
+        platerun;
 
         /**
          * Formats the enumeration values array to string.
@@ -202,7 +208,7 @@ public class Args {
                     clazz = Plate.class;
                     break;
 
-                case plateacquisition:
+                case platerun:
                     clazz = PlateAcquisition.class;
                     break;
 
@@ -237,10 +243,10 @@ public class Args {
                     break;
 
                 case plate:
-                    childType = AnnotatedType.plateacquisition;
+                    childType = AnnotatedType.platerun;
                     break;
 
-                case plateacquisition:
+                case platerun:
                     childType = AnnotatedType.image;
                     break;
 

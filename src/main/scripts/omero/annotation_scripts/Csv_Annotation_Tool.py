@@ -53,7 +53,7 @@ ANNOTATED_TYPES_ENUM = [
     rstring(DEFAULT_ANNOTATED_TYPE),
     rstring("Image"),
     rstring("Dataset"),
-    rstring("PlateAcquisition"),
+    rstring("PlateRun"),
     rstring("Plate")
 ]
 
@@ -67,7 +67,7 @@ CONTAINER_TYPES_ENUM = [
     rstring("Dataset"),
     rstring("Screen"),
     rstring("Plate"),
-    rstring("PlateAcquisition")
+    rstring("PlateRun")
 ]
 
 ##
@@ -330,7 +330,7 @@ def run_as_script():
         Labels.DATA_TYPE,
         optional = False,
         grouping = "1",
-        description = "The data type (eg. project, dataset, screen or plate/plateacquisition) bearing the attached CSV file (and 'parent' of the data you want to annotate)",
+        description = "The data type (eg. project, dataset, screen or plate/plate run) bearing the attached CSV file (and 'parent' of the data you want to annotate)",
         values = CONTAINER_TYPES_ENUM
         ),
 
@@ -354,7 +354,7 @@ def run_as_script():
         Labels.ANNOTATED_TYPE,
         optional = True,
         grouping = "1",
-        description = """The type of data you want to annotate (eg. image, dataset or plate/plateacquisition).
+        description = """The type of data you want to annotate (eg. image, dataset or plate/plate run).
         Leave empty to use the default 'child' convention (ie. pick the selected container's direct children as annotation targets).""",
         values = ANNOTATED_TYPES_ENUM,
         default = DEFAULT_ANNOTATED_TYPE

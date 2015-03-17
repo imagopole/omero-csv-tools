@@ -113,7 +113,7 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
                             experimenterId, containerId, containerType, csvData);
                 break;
 
-            case plateacquisition:
+            case platerun:
                 result = linkTagsToPlateAcquisitionsWithinPlate(
                             experimenterId, containerId, containerType, csvData);
                 break;
@@ -150,7 +150,7 @@ public class DefaultCsvAnnotationController implements CsvAnnotationController {
 
             case dataset:
             case plate:
-            case plateacquisition:
+            case platerun:
                 result = linkTagsToImagesWithinContainer(
                             experimenterId, containerId, containerType, csvData);
                 break;

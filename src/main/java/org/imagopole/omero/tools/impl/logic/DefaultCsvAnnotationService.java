@@ -306,7 +306,7 @@ public class DefaultCsvAnnotationService implements CsvAnnotationService {
         return saveTagsAndLinkPojos(experimenterId,
                                     experimenterPojos,
                                     uniqueLines,
-                                    AnnotatedType.plateacquisition);
+                                    AnnotatedType.platerun);
     }
 
     /**

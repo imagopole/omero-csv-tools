@@ -124,7 +124,7 @@ public class DefaultFileWriterController implements FileWriterController {
             case dataset:
             case screen:
             case plate:
-            case plateacquisition:
+            case platerun:
                 result = getFileWriterService().writeToRemoteFileAnnotation(
                             experimenterId,
                             containerId,
