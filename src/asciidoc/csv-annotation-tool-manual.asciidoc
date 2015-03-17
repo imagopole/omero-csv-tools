@@ -29,8 +29,8 @@ Examples of how you can annotate your data as an OMERO user:
   using the graphical user interface in OMERO.insight or OMERO.web.
 * Let the webtagging tool automatically suggest tags from your image names for you to review and
   apply interactively in OMERO.web.
-* Bulk annotate your datasets and images (or plates / plate acquisitions (a.k.a runs) / images) in an unattended manner
-  using the CSV tool script in OMERO.insight or OMERO.web.
+* Bulk annotate your datasets and images (or plates / plate runs / images) using the CSV tool script
+  in OMERO.insight or OMERO.web.
 
 [[overview-omero-annotations]]
 === OMERO insight annotations
@@ -50,8 +50,8 @@ http://www.openmicroscopy.org/site/support/partner/omero.webtagging
 Workflow outline (details below):
 
 . Optionally export your current data to a seed CSV file.
-. Attach the tag definitions in CSV format to your OMERO project / dataset (or screen / plate / plate acquisition).
-. Run the CSV annotation tool script on the project / dataset (or screen / plate / plate acquisition).
+. Attach the tag definitions in CSV format to your OMERO project / dataset (or screen / plate / plate run).
+. Run the CSV annotation tool script on the project / dataset (or screen / plate / plate run).
 
 
 [[main-omero-cat]]
@@ -75,8 +75,8 @@ datasets, project, dataset_tag.csv, comma, yes
 |===
 In order to tag, Attach CSV file to, Default file name will be, Default separator will be, CSV header will be ignored?
 images, plate (no run), image_tag.csv, comma, yes
-images, plate acquisition (one or more runs), image_tag.csv, comma, yes
-plate acquisitions/runs, plate, plateacquisition_tag.csv, comma, yes
+images, plate run (one or more runs), image_tag.csv, comma, yes
+plate runs, plate, platerun_tag.csv, comma, yes
 plates, screen, plate_tag.csv, comma, yes
 |===
 
@@ -97,8 +97,8 @@ Ancestor type / _Attachment target_, Default descendant type / _Annotation targe
 Project,Dataset
 Dataset,Image
 Screen,Plate
-Plate,PlateAcquisition
-PlateAcquisition,Image
+Plate,Plate Run
+Plate Run,Image
 |===
 
 The tool currently allows:
@@ -115,11 +115,11 @@ The tool currently allows:
 
   ** tagging and exporting *plates* nested _within_ a *screen* (ie. ``orphans`` or ``top-level`` plates are
   currently not supported, but may be at a later stage)
-  ** tagging and exporting *plate acquisitions (runs)* nested _within_ a *plate*
+  ** tagging and exporting *plate runs* nested _within_ a *plate*
   ** tagging and exporting *images* nested _within_ a *plate* _without runs_ (whether the plate is nested within a screen or not)
-  ** tagging and exporting *images* nested _within_ a *plate acquisition/run* (for plates with _at least one run_)
-  ** attaching the CSV file to a *screen*, a *plate* or a *plate acquisition* (in order to export _plates_,
-   _plate acquisitions_ and _images_, respectively).
+  ** tagging and exporting *images* nested _within_ a *plate run* (for plates with _at least one run_)
+  ** attaching the CSV file to a *screen*, a *plate* or a *plate run* (in order to export _plates_,
+   _plate runs_ and _images_, respectively).
 
 ==== Example data layout
 
@@ -142,15 +142,15 @@ MyOmeroGroup
   |     +-- Image-DN1.2
   |
   +-- Screen-S0  ....................  plate_tag_S0.csv
-  |     +-- Plate-P1  ...............  image_tag_P1.csv                <1>
+  |     +-- Plate-P1  ...............  image_tag_P1.csv        <1>
   |     |     +-- Image-P1.1
   |     |     +-- Image-P1.2
   |     +-- Plate-P2
-  +-- Plate-PN  ......................  plateacquisition_tag_PN.csv    <2>
-        +-- PlateAcquisition-PA1  ....  image_tag_PA1.csv
-        |     +-- Image-PA1.1
-        |     +-- Image-PA1.2
-        +-- PlateAcquisition-PA2
+  +-- Plate-PN  ......................  platerun_tag_PN.csv    <2>
+        +-- PlateRun-PR1  ............  image_tag_PR1.csv
+        |     +-- Image-PR1.1
+        |     +-- Image-PR1.2
+        +-- PlateRun-PR2
 ----
 
 <1> No run for `Plate-P1`
@@ -180,17 +180,17 @@ The available tagging combinations would be:
 |                                 |                                                   |`Plate-P2`
 |`image_tag_P1.csv`               |All images within `Plate-P1`                       |`Image-P1.1`
 |                                 |                                                   |`Image-P1.2`
-|`plateacquisition_tag_PN.csv`    |All plate acquisitions within `Plate-PN`           |`PlateAcquisition-PA1`
-|                                 |                                                   |`PlateAcquisition-PA2`
-|`image_tag_PA1.csv`              |All images within `PlateAcquisition-PA1`           |`Image-PA1.1`
-|                                 |                                                   |`Image-PA1.2`
+|`platerun_tag_PN.csv`            |All plate runs within `Plate-PN`                   |`PlateRun-PR1`
+|                                 |                                                   |`PlateRun-PR2`
+|`image_tag_PR1.csv`              |All images within `PlateRun-PR1`                   |`Image-PR1.1`
+|                                 |                                                   |`Image-PR1.2`
 |============================================================================================================
 
-WARNING: It is recommended to explicitly define a name for plate acquisitions/runs prior to tagging.
+WARNING: It is recommended to explicitly define a name for plate runs prior to tagging.
 Since the OMERO model doesn't require plate runs to have a name, OMERO.web and insight will generate a default
 label for display, based on the run's start and end times if available, or on the run's identifier.
 To avoid locale-related discrepancies in timestamp handling when tagging nameless plate runs, OMERO.csvtools
-will consider the plate acquisition ID _only_, such that the display label will be formatted as: ``Run <run-id>``.
+will consider the plate run ID _only_, such that the display label will be formatted as: ``Run <run-id>``.
 
 [[conventions-omero-cat]]
 === Data management conventions
@@ -295,11 +295,18 @@ image::images/script-ui.png[Script GUI]
 
 TIP: The OMERO.scripts framework usually matches the ``Data Type`` to be pre-selected in the script window
 with the currently active item in the left navigation menu.
-This is not currently the case when the active item is a *plate acquisition/run* - therefore reviewing and
+This is not currently the case when the active item is a *Plate Run* - therefore reviewing and
 adjusting the selected script parameters before launching is recommended.
 
 [[appendices]]
 == Appendices
+
+[terminology]
+=== Terminology
+
+NOTE: *Plate Acquisition* and *Plate Run* refer to identical OMERO concepts and may be used interchangeably.
+Usage throughout this document follows the OMERO convention: the data model (_Plate Acquisition_)
+is referenced via its label (_Plate Run_) as the conventional denomination.
 
 === Distribution packages overview
 
