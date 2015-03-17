@@ -96,6 +96,7 @@ ext.resourcesFilterTokens = [
 
 ext.integrationTests = [
     db : [
+        schemaLocation : sprintf("classpath:db/schemas/ome%s", omeVersions.baseline), //eg. db/schemas/ome50x
         name           : omeVersions.qualifier,                                       //eg. ome508
         owner          : omeVersions.qualifier,
         pwd            : omeVersions.qualifier,
@@ -363,6 +364,29 @@ task integrationTestDbSetup(type: Test) {
 }
 // make sure database is initialized when running 'gradle test'
 test.dependsOn integrationTestDbSetup
+
+/** Convenience wrapper around the flywayClean task, with database properties set */
+task integrationTestDbClean() {
+
+    finalizedBy flywayClean
+    doFirst {
+        project.ext.set('flyway.url',       integrationTests.db.jdbcUrl)
+        project.ext.set('flyway.user',      integrationTests.db.owner)
+        project.ext.set('flyway.password',  integrationTests.db.pwd)
+    }
+}
+
+/** Convenience wrapper around the flywayMigrate task, with database properties set */
+task integrationTestDbMigrate() {
+
+    finalizedBy flywayMigrate
+    doFirst {
+        project.ext.set('flyway.url',       integrationTests.db.jdbcUrl)
+        project.ext.set('flyway.user',      integrationTests.db.owner)
+        project.ext.set('flyway.password',  integrationTests.db.pwd)
+        project.ext.set('flyway.locations', integrationTests.db.schemaLocation)
+    }
+}
 
 /** Create a distribution bundle with runtime dependencies + shell scripts included */
 task withDepsDistZip(type: Zip) { zipTask ->
