@@ -224,4 +224,28 @@ public final class AnnotationsUtil {
         return result;
     }
 
+    /**
+     * Aggregates the maximum number of annotations in the CSV lines.
+     *
+     * Equivalent to: "number of CSV columns - 1".
+     *
+     * @param lines the lines to process
+     * @return the maximum number of annotations across the lines, or zero.
+     */
+    public static int getMaxAnnotationsSize(Collection<CsvAnnotationLine> lines) {
+        Check.notNull(lines, "lines");
+
+        int maxAnnotationsSize = 0;
+
+        for (CsvAnnotationLine line : lines) {
+            int lineSize = line.getAnnotationsSize();
+
+            if (lineSize > maxAnnotationsSize) {
+                maxAnnotationsSize = lineSize;
+            }
+        }
+
+        return maxAnnotationsSize;
+    }
+
 }

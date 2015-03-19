@@ -2,6 +2,8 @@ package org.imagopole.omero.tools.impl.csv;
 
 import static org.imagopole.omero.tools.TestsUtil.asListOrNull;
 import static org.imagopole.omero.tools.TestsUtil.crlf;
+import static org.imagopole.omero.tools.TestsUtil.header;
+import static org.imagopole.omero.tools.TestsUtil.headers;
 import static org.imagopole.omero.tools.TestsUtil.quote;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -50,20 +52,26 @@ public class CommonsCsvAnnotationsWriterTest {
 
     @Test(dataProvider="default-writer-csv-lines-provider")
     public void defaultWriterToCsv(List<CsvAnnotationLine> lines, String expectedCsvContent) {
+        // skipHeader = false
+        // => the script reader will process all lines: do not generate a header row
         CsvLineWriter<CsvAnnotationLine> writer = CommonsCsvAnnotationsWriter.defaultWriter();
 
         checkCsvContent(writer, lines, expectedCsvContent);
     }
 
     @Test(dataProvider="semicolon-writer-csv-lines-provider")
-    public void customSemicolonWriterToCsv(List<CsvAnnotationLine> lines, String expectedCsvContent) {
+    public void customSemicolonWriterToCsvNoSkipHeader(List<CsvAnnotationLine> lines, String expectedCsvContent) {
+        // skipHeader = false
+        // => the script reader will process all lines: do not generate a header row
         CsvLineWriter<CsvAnnotationLine> writer = CommonsCsvAnnotationsWriter.getWriter(';', false);
 
         checkCsvContent(writer, lines, expectedCsvContent);
     }
 
     @Test(dataProvider="pipe-writer-skip-header-csv-lines-provider")
-    public void customPipeSkipHeaderWriterToCsv(List<CsvAnnotationLine> lines, String expectedCsvContent) {
+    public void customPipeSkipHeaderWriterToCsvSkipHeader(List<CsvAnnotationLine> lines, String expectedCsvContent) {
+        // skipHeader = true
+        // => the script reader will ignore the first line: do generate a header row to be skipped
         CsvLineWriter<CsvAnnotationLine> writer = CommonsCsvAnnotationsWriter.getWriter('|', true);
 
         checkCsvContent(writer, lines, expectedCsvContent);
@@ -88,6 +96,9 @@ public class CommonsCsvAnnotationsWriterTest {
          // note: not all return values are set (eg. missing CsvLine interface methods)
          mockLine.returns(annotatedName).getAnnotatedName();
          mockLine.returns(annotationsValues).getAnnotationsValues();
+         if (null != annotationsValues) {
+             mockLine.returns(annotationsValues.size()).getAnnotationsSize();
+         }
 
          return mockLine.getMock();
     }
@@ -150,21 +161,24 @@ public class CommonsCsvAnnotationsWriterTest {
     @DataProvider(name="pipe-writer-skip-header-csv-lines-provider")
     private Object[][] provideCustomPipeSkipHeaderWriterLines() {
         return new Object[][] {
-            { asListOrNull(mockLine(".", null)),      crlf(quote("."))      },
-            { asListOrNull(mockLine(",", null)),      crlf(quote(","))      },
-            { asListOrNull(mockLine(";", null)),      crlf(quote(";"))      },
-            { asListOrNull(mockLine("|", null)),      crlf(quote("|"))      },
-            { asListOrNull(mockLine("node", null)),   crlf("node")          },
-            { asListOrNull(mockLine(" node ", null)), crlf(quote(" node ")) },
-            { asListOrNull(mockLine("node\n", null)), crlf(quote("node\n")) },
+            { asListOrNull(mockLine(".", null)),      crlf(header()).concat(crlf(quote(".")))      },
+            { asListOrNull(mockLine(",", null)),      crlf(header()).concat(crlf(quote(",")))      },
+            { asListOrNull(mockLine(";", null)),      crlf(header()).concat(crlf(quote(";")))      },
+            { asListOrNull(mockLine("|", null)),      crlf(header()).concat(crlf(quote("|")))      },
+            { asListOrNull(mockLine("node", null)),   crlf(header()).concat(crlf("node"))          },
+            { asListOrNull(mockLine(" node ", null)), crlf(header()).concat(crlf(quote(" node "))) },
+            { asListOrNull(mockLine("node\n", null)), crlf(header()).concat(crlf(quote("node\n"))) },
             { asListOrNull(mockLine("node.1", null),
-                           mockLine("node.2", null)), crlf("node.1").concat(crlf("node.2"))   },
+                           mockLine("node.2", null)), crlf(header()).concat(crlf("node.1").concat(crlf("node.2")))   },
             { asListOrNull(mockLine("node",
-                           new ArrayList<String>())), crlf("node")                            },
+                           new ArrayList<String>())), crlf(header()).concat(crlf("node"))                            },
             { asListOrNull(mockLine("node",
-                           newArrayList("annot"))),   crlf("node|annot")                      },
+                           newArrayList("annot"))),   crlf(headers('|', "Annotation 1"))
+                                                          .concat(crlf("node|annot"))                                },
             { asListOrNull(mockLine("node",
-                           newArrayList("annot.1", "annot.2"))), crlf("node|annot.1|annot.2") }
+                           newArrayList("annot.1", "annot.2"))),
+                                                      crlf(headers('|', "Annotation 1", "Annotation 2"))
+                                                          .concat(crlf("node|annot.1|annot.2"))                      }
         };
     }
 

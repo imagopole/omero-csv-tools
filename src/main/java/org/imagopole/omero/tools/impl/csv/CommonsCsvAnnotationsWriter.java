@@ -3,7 +3,10 @@
  */
 package org.imagopole.omero.tools.impl.csv;
 
+import static org.imagopole.omero.tools.util.AnnotationsUtil.getMaxAnnotationsSize;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -40,10 +43,6 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
 
     /** Apache Commons CSV format. */
     private CSVFormat format;
-
-    /** Description for the CSV layout. */
-    private static final String HEADERS_DESC_COMMENT =
-        "Schema description: <object_name><separator><list_of_annotations>";
 
     /**
      * Instanciates a CSV writer for the given format and file content.
@@ -122,8 +121,8 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
          Check.notNull(printer, "printer");
          Check.notEmpty(lines, "lines");
 
-         handleComment(printer, String.format("Generated on %s", new Date()));
-         handleHeader(printer);
+         handleComment(printer, String.format(Comments.GENERATED_ON_FORMAT, new Date()));
+         handleHeader(printer, lines);
          handleBody(printer, lines);
     }
 
@@ -134,12 +133,21 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
         }
     }
 
-    private void handleHeader(CSVPrinter printer) throws IOException {
+    private void handleHeader(
+            CSVPrinter printer,
+            Collection<CsvAnnotationLine> lines) throws IOException {
+
          boolean skipHeader = getFormat().getSkipHeaderRecord();
 
-         // for now, just issue a comment to describe the CSV schema
-         if (!skipHeader) {
-             handleComment(printer, HEADERS_DESC_COMMENT);
+         // issue a comment to describe the CSV schema
+         handleComment(printer, Comments.HEADER_DESCRIPTION);
+
+         // make sure there really is a first row that can be ignored, since the default script
+         // behaviour is to ignore the first row when used for tagging
+         if (skipHeader) {
+             List<String> header = buildHeaderRecord(lines);
+
+             printer.printRecord(header);
          }
     }
 
@@ -172,6 +180,48 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
         }
 
         return result;
+    }
+
+    private List<String> buildHeaderRecord(Collection<CsvAnnotationLine> lines) {
+        Check.notNull(lines, "lines");
+
+        // get the number of columns to be generated in the header
+        int maxAnnotationsCount = getMaxAnnotationsSize(lines);
+
+        List<String> result = new ArrayList<String>(maxAnnotationsCount + 1);
+
+        // leading column (annotation target)
+        result.add(Comments.TARGET_ENTITY_NAME);
+
+        // one column per annotation value
+        for (int i = 0; i < maxAnnotationsCount; ++i) {
+            // add value column number with humanized one-based index
+            result.add(String.format(Comments.ANNOTATION_COLUMN_FORMAT, i + 1));
+        }
+
+        return result;
+    }
+
+    private static final class Comments {
+
+         /** Description for the CSV layout. */
+        private static final String HEADER_DESCRIPTION =
+            "Schema description: <object_name><separator><list_of_annotations>";
+
+        /** First column header (annotation target) */
+        private static final String TARGET_ENTITY_NAME = "Entity name";
+
+        /** {@link java.util.Formatter} template for remaining header columns: <code>Annotation $annotation_number</code>.*/
+        private static final String ANNOTATION_COLUMN_FORMAT = "Annotation %s";
+
+        /** {@link java.util.Formatter} template for header comments: <code>Generated on $date</code>.*/
+        private static final String GENERATED_ON_FORMAT = "Generated on %s";
+
+        /** Constants class. */
+        private Comments() {
+             super();
+        }
+
     }
 
     /**
