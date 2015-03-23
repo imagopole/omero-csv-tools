@@ -6,15 +6,14 @@ package org.imagopole.omero.tools.impl.csv;
 import static org.imagopole.omero.tools.util.AnnotationsUtil.getMaxAnnotationsSize;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.imagopole.omero.tools.api.RtException;
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
+import org.imagopole.omero.tools.api.csv.CsvHeader;
 import org.imagopole.omero.tools.api.csv.CsvLineWriter;
 import org.imagopole.omero.tools.util.Check;
 import org.imagopole.omero.tools.util.CommonsCsvUtil;
@@ -44,16 +43,23 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
     /** Apache Commons CSV format. */
     private CSVFormat format;
 
+    /** Internal CSV header formatter. */
+    private CsvHeader csvHeader;
+
     /**
      * Instanciates a CSV writer for the given format and file content.
      *
      * @param format the Apache Commons CSV format
+     * @param csvHeader the internal header formatter
      */
-    private CommonsCsvAnnotationsWriter(CSVFormat format) {
+    private CommonsCsvAnnotationsWriter(CSVFormat format, CsvHeader csvHeader) {
         super();
 
         Check.notNull(format, "format");
+        Check.notNull(csvHeader, "csvHeader");
+
         this.format = format;
+        this.csvHeader = csvHeader;
     }
 
     /**
@@ -62,7 +68,8 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
      * @return the CSV line writer
      */
     public static CsvLineWriter<CsvAnnotationLine> defaultWriter() {
-        return new CommonsCsvAnnotationsWriter(CommonsCsvUtil.DEFAULT_CSV_FORMAT);
+        return new CommonsCsvAnnotationsWriter(
+            CommonsCsvUtil.DEFAULT_CSV_FORMAT, DefaultCsvHeader.create());
     }
 
     /**
@@ -80,7 +87,7 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
 
         CSVFormat customFormat = CommonsCsvUtil.defaultFormatWith(delimiter, skipHeader);
 
-        return new CommonsCsvAnnotationsWriter(customFormat);
+        return new CommonsCsvAnnotationsWriter(customFormat, DefaultCsvHeader.create());
     }
 
     /**
@@ -121,9 +128,19 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
          Check.notNull(printer, "printer");
          Check.notEmpty(lines, "lines");
 
-         handleComment(printer, String.format(Comments.GENERATED_ON_FORMAT, new Date()));
+         handleComments(printer, getCsvHeader().getComments());
          handleHeader(printer, lines);
          handleBody(printer, lines);
+    }
+
+    private void handleComments(CSVPrinter printer, Collection<String> comments) throws IOException {
+        if (null != comments && !comments.isEmpty()) {
+
+            for (String comment : comments) {
+                handleComment(printer, comment);
+            }
+
+        }
     }
 
     private void handleComment(CSVPrinter printer, String comment) throws IOException {
@@ -139,15 +156,20 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
 
          boolean skipHeader = getFormat().getSkipHeaderRecord();
 
-         // issue a comment to describe the CSV schema
-         handleComment(printer, Comments.HEADER_DESCRIPTION);
-
          // make sure there really is a first row that can be ignored, since the default script
          // behaviour is to ignore the first row when used for tagging
          if (skipHeader) {
-             List<String> header = buildHeaderRecord(lines);
 
-             printer.printRecord(header);
+             // get the number of columns to be generated in the header
+             int maxAnnotationsCount = getMaxAnnotationsSize(lines);
+
+             // generate the header row to fit the number of columns
+             Collection<String> header = getCsvHeader().getRecord(maxAnnotationsCount);
+
+             if (null != header && !header.isEmpty()) {
+                 printer.printRecord(header);
+             }
+
          }
     }
 
@@ -182,48 +204,6 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
         return result;
     }
 
-    private List<String> buildHeaderRecord(Collection<CsvAnnotationLine> lines) {
-        Check.notNull(lines, "lines");
-
-        // get the number of columns to be generated in the header
-        int maxAnnotationsCount = getMaxAnnotationsSize(lines);
-
-        List<String> result = new ArrayList<String>(maxAnnotationsCount + 1);
-
-        // leading column (annotation target)
-        result.add(Comments.TARGET_ENTITY_NAME);
-
-        // one column per annotation value
-        for (int i = 0; i < maxAnnotationsCount; ++i) {
-            // add value column number with humanized one-based index
-            result.add(String.format(Comments.ANNOTATION_COLUMN_FORMAT, i + 1));
-        }
-
-        return result;
-    }
-
-    private static final class Comments {
-
-         /** Description for the CSV layout. */
-        private static final String HEADER_DESCRIPTION =
-            "Schema description: <object_name><separator><list_of_annotations>";
-
-        /** First column header (annotation target) */
-        private static final String TARGET_ENTITY_NAME = "Entity name";
-
-        /** {@link java.util.Formatter} template for remaining header columns: <code>Annotation $annotation_number</code>.*/
-        private static final String ANNOTATION_COLUMN_FORMAT = "Annotation %s";
-
-        /** {@link java.util.Formatter} template for header comments: <code>Generated on $date</code>.*/
-        private static final String GENERATED_ON_FORMAT = "Generated on %s";
-
-        /** Constants class. */
-        private Comments() {
-             super();
-        }
-
-    }
-
     /**
      * Returns format.
      * @return the format
@@ -238,6 +218,22 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
      */
     public void setFormat(CSVFormat format) {
         this.format = format;
+    }
+
+    /**
+     * Returns headerFormat.
+     * @return the headerFormat
+     */
+    public CsvHeader getCsvHeader() {
+        return csvHeader;
+    }
+
+    /**
+     * Sets headerFormat.
+     * @param headerFormat the headerFormat to set
+     */
+    public void setCsvHeader(CsvHeader headerFormat) {
+        this.csvHeader = headerFormat;
     }
 
 }

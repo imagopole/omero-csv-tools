@@ -61,15 +61,15 @@ public final class Check {
         }
     }
 
-    public static final void strictlyPositive(Long number, String argName) {
+    public static final void positive(Number number, String argName) {
         Check.notNull(number, argName);
 
-        if (number.intValue() < 1) {
+        if (number.intValue() < 0) {
              rejectEmptyParam(argName);
         }
     }
 
-    public static final void strictlyPositive(Integer number, String argName) {
+    public static final void strictlyPositive(Number number, String argName) {
         Check.notNull(number, argName);
 
         if (number.intValue() < 1) {
