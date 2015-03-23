@@ -35,18 +35,41 @@ import org.imagopole.omero.tools.util.Check;
  */
 public class DefaultCsvHeader implements CsvHeader {
 
-    /** Private constructor. */
-    private DefaultCsvHeader() {
+    /** Argument to the first column {@link java.util.Formatter} pattern. */
+    private String leadingColumnArg;
+
+    /** Argument to the remaining columns header {@link java.util.Formatter} pattern. */
+    private String standardColumnArg;
+
+    private DefaultCsvHeader(String leadingColumnArg, String standardColumnArg) {
         super();
+        this.leadingColumnArg = leadingColumnArg;
+        this.standardColumnArg = standardColumnArg;
     }
 
     /**
-     * Static factory method.
+     * Static factory method with default columns arguments.
      *
      * @return the default CSV header formatter
      */
     public static CsvHeader create() {
-        return new DefaultCsvHeader();
+        return new DefaultCsvHeader(
+                Comments.DEFAULT_ENTITY_COLUMN_ARG,
+                Comments.DEFAULT_ANNOTATION_COLUMN_ARG);
+    }
+
+    /**
+     * Static factory method with custom columns arguments.
+     *
+     * @param leadingColumnArg argument to the first column format pattern
+     * @param standardColumnArg argument to the remaining columns format pattern
+     * @return the CSV header formatter
+     */
+    public static CsvHeader create(String leadingColumnArg, String standardColumnArg) {
+        Check.notEmpty(leadingColumnArg, "leadingColumnArg");
+        Check.notEmpty(standardColumnArg, "standardColumnArg");
+
+        return new DefaultCsvHeader(leadingColumnArg, standardColumnArg);
     }
 
     /**
@@ -58,11 +81,17 @@ public class DefaultCsvHeader implements CsvHeader {
         private static final String HEADER_DESCRIPTION =
            "Schema description: <object_name><separator><list_of_annotations>";
 
-       /** First column header (annotation target) */
-        private static final String TARGET_ENTITY_NAME = "Entity name";
+        /** {@link java.util.Formatter} template for remaining header columns: <code>$annotation_target name</code>. */
+        private static final String ENTITY_COLUMN_FORMAT = "%s name";
 
        /** {@link java.util.Formatter} template for remaining header columns: <code>Annotation $annotation_number</code>.*/
-        private static final String ANNOTATION_COLUMN_FORMAT = "Annotation %s";
+        private static final String ANNOTATION_COLUMN_FORMAT = "%s %s";
+
+        /** First column default unique argument. */
+        private static final String DEFAULT_ENTITY_COLUMN_ARG = "Entity";
+
+        /** Remaining columns default first argument. */
+        private static final String DEFAULT_ANNOTATION_COLUMN_ARG = "Annotation";
 
        /** {@link java.util.Formatter} template for header comments: <code>Generated on $date</code>.*/
         private static final String GENERATED_ON_FORMAT = "Generated on %s";
@@ -95,15 +124,32 @@ public class DefaultCsvHeader implements CsvHeader {
         List<String> result = new ArrayList<String>(maxColumns + 1);
 
         // leading column (annotation target)
-        result.add(Comments.TARGET_ENTITY_NAME);
+        result.add(String.format(Comments.ENTITY_COLUMN_FORMAT, getLeadingColumnArg()));
 
         // one column per annotation value
         for (int i = 0; i < maxColumns; ++i) {
             // add value column number with humanized one-based index
-            result.add(String.format(Comments.ANNOTATION_COLUMN_FORMAT, i + 1));
+            result.add(String.format(
+                Comments.ANNOTATION_COLUMN_FORMAT, getStandardColumnArg(), i + 1));
         }
 
         return result;
+    }
+
+    /**
+     * Returns leadingColumnPattern.
+     * @return the leadingColumnPattern
+     */
+    public String getLeadingColumnArg() {
+        return leadingColumnArg;
+    }
+
+    /**
+     * Returns standardColumnPattern.
+     * @return the standardColumnPattern
+     */
+    public String getStandardColumnArg() {
+        return standardColumnArg;
     }
 
 }

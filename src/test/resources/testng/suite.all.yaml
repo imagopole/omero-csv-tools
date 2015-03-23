@@ -32,6 +32,7 @@ tests:
       - org.imagopole.omero.tools.impl.csv.CommonsCsvAnnotationsWriterTest
       - org.imagopole.omero.tools.impl.csv.CommonsCsvStringReaderTest
       - org.imagopole.omero.tools.impl.csv.CsvAnnotationsReaderTest
+      - org.imagopole.omero.tools.impl.csv.DefaultCsvHeaderTest
       - org.imagopole.omero.tools.impl.csv.SimpleAnnotationLineTest
 
   - name: Blitz

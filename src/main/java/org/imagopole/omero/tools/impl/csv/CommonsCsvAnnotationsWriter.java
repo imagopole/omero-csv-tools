@@ -73,7 +73,7 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
     }
 
     /**
-     *  Builds a CSV reader for the custom format settings and file content.
+     * Builds a CSV reader for the custom format settings and file content, with a default header format.
      *
      * @param delimiter the CSV delimiter character
      * @param skipHeader set to true to ignore the first CSV line
@@ -83,11 +83,28 @@ public class CommonsCsvAnnotationsWriter implements CsvLineWriter<CsvAnnotationL
             Character delimiter,
             boolean skipHeader) {
 
+       return getWriter(delimiter, skipHeader, DefaultCsvHeader.create());
+    }
+
+    /**
+     * Builds a CSV reader for the custom format settings, header and file content.
+     *
+     * @param delimiter the CSV delimiter character
+     * @param skipHeader set to true to ignore the first CSV line
+     * @param csvHeader the custom CSV header formatter
+     * @return the CSV line writer
+     */
+    public static CsvLineWriter<CsvAnnotationLine> getWriter(
+            Character delimiter,
+            boolean skipHeader,
+            CsvHeader csvHeader) {
+
         Check.notNull(delimiter, "delimiter");
+        Check.notNull(csvHeader, "csvHeader");
 
         CSVFormat customFormat = CommonsCsvUtil.defaultFormatWith(delimiter, skipHeader);
 
-        return new CommonsCsvAnnotationsWriter(customFormat, DefaultCsvHeader.create());
+        return new CommonsCsvAnnotationsWriter(customFormat, csvHeader);
     }
 
     /**

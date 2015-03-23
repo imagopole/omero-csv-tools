@@ -45,6 +45,14 @@ public final class Check {
         }
     }
 
+    public static final void notEmpty(String[] obj, String argName) {
+        Check.notNull(obj, argName);
+
+        if (obj.length <= 0) {
+            rejectEmptyParam(argName);
+        }
+    }
+
     public static final void notEmpty(Long[] obj, String argName) {
         Check.notNull(obj, argName);
 
