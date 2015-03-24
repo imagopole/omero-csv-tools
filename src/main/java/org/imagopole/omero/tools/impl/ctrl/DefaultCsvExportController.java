@@ -5,6 +5,9 @@ package org.imagopole.omero.tools.impl.ctrl;
 
 import java.util.Collection;
 
+import org.imagopole.omero.tools.api.RtException;
+import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
+import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.ctrl.CsvExportController;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.api.logic.CsvWriterService;
@@ -37,12 +40,18 @@ public class DefaultCsvExportController implements CsvExportController {
      * {@inheritDoc}
      */
     @Override
-    public String convertToCsv(Collection<PojoData> pojos) {
+    public String convertToCsv(
+            AnnotationType annotationType,
+            AnnotatedType annotatedType,
+            Collection<PojoData> pojos) throws RtException{
+
+        Check.notNull(annotatedType, "annotatedType");
+        Check.notNull(annotationType, "annotationType");
         Check.notEmpty(pojos, "pojos");
 
         log.debug("Writing {} pojos to CSV", pojos.size());
 
-        return getCsvWriterService().writeLines(pojos);
+        return getCsvWriterService().writeLines(annotationType, annotatedType, pojos);
     }
 
     /**

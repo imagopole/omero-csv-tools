@@ -10,7 +10,6 @@ import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.dataset.xml.XmlProducer;
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.imagopole.omero.tools.api.dto.PojoData;
-import org.imagopole.omero.tools.impl.csv.CommonsCsvAnnotationsWriter;
 import org.imagopole.omero.tools.util.FunctionsUtil;
 import org.testng.collections.Lists;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
@@ -46,9 +45,8 @@ public class TestsUtil {
     /** Default CSV format quote character */
     public static final String DOUBLE_QUOTE = "\"";
 
-    /** Default first column header in the generated CSV content.
-     * @see CommonsCsvAnnotationsWriter.Comments.TARGET_ENTITY_NAME */
-    public static final String HEADER_FIRST_COLUMN = "Entity name";
+    /** Default first column header in the generated CSV content. */
+    public static final String HEADER_FIRST_COLUMN_FORMAT = "%s name";
 
     /** Default mode for reflection-based comparisons */
     public static final ReflectionComparatorMode[] DEFAULT_COMPARATOR_MODE = new ReflectionComparatorMode[] {};
@@ -167,15 +165,21 @@ public class TestsUtil {
         return result;
     }
 
-    public static String header() {
-        return HEADER_FIRST_COLUMN;
+    public static String header(String input) {
+        String result = null;
+
+        if (null != input) {
+            result = String.format(HEADER_FIRST_COLUMN_FORMAT, input);
+        }
+
+        return result;
     }
 
-    public static String headers(Character separator, String... inputs) {
+    public static String headers(String customColName, Character separator, String... inputs) {
         String result = null;
 
         if (null != separator && null != inputs && inputs.length > 0) {
-            result = Joiner.on(separator).skipNulls().join(header(), null, (Object []) inputs);
+            result = Joiner.on(separator).skipNulls().join(header(customColName), null, (Object []) inputs);
         }
 
         return result;

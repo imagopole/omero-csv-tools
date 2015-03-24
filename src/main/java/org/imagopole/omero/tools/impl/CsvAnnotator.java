@@ -207,7 +207,8 @@ public class CsvAnnotator {
                 annotatedType);
 
         // convert the OMERO data hierarchy into CSV content
-        String fileContent = exportController.convertToCsv(entitiesPlusAnnotations);
+        String fileContent =
+            exportController.convertToCsv(annotationType, annotatedType, entitiesPlusAnnotations);
 
         // upload and attach the generated CSV to the OMERO container
         fileWriterController.writeByFileContainerType(
