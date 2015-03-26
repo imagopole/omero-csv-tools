@@ -70,6 +70,14 @@ CONTAINER_TYPES_ENUM = [
     rstring("PlateRun")
 ]
 
+FILENAME_PATTERNS_ENUM = [
+    rstring(""),
+    rstring("<basename>_<container-type><suffix>"),
+    rstring("<basename>_<container-id><suffix>"),
+    rstring("<basename>_<container-type><container-id><suffix>"),
+    rstring("<basename>_<container-type>-<container-id><suffix>")
+]
+
 ##
 # An enum-style holder for the script
 # parameters and their keys/labels
@@ -80,6 +88,7 @@ class Labels:
     DATA_TYPE       = "Data_Type"
     IDs             = "IDs"
     FILE_NAME       = "CSV_File_Name"
+    FILE_NAME_PATTERN = "File_Name_Pattern"
     DELIMITER       = "CSV_Records_Separator"
     SKIP_HEADER     = "Skip_CSV_Header_Line"
     CHARSET         = "CSV_Text_Encoding"
@@ -100,6 +109,7 @@ PARAMETERS_KEYS_MAPPING = {
     Labels.DATA_TYPE       : "csv-container-type",
     Labels.IDs             : "csv-container-id",
     Labels.FILE_NAME       : "csv-file-name",
+    Labels.FILE_NAME_PATTERN : "csv-file-name",
     Labels.DELIMITER       : "csv-delimiter",
     Labels.SKIP_HEADER     : "csv-skip-header",
     Labels.CHARSET         : "csv-charset",
@@ -143,6 +153,7 @@ PARAMETERS_VALUES_MAPPING = {
     Labels.DATA_TYPE       : to_lowercase,
     Labels.IDs             : first_item_or_none,
     Labels.FILE_NAME       : trim,
+    Labels.FILE_NAME_PATTERN : trim,
     Labels.DELIMITER       : trim,
     Labels.SKIP_HEADER     : to_lowercase,
     Labels.CHARSET         : to_uppercase,
@@ -369,16 +380,24 @@ def run_as_script():
         ),
 
     scripts.String(
-        Labels.DELIMITER,
+        Labels.FILE_NAME_PATTERN,
         optional = True,
         grouping = "2.1",
+        description = "Custom token-based CSV file naming convention. Mutually exclusive with the filename option. Default: <basename>_<suffix>",
+        values = FILENAME_PATTERNS_ENUM
+        ),
+
+    scripts.String(
+        Labels.DELIMITER,
+        optional = True,
+        grouping = "2.2",
         description = "The CSV file delimiter character. Leave empty to use the default value, ie. a comma (,)."
         ),
 
     scripts.Bool(
         Labels.SKIP_HEADER,
         optional = True,
-        grouping = "2.2",
+        grouping = "2.3",
         description = "Ignore the first (header) line from the CSV file. Default value: enabled. Tick to process all lines.",
         default = True
         ),
@@ -388,14 +407,14 @@ def run_as_script():
     scripts.String(
         Labels.CHARSET,
         optional = True,
-        grouping = "2.3",
+        grouping = "2.4",
         description = "CSV file charset encoding to use when reading. Default value: UTF-8. Leave blank if unknown."
         ),
 
     scripts.Bool(
         Labels.EXPORT_MODE,
         optional = True,
-        grouping = "2.4",
+        grouping = "2.5",
         description = "Extract the selected data to a CSV file. Default value: disabled. Tick to switch from default 'annotate' mode.",
         ),
 
