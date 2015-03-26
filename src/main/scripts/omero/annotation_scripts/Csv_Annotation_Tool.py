@@ -104,16 +104,16 @@ class Labels:
 # value = CSV Annotation Tool CLI argument key
 ##
 PARAMETERS_KEYS_MAPPING = {
-    Labels.ANNOTATED_TYPE  : "annotated-type",
-    Labels.ANNOTATION_TYPE : "annotation-type",
-    Labels.DATA_TYPE       : "csv-container-type",
-    Labels.IDs             : "csv-container-id",
-    Labels.FILE_NAME       : "csv-file-name",
+    Labels.ANNOTATED_TYPE    : "annotated-type",
+    Labels.ANNOTATION_TYPE   : "annotation-type",
+    Labels.DATA_TYPE         : "csv-container-type",
+    Labels.IDs               : "csv-container-id",
+    Labels.FILE_NAME         : "csv-file-name",
     Labels.FILE_NAME_PATTERN : "csv-file-name",
-    Labels.DELIMITER       : "csv-delimiter",
-    Labels.SKIP_HEADER     : "csv-skip-header",
-    Labels.CHARSET         : "csv-charset",
-    Labels.EXPORT_MODE     : "export-mode"
+    Labels.DELIMITER         : "csv-delimiter",
+    Labels.SKIP_HEADER       : "csv-skip-header",
+    Labels.CHARSET           : "csv-charset",
+    Labels.EXPORT_MODE       : "export-mode"
 }
 
 ##
@@ -148,16 +148,16 @@ def first_item_or_none(list_value):
     return None
 
 PARAMETERS_VALUES_MAPPING = {
-    Labels.ANNOTATED_TYPE  : to_lowercase,
-    Labels.ANNOTATION_TYPE : to_lowercase,
-    Labels.DATA_TYPE       : to_lowercase,
-    Labels.IDs             : first_item_or_none,
-    Labels.FILE_NAME       : trim,
+    Labels.ANNOTATED_TYPE    : to_lowercase,
+    Labels.ANNOTATION_TYPE   : to_lowercase,
+    Labels.DATA_TYPE         : to_lowercase,
+    Labels.IDs               : first_item_or_none,
+    Labels.FILE_NAME         : trim,
     Labels.FILE_NAME_PATTERN : trim,
-    Labels.DELIMITER       : trim,
-    Labels.SKIP_HEADER     : to_lowercase,
-    Labels.CHARSET         : to_uppercase,
-    Labels.EXPORT_MODE     : to_lowercase
+    Labels.DELIMITER         : trim,
+    Labels.SKIP_HEADER       : to_lowercase,
+    Labels.CHARSET           : to_uppercase,
+    Labels.EXPORT_MODE       : to_lowercase
 }
 
 
