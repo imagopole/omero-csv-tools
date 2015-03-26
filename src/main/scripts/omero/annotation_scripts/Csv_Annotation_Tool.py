@@ -37,20 +37,13 @@ COMMAND_PATH_FORMAT = "{0} --hostname='localhost' --session-key='{1}' {2} --anno
 SINGLE_ARGUMENT_FORMAT = "--{0}='{1}'"
 
 ##
-# Default value for the optional annotated type parameter.
-# Using an empty character string causes the annotation target to be defined as
-# the data type nested one level below the selected container (eg. Project -> Dataset, Dataset -> Image).
-##
-DEFAULT_ANNOTATED_TYPE = ""
-
-##
 # OMERO script enumeration values for combo-boxes
 # All values follow the script style guidelines for data binding and
 # are converted to their lowercase equivalent before the external
 # process invocation
 ##
 ANNOTATED_TYPES_ENUM = [
-    rstring(DEFAULT_ANNOTATED_TYPE),
+    rstring(""),
     rstring("Image"),
     rstring("Dataset"),
     rstring("PlateRun"),
@@ -367,8 +360,7 @@ def run_as_script():
         grouping = "1",
         description = """The type of data you want to annotate (eg. image, dataset or plate/plate run).
         Leave empty to use the default 'child' convention (ie. pick the selected container's direct children as annotation targets).""",
-        values = ANNOTATED_TYPES_ENUM,
-        default = DEFAULT_ANNOTATED_TYPE
+        values = ANNOTATED_TYPES_ENUM
         ),
 
     #---- Optional arguments
