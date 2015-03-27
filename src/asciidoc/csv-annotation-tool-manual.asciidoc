@@ -197,14 +197,16 @@ will consider the plate run ID _only_, such that the display label will be forma
 
 ==== Tags file name
 
+===== Default naming conventions
+
 If you don't use a specific file name, a default naming scheme is applied.
 
-===== In annotate mode
+====== In annotate mode
 
 In _annotate mode_, the default name will be: `*<annotated-type>_<annotation-type>.csv*`, with `*annotated-type*` and
 `*annotation-type*` being the supported script arguments.
 
-===== In export mode
+====== In export mode
 
 In _export mode_, the conventional name will be generated with an additional ``.export`` suffix appended to the
 default name: `*<annotated-type>_<annotation-type>.export.csv*`.
@@ -216,6 +218,38 @@ Example default file names:
 
 The file content is consequently expected to be of homogenous nature: you cannot mix tags to be
 applied to images and datasets in the same file (you would need two files for this).
+
+===== Custom naming conventions
+
+In order to customize file naming, a set of patterns based on "well-known tokens" may be used within the
+filename parameter.
+
+Tokens formatted as `*<token>*` are subsequently substituted prior to the script execution:
+
+[width="100%", cols="20,80", options="header"]
+|==================================================================================================
+|Available token     |Expands to
+|`<container-id>`    |The parent's container ID
+|`<container-type>`  |The parent's container data type (eg. project, dataset, screen, plate)
+|`<annotation-type>` |The type of annotation in used (currently restricted to 'tag')
+|`<annotated-type>`  |The target annotated object's data type (eg. dataset, platerun, image)
+|`<basename>`        |Shorthand for the default naming convention (without suffix) {empty} +
+                      Equivalent to `<annotated-type>_<annotation-type>`
+|`<suffix>`          |Shorthand for the default convention suffix (eg. ``.csv`` or ``.export.csv``)
+|==================================================================================================
+
+Predefined patterns available as shorthands via the script options:
+
+[width="100%", options="header"]
+|=================================================================================
+|Pattern                                              | Example expansions
+|`<basename><suffix>`                                 |`image_tag.csv`
+|`<annotated-type>_<annotation-type><suffix>`         |`image_tag.csv`
+|`<basename>_<container-type><suffix>`                |`image_tag_dataset.csv`
+|`<basename>_<container-id><suffix>`                  |`image_tag_123.csv`
+|`<basename>_<container-type><container-id><suffix>`  |`image_tag_dataset123.csv`
+|`<basename>_<container-type>-<container-id><suffix>` |`image_tag_dataset-123.csv`
+|=================================================================================
 
 ==== Tags file format
 
