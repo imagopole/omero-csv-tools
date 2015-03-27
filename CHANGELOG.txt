@@ -1,6 +1,16 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.4-rc1
+
+- Fix missing header row in export mode with skip header
+- Add file name tokens substitution
+- Standardize documentation on 'plate run'
+- Build maintenance:
+  * Integration tests helper tasks
+  * New 5.1.x milestone build profile
+
+
 ## 0.3
 
 - Build/dependencies updates
