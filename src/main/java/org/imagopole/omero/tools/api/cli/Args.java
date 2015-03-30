@@ -285,6 +285,30 @@ public class Args {
     }
 
     /**
+     * Enumeration for the --run-mode argument.
+     *
+     * @author seb
+     *
+     */
+    public static enum RunMode {
+
+        /** Default run mode: tag/annotate. */
+        annotate,
+
+        /** Export to the relevant {@link FileType}. */
+        export;
+
+        /**
+         * Formats the enumeration values array to string.
+         * @return the enum values as a comma separated string
+         */
+        public static String dump() {
+            return Joiner.on(ENUM_SEPARATOR).join(values());
+        }
+
+    }
+
+    /**
      * Default constant values for optional arguments.
      *
      * @author seb
@@ -297,6 +321,7 @@ public class Args {
         public static final String    UTF_8_CHARSET     =  Charsets.UTF_8.name();
         public static final Boolean   SKIP_HEADER_ON    =  Boolean.TRUE;
         public static final Boolean   EXPORT_MODE_OFF   =  Boolean.FALSE;
+        public static final String    RUN_MODE_ANNOTATE =  RunMode.annotate.name();
         public static final String    FILE_TYPE_REMOTE  =  FileType.remote.name();
 
         private Defaults() {
