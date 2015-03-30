@@ -106,7 +106,7 @@ PARAMETERS_KEYS_MAPPING = {
     Labels.DELIMITER         : "csv-delimiter",
     Labels.SKIP_HEADER       : "csv-skip-header",
     Labels.CHARSET           : "csv-charset",
-    Labels.EXPORT_MODE       : "export-mode"
+    Labels.EXPORT_MODE       : "run-mode"
 }
 
 ##
@@ -140,6 +140,15 @@ def first_item_or_none(list_value):
         return list_value[0]
     return None
 
+def to_run_mode_enum_or_none(boolean_value):
+    export_mode_to_run_mode_mapping = {
+        True  : "export",
+        False : "annotate"
+    }
+    if boolean_value is not None:
+        return export_mode_to_run_mode_mapping[boolean_value]
+    return None
+
 PARAMETERS_VALUES_MAPPING = {
     Labels.ANNOTATED_TYPE    : to_lowercase,
     Labels.ANNOTATION_TYPE   : to_lowercase,
@@ -150,7 +159,7 @@ PARAMETERS_VALUES_MAPPING = {
     Labels.DELIMITER         : trim,
     Labels.SKIP_HEADER       : to_lowercase,
     Labels.CHARSET           : to_uppercase,
-    Labels.EXPORT_MODE       : to_lowercase
+    Labels.EXPORT_MODE       : to_run_mode_enum_or_none
 }
 
 
