@@ -10,6 +10,7 @@ import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.Args.FileType;
+import org.imagopole.omero.tools.api.cli.Args.RunMode;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,9 +93,9 @@ public class ScriptArgsParser extends AbstractArgsParser {
             + "      --csv-charset               CSV file charset name for decoding. \n"
             + "                                  Default value: UTF-8 \n"
             + "\n"
-            + "      --export-mode               Extract annotation metadata to CSV file. \n"
-            + "                                  Valid values: true, false \n"
-            + "                                  Default value: false \n"
+            + "      --run-mode                  Main processing mode (eg. annotate, export). \n"
+            + "                                  Valid values: " + RunMode.dump() + "\n"
+            + "                                  Default value: annotate \n"
             + "\n";
 
     /** The GetOpts short options spec. */
@@ -125,7 +126,8 @@ public class ScriptArgsParser extends AbstractArgsParser {
         new LongOpt("csv-delimiter",   LongOpt.OPTIONAL_ARGUMENT, null, 20),
         new LongOpt("csv-skip-header", LongOpt.OPTIONAL_ARGUMENT, null, 30),
         new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40),
-        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 50),
+        new LongOpt("run-mode",        LongOpt.OPTIONAL_ARGUMENT, null, 50),
+        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 55),
         new LongOpt("csv-file-type",   LongOpt.OPTIONAL_ARGUMENT, null, 60)
 
     };
@@ -175,7 +177,7 @@ public class ScriptArgsParser extends AbstractArgsParser {
         if (null == config.getCsvSkipHeader())      { valid = false; validationMessages.append("\n csv-skip-header");    }
         if (null == config.getCsvCharsetName())     { valid = false; validationMessages.append("\n csv-charset");        }
         if (null == config.getPort())               { valid = false; validationMessages.append("\n port");               }
-        if (null == config.getExportMode())         { valid = false; validationMessages.append("\n export-mode");        }
+        if (null == config.getRunModeArg())         { valid = false; validationMessages.append("\n run-mode");           }
 
         log.debug("validConfig? {}", valid);
 

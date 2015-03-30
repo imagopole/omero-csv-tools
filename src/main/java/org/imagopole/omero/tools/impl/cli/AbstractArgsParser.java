@@ -10,13 +10,14 @@ import static org.imagopole.omero.tools.util.ParseUtil.parseLongOrNull;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
-import com.google.common.base.Preconditions;
-
+import org.imagopole.omero.tools.api.cli.Args.RunMode;
 import org.imagopole.omero.tools.api.cli.ArgsParser;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Preconditions;
 
 /**
  * Base class for command line parsers implementations.
@@ -125,10 +126,23 @@ public abstract class AbstractArgsParser implements ArgsParser {
                     config.setCsvCharsetName(csvCharsetName);
                     break;
 
-                // --export-mode : optional
+                // --run-mode : optional
                 case 50:
+                    String runMode = g.getOptarg();
+                    config.setRunModeArg(runMode);
+                    break;
+
+                // --export-mode : to be superceded with --run-mode=export, but still takes precendence
+                // in case of (wrong) doubled-up arguments (eg. --export-mode=true --run-mode=annotate)
+                case 55:
                     String exportMode = g.getOptarg();
-                    config.setExportMode(parseBooleanOrNull(exportMode));
+                    log.warn("Deprecation warning: --export-mode will be replaced with --run-mode=export");
+                    Boolean isExportMode = parseBooleanOrNull(exportMode);
+
+                    config.setExportMode(isExportMode);
+                    if (null != isExportMode && isExportMode) {
+                        config.setRunModeArg(RunMode.export.name());
+                    }
                     break;
 
                // --csv-file-type : optional

@@ -44,7 +44,9 @@ public class CsvAnnotationConfig {
     private Boolean csvSkipHeader  = Defaults.SKIP_HEADER_ON;
     private String csvCharsetName  = Defaults.UTF_8_CHARSET;
     private Integer port           = Defaults.ICE_SSL_PORT;
+    @Deprecated
     private Boolean exportMode     = Defaults.EXPORT_MODE_OFF;
+    private String runModeArg      = Defaults.RUN_MODE_ANNOTATE;
 
     /**
      * Vanilla constructor
@@ -142,6 +144,7 @@ public class CsvAnnotationConfig {
             .add("csv-delimiter", getCsvDelimiter())
             .add("csv-skip-header", getCsvSkipHeader())
             .add("csv-charset", getCsvCharsetName())
+            .add("run-mode", getRunModeArg())
             .add("export-mode", getExportMode())
             .toString();
      }
@@ -446,16 +449,36 @@ public class CsvAnnotationConfig {
 
     /**
      * @return the exportMode
+     * @deprecated Superceded by --mode=export
      */
+    @Deprecated
     public Boolean getExportMode() {
         return exportMode;
     }
 
     /**
      * @param exportMode the exportMode to set
+     * @deprecated Superceded by --mode=export
      */
+    @Deprecated
     public void setExportMode(Boolean exportMode) {
         this.exportMode = exportMode;
+    }
+
+    /**
+     * Returns modeArg.
+     * @return the modeArg
+     */
+    public String getRunModeArg() {
+        return runModeArg;
+    }
+
+    /**
+     * Sets modeArg.
+     * @param runModeArg the modeArg to set
+     */
+    public void setRunModeArg(String runModeArg) {
+        this.runModeArg = runModeArg;
     }
 
     /**
