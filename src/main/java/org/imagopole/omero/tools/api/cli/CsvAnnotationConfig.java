@@ -9,6 +9,7 @@ import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.Args.Defaults;
+import org.imagopole.omero.tools.api.cli.Args.RunMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ public class CsvAnnotationConfig {
         ContainerType containerType = ContainerType.valueOf(getCsvContainerTypeArg());
         AnnotationType annotationType = AnnotationType.valueOf(getAnnotationTypeArg());
         AnnotatedType annotatedType = getOrInferEffectiveAnnotatedType();
+        Boolean isExportMode = isExportMode();
 
         if (null != configuredFilename && ! configuredFilename.isEmpty()) {
             log.debug("Reusing csv filename from configured argument: {}", configuredFilename);
@@ -83,7 +85,7 @@ public class CsvAnnotationConfig {
                         getContainerId(),
                         annotationType,
                         annotatedType,
-                        getExportMode());
+                        isExportMode);
 
                 log.debug("Tokens expansion in csv filename argument: {}", expandedFileName);
                 return expandedFileName;
@@ -94,7 +96,7 @@ public class CsvAnnotationConfig {
 
         // otherwise use the naming convention (based on the _effective_ annotation target)
         String inferredFileName =
-            NamingConventions.buildFullName(annotatedType, annotationType, getExportMode());
+            NamingConventions.buildFullName(annotatedType, annotationType, isExportMode);
 
         log.info("Inferring csv filename from container & annotation types: {}", inferredFileName);
 
@@ -463,6 +465,15 @@ public class CsvAnnotationConfig {
     @Deprecated
     public void setExportMode(Boolean exportMode) {
         this.exportMode = exportMode;
+    }
+
+    public Boolean isExportMode() {
+        Boolean isExportMode =
+            (null != getRunModeArg()
+             && !getRunModeArg().isEmpty()
+             && RunMode.export.equals(RunMode.valueOf(getRunModeArg())));
+
+        return isExportMode;
     }
 
     /**

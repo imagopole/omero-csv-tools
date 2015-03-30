@@ -116,7 +116,7 @@ public class CsvAnnotator {
         // config is expected to be valid at this point
         log.debug("Config dump: {}", config.dump());
 
-        final Boolean isExportMode = config.getExportMode();
+        final Boolean isExportMode = config.isExportMode();
 
         if (null != isExportMode && isExportMode) {
             log.debug("Export mode requested");
