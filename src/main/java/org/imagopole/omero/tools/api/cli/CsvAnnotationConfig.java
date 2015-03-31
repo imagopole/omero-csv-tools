@@ -45,8 +45,6 @@ public class CsvAnnotationConfig {
     private Boolean csvSkipHeader  = Defaults.SKIP_HEADER_ON;
     private String csvCharsetName  = Defaults.UTF_8_CHARSET;
     private Integer port           = Defaults.ICE_SSL_PORT;
-    @Deprecated
-    private Boolean exportMode     = Defaults.EXPORT_MODE_OFF;
     private String runModeArg      = Defaults.RUN_MODE_ANNOTATE;
 
     /**
@@ -147,7 +145,6 @@ public class CsvAnnotationConfig {
             .add("csv-skip-header", getCsvSkipHeader())
             .add("csv-charset", getCsvCharsetName())
             .add("run-mode", getRunModeArg())
-            .add("export-mode", getExportMode())
             .toString();
      }
 
@@ -447,24 +444,6 @@ public class CsvAnnotationConfig {
      */
     public void setSessionKey(String sessionId) {
         this.sessionKey = sessionId;
-    }
-
-    /**
-     * @return the exportMode
-     * @deprecated Superceded by --mode=export
-     */
-    @Deprecated
-    public Boolean getExportMode() {
-        return exportMode;
-    }
-
-    /**
-     * @param exportMode the exportMode to set
-     * @deprecated Superceded by --mode=export
-     */
-    @Deprecated
-    public void setExportMode(Boolean exportMode) {
-        this.exportMode = exportMode;
     }
 
     public Boolean isExportMode() {

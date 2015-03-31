@@ -125,12 +125,12 @@ public class CliArgsParser extends AbstractArgsParser {
             + "  * Export tags and datasets to a remote csv file attached to a project with the default "
             + "conventional name ('dataset_tag.export.csv'): \n"
             + "  -s localhost -u my-username -w secret --annotated-type dataset --annotation-type tag "
-            + "--csv-container-type project --csv-container-id 1234 --export-mode=true \n"
+            + "--csv-container-type project --csv-container-id 1234 --run-mode=export \n"
             + "\n"
             + "  * Export tags and datasets to a local csv file with a custom name: \n "
             + "  -s localhost -u my-username -w secret --annotated-type dataset --annotation-type tag "
             + "--csv-file-type local --csv-file-name=/tmp/my_datasets.csv "
-            + "--csv-container-type project --csv-container-id 1234 --export-mode=true \n"
+            + "--csv-container-type project --csv-container-id 1234 --run-mode=export \n"
             + "\n"
             + "Expected CSV format (with optional columns header): \n"
             + "------------------------------------------------------------------\n"
@@ -168,7 +168,6 @@ public class CliArgsParser extends AbstractArgsParser {
         new LongOpt("csv-skip-header", LongOpt.OPTIONAL_ARGUMENT, null, 30),
         new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40),
         new LongOpt("run-mode",        LongOpt.OPTIONAL_ARGUMENT, null, 50),
-        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 55),
         new LongOpt("csv-file-type",   LongOpt.OPTIONAL_ARGUMENT, null, 60)
 
     };

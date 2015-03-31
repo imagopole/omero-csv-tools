@@ -127,7 +127,6 @@ public class ScriptArgsParser extends AbstractArgsParser {
         new LongOpt("csv-skip-header", LongOpt.OPTIONAL_ARGUMENT, null, 30),
         new LongOpt("csv-charset",     LongOpt.OPTIONAL_ARGUMENT, null, 40),
         new LongOpt("run-mode",        LongOpt.OPTIONAL_ARGUMENT, null, 50),
-        new LongOpt("export-mode",     LongOpt.OPTIONAL_ARGUMENT, null, 55),
         new LongOpt("csv-file-type",   LongOpt.OPTIONAL_ARGUMENT, null, 60)
 
     };
