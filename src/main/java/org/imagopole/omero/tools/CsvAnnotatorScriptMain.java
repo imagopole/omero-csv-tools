@@ -43,6 +43,9 @@ public class CsvAnnotatorScriptMain {
     /** Failure exit code */
     private static final int FAILURE = -1;
 
+    /** Agent dicriminator in session table. */
+    private static final String AGENT = "OMERO.csvtools";
+
     private static void die(String msg) {
         System.err.println(msg);
         System.exit(FAILURE);
@@ -51,6 +54,8 @@ public class CsvAnnotatorScriptMain {
     private static client createOmeroClient(String hostname, Integer port) {
 
         final client client = new client(hostname, port);
+        client.setAgent(AGENT);
+
         LOG.debug("Got client handle {} - secure: {}", client, client.isSecure());
 
         return client;
