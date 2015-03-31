@@ -1,6 +1,12 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.4
+
+- Deprecate --export-mode boolean cli argument in favor of enum-based --run-mode
+- Add 5.1.0-rc2 + ice35 build profile
+
+
 ## 0.4-rc1
 
 - Fix missing header row in export mode with skip header
