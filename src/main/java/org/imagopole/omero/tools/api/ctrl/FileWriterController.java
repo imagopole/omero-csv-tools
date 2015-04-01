@@ -6,6 +6,7 @@ import omero.ServerError;
 
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.cli.Args.FileType;
+import org.imagopole.omero.tools.api.dto.AnnotationInfo;
 
 /**
  * Dispatcher layer to the file write related services.
@@ -24,6 +25,7 @@ public interface FileWriterController {
      * @param fileType the type of file (local or remote)
      * @param fileName the file name (may be a path for local files)
      * @param fileContent the file content as String
+     * @param annotationInfo the file annotation metadata for remote file types (null for local files)
      * @throws ServerError OMERO client or server failure
      * @throws IOException read failure
      */
@@ -33,6 +35,7 @@ public interface FileWriterController {
                     ContainerType containerType,
                     FileType fileType,
                     String fileName,
-                    String fileContent) throws ServerError, IOException;
+                    String fileContent,
+                    AnnotationInfo annotationInfo) throws ServerError, IOException;
 
 }

@@ -3,6 +3,9 @@
  */
 package org.imagopole.omero.tools.impl;
 
+import static org.imagopole.omero.tools.util.AnnotationsUtil.getImportModeAnnotationInfo;
+import static org.imagopole.omero.tools.util.AnnotationsUtil.getExportModeAnnotationInfo;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collection;
@@ -18,13 +21,16 @@ import org.imagopole.omero.tools.api.blitz.OmeroUpdateService;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.AnnotationType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
+import org.imagopole.omero.tools.api.cli.Args.Defaults;
 import org.imagopole.omero.tools.api.cli.Args.FileType;
+import org.imagopole.omero.tools.api.cli.Args.RunMode;
 import org.imagopole.omero.tools.api.cli.CsvAnnotationConfig;
 import org.imagopole.omero.tools.api.ctrl.CsvAnnotationController;
 import org.imagopole.omero.tools.api.ctrl.CsvExportController;
 import org.imagopole.omero.tools.api.ctrl.FileReaderController;
 import org.imagopole.omero.tools.api.ctrl.FileWriterController;
 import org.imagopole.omero.tools.api.ctrl.MetadataController;
+import org.imagopole.omero.tools.api.dto.AnnotationInfo;
 import org.imagopole.omero.tools.api.dto.CsvData;
 import org.imagopole.omero.tools.api.dto.LinksData;
 import org.imagopole.omero.tools.api.dto.PojoData;
@@ -116,15 +122,35 @@ public class CsvAnnotator {
         // config is expected to be valid at this point
         log.debug("Config dump: {}", config.dump());
 
-        final Boolean isExportMode = config.isExportMode();
+        // convert cli arguments to valid enum values or fail
+        final String runModeArg = config.getRunModeArg();
+        final RunMode runMode = RunMode.valueOf(runModeArg);
 
-        if (null != isExportMode && isExportMode) {
-            log.debug("Export mode requested");
-            runExportModeFromConfig(experimenterId);
-        } else {
-            log.debug("Annotate mode requested");
-            runAnnotateModeFromConfig(experimenterId);
+        log.debug("Requested run mode: {}", runMode);
+
+        switch (runMode) {
+
+            case annotate:
+                runAnnotateModeFromConfig(experimenterId);
+                break;
+
+            case export:
+                runExportModeFromConfig(experimenterId);
+                break;
+
+            case transfer:
+                runTransferModeFromConfig(experimenterId);
+                break;
+
+            case auto:
+                runAutoModeFromConfig(experimenterId);
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unsupported run mode parameter");
+
         }
+
     }
 
     /**
@@ -136,6 +162,8 @@ public class CsvAnnotator {
      */
     private void runAnnotateModeFromConfig(final Long experimenterId) throws ServerError, IOException {
         Check.notNull(experimenterId, "experimenterId");
+
+        log.debug("annotate-mode:start");
 
         final Long containerId = config.getContainerId();
         final String csvFileName = config.getOrInferCsvFilename();
@@ -172,6 +200,8 @@ public class CsvAnnotator {
         // persist to database
         log.info("Persisting changes to database");
         annotationController.saveAllAnnotationLinks(linksData);
+
+        log.debug("annotate-mode:end");
     }
 
     /**
@@ -183,6 +213,8 @@ public class CsvAnnotator {
      */
     private void runExportModeFromConfig(final Long experimenterId) throws ServerError, IOException {
         Check.notNull(experimenterId, "experimenterId");
+
+        log.debug("export-mode:start");
 
         final Long containerId = config.getContainerId();
         final String csvFileName = config.getOrInferCsvFilename();
@@ -210,6 +242,9 @@ public class CsvAnnotator {
         String fileContent =
             exportController.convertToCsv(annotationType, annotatedType, entitiesPlusAnnotations);
 
+        // get the file annotation metadata (ie. namespace & description)
+        AnnotationInfo annotationInfo = getExportModeAnnotationInfo(containerId, containerType);
+
         // upload and attach the generated CSV to the OMERO container
         fileWriterController.writeByFileContainerType(
                 experimenterId,
@@ -217,7 +252,91 @@ public class CsvAnnotator {
                 containerType,
                 fileType,
                 csvFileName,
-                fileContent);
+                fileContent,
+                annotationInfo);
+
+        log.debug("export-mode:end");
+    }
+
+    /**
+     * Main entry point to the "import/transfer mode" (ie. upload + attach) logic.
+     *
+     * @param experimenterId the experimenter
+     * @throws ServerError OMERO client or server failure
+     * @throws IOException CSV file upload/attach failure
+     */
+    private void runTransferModeFromConfig(final Long experimenterId) throws ServerError, IOException {
+        Check.notNull(experimenterId, "experimenterId");
+
+        log.debug("transfer-mode:start");
+
+        final Long containerId = config.getContainerId();
+        final String csvFileName = config.getOrInferCsvFilename();
+
+        // ignore the fileType in attach mode:
+        // always read from a local file and write to a remote file annotation
+        final String fileTypeArg = config.getCsvFileTypeArg();
+        if (null != fileTypeArg && !fileTypeArg.trim().isEmpty()) {
+            log.info("Transfer mode - ignoring/resetting configured fileType: {}", fileTypeArg);
+            config.setCsvFileTypeArg(null);
+        }
+
+        // convert cli arguments to valid enum values or fail
+        final String containerTypeArg = config.getCsvContainerTypeArg();
+        final ContainerType containerType = ContainerType.valueOf(containerTypeArg);
+
+        // read CSV content from local file
+        final CsvData csvData =
+            fileReaderController.readByFileContainerType(
+                    experimenterId,
+                    containerId,
+                    containerType,
+                    FileType.local,
+                    csvFileName);
+
+        if (null != csvData) {
+
+            // get the file annotation data + metadata (ie. namespace & description)
+            String fileContent = csvData.getFileContent();
+            AnnotationInfo annotationInfo = getImportModeAnnotationInfo(containerId, containerType);
+
+            // upload and attach the generated CSV to the OMERO container
+            fileWriterController.writeByFileContainerType(
+                    experimenterId,
+                    containerId,
+                    containerType,
+                    FileType.remote,
+                    csvFileName,
+                    fileContent,
+                    annotationInfo);
+
+        } else {
+            log.warn("Failed to read local file content for transfer from: {}", csvFileName);
+        }
+
+        log.debug("transfer-mode:end");
+    }
+
+    /**
+     * Main entry point to the "auto-pilot mode" (transfer + annotate) logic.
+     *
+     * @param experimenterId the experimenter
+     * @throws ServerError OMERO client or server failure
+     * @throws IOException CSV file upload/attach failure
+     */
+    private void runAutoModeFromConfig(final Long experimenterId) throws ServerError, IOException {
+        Check.notNull(experimenterId, "experimenterId");
+
+        //-- auto mode:
+        //-- (i) upload and attach local CSV file
+        runTransferModeFromConfig(experimenterId);
+
+        //-- (ii) re-configure cli parameters for next step (annotate)
+        log.info("Auto mode - overriding/resetting configured fileType: {}", config.getCsvFileTypeArg());
+        config.setCsvFileTypeArg(Defaults.FILE_TYPE_REMOTE);
+
+        //-- (iii) process remote CSV file annotation
+        runAnnotateModeFromConfig(experimenterId);
     }
 
     /**

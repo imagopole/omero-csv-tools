@@ -296,7 +296,13 @@ public class Args {
         annotate,
 
         /** Export to the relevant {@link FileType}. */
-        export;
+        export,
+
+        /** Transfer mode: upload a local file and link as a remote file attachment. */
+        transfer,
+
+        /** "Auto-pilot" mode: run {@link RunMode#transfer} and {@link RunMode#annotate} sequentially. */
+        auto;
 
         /**
          * Formats the enumeration values array to string.

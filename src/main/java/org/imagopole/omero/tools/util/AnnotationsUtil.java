@@ -12,7 +12,10 @@ import java.util.Set;
 
 import omero.model.IObject;
 
+import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
+import org.imagopole.omero.tools.api.dto.AnnotationInfo;
+import org.imagopole.omero.tools.impl.dto.DefaultAnnotationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,10 @@ public final class AnnotationsUtil {
     /** Application namespace for export related operations. */
     public static final String EXPORT_NAMESPACE = ROOT_NAMESPACE + "/export";
 
-    /** Metadata template for the <code>FileAnnotationData<code> description attribute.
+    /** Application namespace for "import" (upload + attach) related operations. */
+    public static final String IMPORT_NAMESPACE = ROOT_NAMESPACE + "/import";
+
+    /** Metadata template for the <code>FileAnnotationData<code> export description attribute.
      *
      *  Should be formatted with {@link String#format(String, Object...)}, with two required
      *  arguments:
@@ -59,7 +65,18 @@ public final class AnnotationsUtil {
      *    <li>containerId</li>
      *  </ol>
      *  */
-    public static final String EXPORT_DESCRIPTION_FORMAT = "CSV export for %s %s";
+    private static final String EXPORT_DESCRIPTION_FORMAT = "CSV export for %s %s";
+
+    /** Metadata template for the <code>FileAnnotationData<code> upload/attach description attribute.
+    *
+    *  Should be formatted with {@link String#format(String, Object...)}, with two required
+    *  arguments:
+    *  <ol>
+    *    <li>containerType</li>
+    *    <li>containerId</li>
+    *  </ol>
+    *  */
+    private static final String IMPORT_DESCRIPTION_FORMAT = "CSV import for %s %s";
 
     /** Comparator for pojos names and annotations values ordering before CSV export.
      *  Uses alphanumeric string comparisons by default. */
@@ -70,6 +87,20 @@ public final class AnnotationsUtil {
      */
     private AnnotationsUtil() {
         super();
+    }
+
+    public static AnnotationInfo getExportModeAnnotationInfo(Long containerId, ContainerType containerType) {
+        String annotationDescription =
+            String.format(EXPORT_DESCRIPTION_FORMAT, containerType, containerId);
+
+        return DefaultAnnotationInfo.forInfo(EXPORT_NAMESPACE, annotationDescription);
+    }
+
+    public static AnnotationInfo getImportModeAnnotationInfo(Long containerId, ContainerType containerType) {
+        String annotationDescription =
+            String.format(IMPORT_DESCRIPTION_FORMAT, containerType, containerId);
+
+        return DefaultAnnotationInfo.forInfo(IMPORT_NAMESPACE, annotationDescription);
     }
 
     /**

@@ -4,8 +4,6 @@
 package org.imagopole.omero.tools.impl.ctrl;
 
 import static org.imagopole.omero.tools.util.AnnotationsUtil.CSV_MIME_TYPE;
-import static org.imagopole.omero.tools.util.AnnotationsUtil.EXPORT_DESCRIPTION_FORMAT;
-import static org.imagopole.omero.tools.util.AnnotationsUtil.EXPORT_NAMESPACE;
 import static org.imagopole.omero.tools.util.ParseUtil.parseContentTypeOrFail;
 
 import java.io.IOException;
@@ -19,7 +17,6 @@ import org.imagopole.omero.tools.api.cli.Args.FileType;
 import org.imagopole.omero.tools.api.ctrl.FileWriterController;
 import org.imagopole.omero.tools.api.dto.AnnotationInfo;
 import org.imagopole.omero.tools.api.logic.FileWriterService;
-import org.imagopole.omero.tools.impl.dto.DefaultAnnotationInfo;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +51,9 @@ public class DefaultFileWriterController implements FileWriterController {
             Long containerId,
             ContainerType containerType,
             FileType fileType,
-            String fileName, String fileContent) throws ServerError, IOException {
+            String fileName,
+            String fileContent,
+            AnnotationInfo annotationInfo) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
@@ -75,7 +74,8 @@ public class DefaultFileWriterController implements FileWriterController {
                                 containerId,
                                 containerType,
                                 fileName,
-                                fileContent);
+                                fileContent,
+                                annotationInfo);
                 break;
 
             default:
@@ -104,16 +104,17 @@ public class DefaultFileWriterController implements FileWriterController {
             Long containerId,
             ContainerType containerType,
             String fileName,
-            String fileContent) throws ServerError, IOException {
+            String fileContent,
+            AnnotationInfo annotationInfo) throws ServerError, IOException {
 
         Check.notNull(experimenterId, "experimenterId");
         Check.notNull(containerId, "containerId");
         Check.notNull(containerType, "containerType");
         Check.notEmpty(fileName, "fileName");
         Check.notEmpty(fileContent, "fileContent");
+        Check.notNull(annotationInfo, "annotationInfo");
 
         MimeType contentType = parseContentTypeOrFail(CSV_MIME_TYPE);
-        AnnotationInfo annotationInfo = getExportModeAnnotationInfo(containerId, containerType);
 
         Long result = null;
 
@@ -142,13 +143,6 @@ public class DefaultFileWriterController implements FileWriterController {
         }
 
         return result;
-    }
-
-    private AnnotationInfo getExportModeAnnotationInfo(Long containerId, ContainerType containerType) {
-        String annotationDescription =
-            String.format(EXPORT_DESCRIPTION_FORMAT, containerType, containerId);
-
-        return DefaultAnnotationInfo.forInfo(EXPORT_NAMESPACE, annotationDescription);
     }
 
     /**
