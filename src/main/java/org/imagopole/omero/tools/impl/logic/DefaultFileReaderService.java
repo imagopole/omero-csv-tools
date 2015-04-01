@@ -100,7 +100,7 @@ public class DefaultFileReaderService implements FileReaderService {
         CsvData result = null;
 
         if (null != attachment) {
-            result = readFromFileAnnotation(containerId, attachment);
+            result = readFromFileAnnotation(containerType, containerId, attachment);
         } else {
             log.warn("Null file annotation data with name {} for container {}", fileName, containerId);
         }
@@ -109,14 +109,16 @@ public class DefaultFileReaderService implements FileReaderService {
     }
 
     private CsvData readFromFileAnnotation(
-            Long containerId, // for audit/debug logs only
+            ContainerType containerType,
+            Long containerId,
             FileAnnotationData attachment) throws ServerError, IOException {
 
-        Check.notNull(containerId, "containerId");
+        Check.notNull(containerType, "containerType"); // for validation messages only
+        Check.notNull(containerId, "containerId");     // for audit/debug logs only
         Check.notNull(attachment, "attachment");
 
         // avoid possibly dodgy uploads
-        rejectIfEmptyOriginalFile(containerId, attachment);
+        rejectIfEmptyOriginalFile(containerType, containerId, attachment);
 
         String fileContent = readAttachment(attachment);
 
@@ -200,7 +202,8 @@ public class DefaultFileReaderService implements FileReaderService {
                         fileAnnotationsByName.get(attachedFileName);
 
                     // only one file of the given name must be attached to the container
-                    rejectIfDuplicatesAttachments(containerId, fileAnnotationsWithMatchingName);
+                    rejectIfDuplicatesAttachments(
+                        containerType, containerId, fileAnnotationsWithMatchingName);
 
                     result = Iterables.getOnlyElement(fileAnnotationsWithMatchingName);
 
@@ -255,6 +258,7 @@ public class DefaultFileReaderService implements FileReaderService {
 
     //note: all attachments must be of the same "type" (ie. datasets_tags, or datasets_comments, etc)
     private void rejectIfDuplicatesAttachments(
+                    ContainerType containerType,
                     Long containerId,
                     Collection<FileAnnotationData> csvAttachments) throws IllegalStateException {
 
@@ -262,22 +266,24 @@ public class DefaultFileReaderService implements FileReaderService {
 
             if (csvAttachments.size() > 1) {
                 throw new IllegalStateException(String.format(
-                    "Too many csv attachments (%d) for project: %d",
-                    csvAttachments.size(), containerId));
+                    "Too many csv attachments (%d) for container: %d of type %s",
+                    csvAttachments.size(), containerId, containerType));
             }
 
         }
     }
 
-    private void rejectIfEmptyOriginalFile(Long containerId, FileAnnotationData csvAttachment)
-                    throws IllegalStateException {
+    private void rejectIfEmptyOriginalFile(
+            ContainerType containerType,
+            Long containerId,
+            FileAnnotationData csvAttachment) throws IllegalStateException {
 
         if (null != csvAttachment) {
 
             if (csvAttachment.getFileSize() == 0) {
                 throw new IllegalStateException(String.format(
-                    "Zero-length csv attachment (%d) for project: %d",
-                    csvAttachment.getId(), containerId));
+                    "Zero-length csv attachment (%d) for container: %d of type: %s",
+                    csvAttachment.getId(), containerId, containerType));
             }
 
         }
