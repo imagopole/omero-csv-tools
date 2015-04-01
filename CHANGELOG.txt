@@ -1,6 +1,12 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.5
+
+- Drop support for --export-mode cli argument (superseded by --run-mode)
+- Add cli-only run modes for csv file transfer and "auto" processing
+
+
 ## 0.4
 
 - Deprecate --export-mode boolean cli argument in favor of enum-based --run-mode
