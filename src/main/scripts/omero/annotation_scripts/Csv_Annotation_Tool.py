@@ -76,16 +76,16 @@ FILENAME_PATTERNS_ENUM = [
 # parameters and their keys/labels
 ##
 class Labels:
-    ANNOTATED_TYPE  = "Target_For_Annotation"
-    ANNOTATION_TYPE = "Annotation_Type"
-    DATA_TYPE       = "Data_Type"
-    IDs             = "IDs"
-    FILE_NAME       = "CSV_File_Name"
+    ANNOTATED_TYPE    = "Target_For_Annotation"
+    ANNOTATION_TYPE   = "Annotation_Type"
+    DATA_TYPE         = "Data_Type"
+    IDs               = "IDs"
+    FILE_NAME         = "CSV_File_Name"
     FILE_NAME_PATTERN = "File_Name_Pattern"
-    DELIMITER       = "CSV_Records_Separator"
-    SKIP_HEADER     = "Skip_CSV_Header_Line"
-    CHARSET         = "CSV_Text_Encoding"
-    EXPORT_MODE     = "Export_Mode"
+    DELIMITER         = "CSV_Records_Separator"
+    SKIP_HEADER       = "Skip_CSV_Header_Line"
+    CHARSET           = "CSV_Text_Encoding"
+    EXPORT_MODE       = "Export_Mode"
 
 ##
 # One-to-one mapping for conversion between:
