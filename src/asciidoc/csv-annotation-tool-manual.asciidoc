@@ -49,7 +49,7 @@ http://www.openmicroscopy.org/site/support/partner/omero.webtagging
 
 Workflow outline (details below):
 
-. Optionally export your current data to a seed CSV file.
+. Optionally extract (export) your current data to a seed CSV file.
 . Attach the tag definitions in CSV format to your OMERO project / dataset (or screen / plate / plate run).
 . Run the CSV annotation tool script on the project / dataset (or screen / plate / plate run).
 
@@ -208,6 +208,9 @@ In _annotate mode_, the default name will be: `*<annotated-type>_<annotation-typ
 
 ====== In export mode
 
+_Export mode_ reads the selected OMERO data hierarchy and performs data conversion/extraction to CSV for easier
+creation of seed files to be edited and processed in _annotate mode_.
+
 In _export mode_, the conventional name will be generated with an additional ``.export`` suffix appended to the
 default name: `*<annotated-type>_<annotation-type>.export.csv*`.
 
@@ -341,6 +344,9 @@ adjusting the selected script parameters before launching is recommended.
 NOTE: *Plate Acquisition* and *Plate Run* refer to identical OMERO concepts and may be used interchangeably.
 Usage throughout this document follows the OMERO convention: the data model (_Plate Acquisition_)
 is referenced via its label (_Plate Run_) as the conventional denomination.
+
+NOTE: *Export* mode refers to the extraction and conversion of _name_ data to CSV - unlike its OMERO counterpart,
+this operation does not handle pixel data.
 
 === Distribution packages overview
 
