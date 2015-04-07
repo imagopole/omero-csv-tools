@@ -2,12 +2,19 @@
 
 ####
 # OMERO CSV Annotation Tool for command line use via JVM + Jython script invocation.
-# 
+#
 # Arguments:
 #     csv-annotation-tool-jy.sh --help
 
 # Lookup common dependencies set (assumed from current directory)
-BIN_DIR=`dirname $0`
+if [ -L "$0" ]
+then
+  TOOLS_SCRIPT=`readlink "$0"`
+else
+  TOOLS_SCRIPT=$0
+fi
+
+BIN_DIR=`dirname "$TOOLS_SCRIPT"`
 source "$BIN_DIR/dependencies.sh"
 
 # Jython script from the current distribution

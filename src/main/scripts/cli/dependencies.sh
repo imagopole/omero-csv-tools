@@ -7,9 +7,17 @@
 
 # Distribution unpack directory
 # Assumed to be the current folder for the executed script
-BIN_DIR=`dirname $0`
-UNPACK_DIR=`readlink -e "$BIN_DIR/.."`
+if [ -L "$0" ]
+then
+  TOOLS_SCRIPT=`readlink "$0"`
+else
+  TOOLS_SCRIPT=$0
+fi
+
+BIN_DIR=`dirname "$TOOLS_SCRIPT"`
+UNPACK_DIR=`cd "$BIN_DIR/.." && pwd`
 JARS_DIR="$UNPACK_DIR/lib"
+
 CSV_TOOL_VERSION="@project_version_token@"
 OMERO_VERSION="@omero_version_token@"
 ICE_VERSION="@ice_version_token@"
