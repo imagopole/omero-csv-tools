@@ -1,13 +1,30 @@
-# OMERO CSV Annotation Tool deployment as an OMERO.script
-
+# OMERO.csvtools installation
 
 ## Minimum requirements
 
-- OMERO.server-5.0.0-beta1-ice34
+- OMERO.server 5.0
 - Java 6
 - Python 2.6
-- GNU bash 4.2
+- GNU bash
 
+
+## Package overview
+
+The toolset contains three subcomponents:
+
+- `omero-csv-tools-<VERSION>.jar`: the Java tool - may be invoked as a standalone utility or
+   via its companion scripts
+- `Csv_Annotation_Tool.py`: the OMERO.scripts tool - may be invoked from script-aware OMERO clients,
+   and relies on a companion script/command to launch the Java tool
+- `csv-annotation-tool-script.sh`: the companion shell script - acts as an executable wrapper/glu
+   around the Java tool
+
+In order to ensure compatibility between the OMERO.server and the client Blitz libraries bundled with
+the toolset, it is recommended to select OMERO_FLAVORs with matching major OMERO versions for
+download (eg. 'ome50x' for the '5.0.x' server line).
+
+
+# OMERO.csvtools deployment as an OMERO.script
 
 ## Get the standalone distribution
 
@@ -15,22 +32,29 @@
 
 - Unpack to a location of your choice.
 
-Example - assuming deployment to `/opt/omero/lib/omero-csv-annotation-tool`:
+Example - assuming deployment to `/opt/OMERO.csvtools`:
 
-    mkdir -p /opt/omero/lib/omero-csv-annotation-tool
-    unzip omero-csv-tools-VERSION-dist-standalone.zip -d /opt/omero/lib/omero-csv-annotation-tool
+    mkdir -p /opt/OMERO.csvtools
+    unzip omero-csv-tools-<VERSION>-dist-standalone.zip -d /opt/OMERO.csvtools
 
 
 ## Configure the server scripting environment
 
 - Deploy the OMERO scripts located in the `scripts/omero/annotation_scripts` distribution folder to your OMERO server:
   add the `annotation_scripts` directory to your `OMERO.server/lib/scripts/omero/` directory.
+  Alternatively, you may wish to upload the script with the built-in OMERO command line utilities:
 
-- Check that the CSV tool script `bin/csv-annotation-tool-script.sh` is executable for the OMERO user,
+     cd /opt/OMERO.csvtools/scripts
+     $OMERO_PREFIX/bin/omero script upload -u root --official omero/annotation_scripts/Csv_Annotation_Tool.py
+
+- Check that the companion shell script `bin/csv-annotation-tool-script.sh` is executable for the OMERO user,
   or `chmod u+x bin/csv-annotation-tool-script.sh`
 
-- Make sure that this script is available on the PATH environment variable - hence accessible to the
-  OMERO.server scripting environment: `export PATH=$PATH:/opt/omero/lib/omero-csv-annotation-tool/bin`.
+- Make sure the companion shell script is available on the `PATH` environment variable - hence accessible to the
+  OMERO.server scripting environment: `export PATH=$PATH:/opt/OMERO.csvtools/omero-csv-annotation-tool/bin`.
+  Alternatively, you may wish to keep the `PATH` unchanged and edit `Csv_Annotation_Tool.py` prior to upload
+  such that `csv-annotation-tool-script.sh` is referenced via its absolute path:
+  `COMMAND_NAME = "/opt/OMERO.csvtools/bin/csv-annotation-tool-script.sh"`
 
 
 ## Run the script
@@ -41,7 +65,7 @@ Example - assuming deployment to `/opt/omero/lib/omero-csv-annotation-tool`:
   `Scripts > Annotation Scripts > CSV Annotation Tool`.
 
 
-# OMERO CSV Annotation Tool deployment as a standalone CLI tool
+# OMERO.csvtools deployment as a standalone CLI tool
 
 - As above, unpack the distribution (either standalone or with dependencies).
 
@@ -61,7 +85,20 @@ Two binary distributions are supplied:
 
 Depending on your needs and preferences, you may choose either: the standalone distribution allows deployment
 from a single package, whereas using separate dependencies provides a more fine grained classpath management
-(eg. cherry-picking jars or shell scripts to a different location).
+(eg. cherry-picking jars and shell scripts to a different location such as `OMERO.server/lib` and
+`OMERO.server/bin`, or overriding the Blitz libraries versions bundled with the tool).
+
+
+## Operating system support
+
+The "full toolset" (ie. Java tool + companion scripts) is currently unsupported on Windows environments.
+
+Some subcomponents would require adjusting to enable Windows support:
+
+- the Java tool should work out of the box as a CLI-only OMERO client
+- the OMERO.scripts tool should work provided the COMMAND_NAME is edited accordingly
+- the companion shell script would require porting to a native command interpreter, or inlining into
+  the python OMERO script
 
 
 ## Reference documentation
