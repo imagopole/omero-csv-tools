@@ -11,7 +11,8 @@ from omero.rtypes import unwrap, rstring, rlong
 
 ##
 # This script expects the external Java tool to be available as
-# an executable command exposed on the PATH under a conventional name.
+# an executable command, either exposed on the PATH under a conventional name
+# or configured via its absolute path in the COMMAND_NAME variable below.
 #
 # The external command will locate the relevant
 # classpath dependencies and lauch the Java tool.
@@ -19,6 +20,9 @@ from omero.rtypes import unwrap, rstring, rlong
 
 ##
 # The expected name for the executable command on the PATH
+#
+# May be replaced with the absolute path to the launcher script,
+# the underlying java command, or a custom executable wrapper.
 ##
 COMMAND_NAME = "csv-annotation-tool-script.sh"
 
