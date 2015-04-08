@@ -62,6 +62,13 @@ public class ParseUtilTest {
         assertEquals(result.getBaseType(), expected);
     }
 
+    @Test(dataProvider="file-names-provider")
+    public void getFileBasenameTests(String input, String expected) {
+        String result = ParseUtil.getFileBasename(input);
+
+        assertEquals(result, expected);
+    }
+
     @DataProvider(name="numbers-provider")
     private Object[][] provideNumbers() {
         return new Object[][] {
@@ -123,6 +130,19 @@ public class ParseUtilTest {
             { "text/plain",         "text/plain"       },
             { "  text/csv",         "text/csv"         },
             { "application/json  ", "application/json" }
+        };
+    }
+
+    @DataProvider(name="file-names-provider")
+    private Object[][] provideFileNames() {
+        return new Object[][] {
+            { "/",                  ""         },
+            { "file",               "file"     },
+            { " file",              "file"     },
+            { "file ",              "file"     },
+            { "/file",              "file"     },
+            { "/path/to/file/",     "file"     },
+            { "/path/to/file.txt",  "file.txt" }
         };
     }
 

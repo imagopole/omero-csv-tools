@@ -3,8 +3,9 @@
  */
 package org.imagopole.omero.tools.impl;
 
-import static org.imagopole.omero.tools.util.AnnotationsUtil.getImportModeAnnotationInfo;
 import static org.imagopole.omero.tools.util.AnnotationsUtil.getExportModeAnnotationInfo;
+import static org.imagopole.omero.tools.util.AnnotationsUtil.getImportModeAnnotationInfo;
+import static org.imagopole.omero.tools.util.ParseUtil.getFileBasename;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -53,6 +54,8 @@ import org.imagopole.omero.tools.impl.logic.DefaultMetadataService;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Main application class for CSV and annotations processing.
@@ -271,7 +274,7 @@ public class CsvAnnotator {
         log.debug("transfer-mode:start");
 
         final Long containerId = config.getContainerId();
-        final String csvFileName = config.getOrInferCsvFilename();
+        final String configCsvFileName = config.getOrInferCsvFilename();
 
         // ignore the fileType in attach mode:
         // always read from a local file and write to a remote file annotation
@@ -292,7 +295,7 @@ public class CsvAnnotator {
                     containerId,
                     containerType,
                     FileType.local,
-                    csvFileName);
+                    configCsvFileName);
 
         if (null != csvData) {
 
@@ -300,18 +303,21 @@ public class CsvAnnotator {
             String fileContent = csvData.getFileContent();
             AnnotationInfo annotationInfo = getImportModeAnnotationInfo(containerId, containerType);
 
+            // strip the path information from the remote file annotation name
+            String remoteCsvFileName = getFileBasename(configCsvFileName);
+
             // upload and attach the generated CSV to the OMERO container
             fileWriterController.writeByFileContainerType(
                     experimenterId,
                     containerId,
                     containerType,
                     FileType.remote,
-                    csvFileName,
+                    remoteCsvFileName,
                     fileContent,
                     annotationInfo);
 
         } else {
-            log.warn("Failed to read local file content for transfer from: {}", csvFileName);
+            log.warn("Failed to read local file content for transfer from: {}", configCsvFileName);
         }
 
         log.debug("transfer-mode:end");
@@ -332,8 +338,13 @@ public class CsvAnnotator {
         runTransferModeFromConfig(experimenterId);
 
         //-- (ii) re-configure cli parameters for next step (annotate)
-        log.info("Auto mode - overriding/resetting configured fileType: {}", config.getCsvFileTypeArg());
+        String configCsvFileName = config.getOrInferCsvFilename();
+        String remoteCsvFileName = getFileBasename(configCsvFileName);
+
+        log.info("Auto mode - overriding configured fileType: {}->remote and fileName: {}->{}",
+                 config.getCsvFileTypeArg(), configCsvFileName, remoteCsvFileName);
         config.setCsvFileTypeArg(Defaults.FILE_TYPE_REMOTE);
+        config.setCsvFileName(remoteCsvFileName);
 
         //-- (iii) process remote CSV file annotation
         runAnnotateModeFromConfig(experimenterId);

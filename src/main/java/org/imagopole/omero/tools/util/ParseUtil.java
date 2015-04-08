@@ -3,6 +3,8 @@
  */
 package org.imagopole.omero.tools.util;
 
+import java.io.File;
+
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
 
@@ -92,6 +94,12 @@ public final class ParseUtil {
         } catch (MimeTypeParseException mtpe) {
             throw new RtException(mtpe.getMessage(), mtpe);
         }
+    }
+
+    public static String getFileBasename(String fileName) {
+        Check.notEmpty(fileName, "fileName");
+
+        return new File(fileName.trim()).getName();
     }
 
 }
