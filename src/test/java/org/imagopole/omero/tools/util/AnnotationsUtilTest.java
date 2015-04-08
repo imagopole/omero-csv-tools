@@ -271,6 +271,7 @@ public class AnnotationsUtilTest {
         List<TagAnnotationData> tags = Lists.newArrayList(
                 newTag("tag.z1"), newTag("TAG.z1"), newTag("TAG.z10"),
                 newTag("tag.a2"), newTag("tag.a1"),
+                newTag("das_02"), newTag("Des"), newTag("das_01"),
                 newTag("tag.2"), newTag("tag.1"), newTag("tag.11"),
                 newTag("TAG.2"), newTag("TAG.1"));
 
@@ -283,13 +284,13 @@ public class AnnotationsUtilTest {
         log.trace("alphanum: {}", resultAlphanumOrder);
 
         List<String> expectedDefaultOrder = Lists.newArrayList(
-            "TAG.1", "TAG.2", "TAG.z1", "TAG.z10", "tag.1", "tag.11", "tag.2", "tag.a1", "tag.a2", "tag.z1");
+           "Des", "TAG.1", "TAG.2", "TAG.z1", "TAG.z10",  "das_01", "das_02", "tag.1", "tag.11", "tag.2", "tag.a1", "tag.a2", "tag.z1");
 
         List<String> expectedAlphanumOrder = Lists.newArrayList(
-            "TAG.1", "TAG.2", "TAG.z1", "TAG.z10", "tag.1", "tag.2", "tag.11", "tag.a1", "tag.a2", "tag.z1");
+            "das_01", "das_02", "Des", "tag.1", "TAG.1", "tag.2", "TAG.2", "tag.11", "tag.a1", "tag.a2", "tag.z1", "TAG.z1", "TAG.z10");
 
-        assertReflectionEquals("Wrong ordering", expectedDefaultOrder, resultDefaultOrder, TestsUtil.DEFAULT_COMPARATOR_MODE);
-        assertReflectionEquals("Wrong ordering", expectedAlphanumOrder, resultAlphanumOrder, TestsUtil.DEFAULT_COMPARATOR_MODE);
+        assertReflectionEquals("Wrong default ordering", expectedDefaultOrder, resultDefaultOrder, TestsUtil.DEFAULT_COMPARATOR_MODE);
+        assertReflectionEquals("Wrong alphanum ordering", expectedAlphanumOrder, resultAlphanumOrder, TestsUtil.DEFAULT_COMPARATOR_MODE);
     }
 
 }

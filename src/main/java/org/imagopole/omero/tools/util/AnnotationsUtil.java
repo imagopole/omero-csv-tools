@@ -79,8 +79,8 @@ public final class AnnotationsUtil {
     private static final String IMPORT_DESCRIPTION_FORMAT = "CSV import for %s %s";
 
     /** Comparator for pojos names and annotations values ordering before CSV export.
-     *  Uses alphanumeric string comparisons by default. */
-    public static final Comparator<String> EXPORT_LINE_COMPARATOR = Strings.getNaturalComparatorAscii();
+     *  Uses alphanumeric string comparisons by default (case-insensitive to be in line with official OMERO clients). */
+    public static final Comparator<String> EXPORT_LINE_COMPARATOR = Strings.getNaturalComparatorIgnoreCaseAscii();
 
     /**
      * Private constructor.
