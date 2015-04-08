@@ -5,12 +5,16 @@ apply plugin: 'maven'
 apply plugin: 'findbugs'
 apply plugin: 'pmd'
 apply plugin: 'checkstyle'
-apply plugin: 'project-report' // gradle-1.9 feature
-apply plugin: 'jacoco'         // gradle-1.9 incubating
+apply plugin: 'project-report'
+apply plugin: 'jacoco'
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'artifactory'
 apply plugin: 'flyway'
+apply plugin: 'info-broker'
+apply plugin: 'info-jar'
+apply plugin: 'info-basic'
+apply plugin: 'info-java'
 
 
 /********************************/
@@ -56,12 +60,10 @@ ext.buildConfig = [
 ]
 
 ext.sharedManifest = manifest {
-    attributes 'Implementation-Title': 'OMERO CSV Annotation Tool',
-               'Implementation-Version': version,
-               'Main-Class': 'org.imagopole.omero.tools.CsvAnnotatorCliMain',
-               'X-Build-Profile': profile,
-               'X-Omero-Version': omeVersions.omeroRelease,
-               'X-Omero-Ice-Version': iceVersions.main
+    attributes 'Main-Class'          : 'org.imagopole.omero.tools.CsvAnnotatorCliMain',
+               'X-Build-Profile'     : profile,
+               'X-Omero-Version'     : omeVersions.omeroRelease,
+               'X-Omero-Ice-Version' : iceVersions.main
 }
 
 /** Full omero server + ice flavor classifier for distribution packages */
@@ -495,7 +497,8 @@ buildscript {
         asciidoctorjPdf  : '1.5.0-alpha.6',
         shadow           : '1.2.0',
         artifactory      : '2.2.5',
-        flyway           : '3.1'
+        flyway           : '3.1',
+        info             : '2.2.0'
     ]
 
     repositories {
@@ -509,6 +512,7 @@ buildscript {
         classpath 'com.github.jengelman.gradle.plugins:shadow:' + pluginsVersions.shadow
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
         classpath 'org.flywaydb:flyway-gradle-plugin:' + pluginsVersions.flyway
+        classpath 'com.netflix.nebula:gradle-info-plugin:' + pluginsVersions.info
     }
 }
 
