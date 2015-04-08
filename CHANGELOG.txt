@@ -1,6 +1,14 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.5.1
+
+- Switch to case-insensitive export mode ordering
+- Improve Mac OS X shell support
+- Add 5.1.0 + ice35 build profile
+- Documentation enhancements
+
+
 ## 0.5
 
 - Drop support for --export-mode cli argument (superseded by --run-mode)
