@@ -474,17 +474,9 @@ task docsDistZip(type: Zip) { zipTask ->
     from fileTree("$projectDir").include(["*.md", "LICENSE.txt", "NOTICE.txt"])
 }
 
-/** Create an examples only bundle with CSV files samples */
-task examplesDistZip(type: Zip) { zipTask ->
-
-    classifier = 'examples'
-
-    from "$buildDir/asciidoc/files"
-}
-
 /** Create all distribution bundles */
 task distributionZip {
-    dependsOn standaloneDistZip, withDepsDistZip, docsDistZip, examplesDistZip
+    dependsOn standaloneDistZip, withDepsDistZip, docsDistZip
 }
 
 
