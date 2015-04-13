@@ -9,6 +9,7 @@ apply plugin: 'project-report'
 apply plugin: 'jacoco'
 apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.jfrog.bintray'
 apply plugin: 'artifactory'
 apply plugin: 'flyway'
 apply plugin: 'info-broker'
@@ -313,6 +314,30 @@ shadowJar {
     exclude 'META-INF/*.SF'
 }
 
+bintray {
+    user    = project.hasProperty('bintray_user')    ? bintray_user                : null
+    key     = project.hasProperty('bintray_key')     ? bintray_key                 : null
+    dryRun  = project.hasProperty('bintray_dryRun')  ? bintray_dryRun.toBoolean()  : true
+    publish = project.hasProperty('bintray_publish') ? bintray_publish.toBoolean() : false
+
+    filesSpec {
+        from    "$distsDir"
+        into    bintray_targetPath
+        include project.hasProperty('bintray_includeSpec') ? bintray_includeSpec : '**/*.zip'
+    }
+
+    pkg {
+        repo      = project.bintray_repo
+        userOrg   = project.hasProperty('bintray_org') ? bintray_org : null
+        name      = project.bintray_pkg
+        desc      = project.description
+        vcsUrl    = project.bintray_vcsUrl
+        licenses  = [ 'GPL-2.0' ]
+
+        version.mavenCentralSync.sync = false
+    }
+}
+
 
 /*********************************************/
 /**** Custom tasks/project configuration ****/
@@ -489,6 +514,7 @@ buildscript {
         asciidoctorjPdf  : '1.5.0-alpha.6',
         shadow           : '1.2.0',
         artifactory      : '2.2.5',
+        bintray          : '1.1',
         flyway           : '3.1',
         info             : '2.2.0'
     ]
@@ -503,6 +529,7 @@ buildscript {
         classpath 'org.asciidoctor:asciidoctorj-pdf:' + pluginsVersions.asciidoctorjPdf
         classpath 'com.github.jengelman.gradle.plugins:shadow:' + pluginsVersions.shadow
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:' + pluginsVersions.artifactory
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:' + pluginsVersions.bintray
         classpath 'org.flywaydb:flyway-gradle-plugin:' + pluginsVersions.flyway
         classpath 'com.netflix.nebula:gradle-info-plugin:' + pluginsVersions.info
     }
