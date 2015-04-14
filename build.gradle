@@ -319,7 +319,7 @@ bintray {
     filesSpec {
         from    "$distsDir"
         into    bintray_targetPath
-        include project.hasProperty('bintray_includeSpec') ? bintray_includeSpec : '**/*.zip'
+        include project.hasProperty('bintray_includeSpec') ? bintray_includeSpec : []
     }
 
     pkg {
@@ -504,6 +504,34 @@ artifacts {
     archives file(withDepsDistZip.archivePath)
     archives file(standaloneDistZip.archivePath)
     archives file(docsDistZip.archivePath)
+}
+
+
+/** Upload and publish the released standalone + exploded dependencies binaries distributions.
+ *  Note: SNAPSHOT artifacts bintray uploads are disallowed */
+task bintrayDistsUpload() {
+
+    finalizedBy bintrayUpload
+    doFirst {
+        // hacky way to override the copySpec after buildfile evaluation, so that:
+        // (i) the com.jfrog.bintray.gradle.Artifact path may be customized/shortened (as MavenPublication or
+        //     Configuration-collected artifacts strictly adhere to a maven repo layout for artifacts paths)
+        // (ii) packages uploads may be handled by separate tasks with finer granularity (ie. binaries
+        //      and docs), eg. when sequentially publishing artifacts from distinct profiles to a single package version
+        project.extensions['bintray'].filesSpec.include('**/*-standalone.zip',
+                                                        '**/*-with-dependencies.zip')
+    }
+}
+
+/** Upload and publish the released docs distribution.
+ *  Note: SNAPSHOT artifacts bintray uploads are disallowed */
+task bintrayDocsUpload {
+
+    finalizedBy bintrayUpload
+    doFirst {
+        // see bintrayDistsPublish comment
+        project.extensions['bintray'].filesSpec.include('**/*-docs-with-examples.zip')
+    }
 }
 
 
