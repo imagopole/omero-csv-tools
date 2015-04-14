@@ -211,10 +211,6 @@ test {
     systemProperty 'ice.config.location', "$sourceSets.test.output.resourcesDir/ice-local.config"
 }
 
-artifacts {
-// archives distributionZip
-}
-
 sourceSets {
     main {
         resources {
@@ -502,6 +498,12 @@ task docsDistZip(type: Zip) { zipTask ->
 /** Create all distribution bundles */
 task distributionZip {
     dependsOn standaloneDistZip, withDepsDistZip, docsDistZip
+}
+
+artifacts {
+    archives file(withDepsDistZip.archivePath)
+    archives file(standaloneDistZip.archivePath)
+    archives file(docsDistZip.archivePath)
 }
 
 
