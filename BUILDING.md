@@ -94,3 +94,21 @@ system property to the relevant file location within the build directory.
     ./src/test/resources/db/teardown-db.sh ome508 ome508
     # or
     ./gradlew integrationTestDbClean
+
+
+## Publishing
+
+Upload and publish released deliverables with:
+
+    # Default OMERO profile, all artifacts
+    ORG_GRADLE_PROJECT_bintray_user=user_name ORG_GRADLE_PROJECT_bintray_key=api_key \
+    ./gradlew -Pbintray_org=imagopole -Pbintray_dryRun=false -Pbintray_publish=true \
+    clean dist bintrayUpload --info
+
+    # Alternate OMERO profile, split artifacts
+    ./gradlew clean dist -Pprofile=omero510-ice35
+
+    ORG_GRADLE_PROJECT_bintray_user=user_name ORG_GRADLE_PROJECT_bintray_key=api_key \
+    ./gradlew -Pbintray_org=imagopole -Pbintray_dryRun=false -Pbintray_publish=true \
+    bintrayDocsUpload bintrayDistsUpload --info
+
