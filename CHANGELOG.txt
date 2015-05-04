@@ -1,6 +1,11 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.5.2
+
+- Additional 5.1.x build profiles (ice34/35)
+
+
 ## 0.5.1
 
 - Switch to case-insensitive export mode ordering
