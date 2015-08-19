@@ -371,6 +371,7 @@ For testing purposes, sample microscopy or screening data is available from the 
   ** http://www.openmicroscopy.org/Schemas/Samples/
 * Misc. formats
   ** http://downloads.openmicroscopy.org/images/
+  ** http://openslide.cs.cmu.edu/download/openslide-testdata/
   ** http://loci.wisc.edu/software/sample-data
   ** http://imagej.nih.gov/ij/images/
   ** http://imagej.net/Image5D#Sample_data
