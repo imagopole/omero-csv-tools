@@ -1,0 +1,22 @@
+/**
+ * Buildfile fragment used as a Maven-style profile to define specific OMERO dependencies
+ * for the 5.1.2-ice34 server flavor.
+ **/
+
+ext.omeVersions = [
+    baseline     : '51x',                //-- short baseline classifier (eg. for db migrations location)
+    omeroRelease : '5.1.2-ice34-b45',
+    qualifier    : 'ome511',             //-- short server flavor classifier for distribution packages
+]
+
+ext.iceVersions = [
+    main           : '3.4.2',           //--OMERO: ice33, 34 or 35
+    qualifier      : 'ice34'            //-- short server flavor classifier for distribution packages
+]
+
+/** Additional, per-profile dependencies */
+dependencies {
+
+    profileRuntime group: 'ome', name: 'ome-xml', version: '5.1.2', transitive: false
+
+}
