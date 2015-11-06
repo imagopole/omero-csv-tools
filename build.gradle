@@ -41,7 +41,7 @@ def applyProfile(aProfile) {
 }
 
 /** usage: gradle build -Pprofile=omero500-ice34 */
-ext.profile = hasProperty("profile") ? profile : 'omero510-ice34' // default profile: omero-5.1.0 + ice-3.4.2
+ext.profile = hasProperty("profile") ? profile : 'omero520-ice35' // default profile: omero-5.2.0 + ice-3.5.1
 applyProfile(profile)
 
 
@@ -75,11 +75,11 @@ ext.versions = [
     ice          : iceVersions.main,                 //--OMERO: cf. profile
     slf4j        : '1.7.6',                          //--OMERO: 1.7.6
     logback      : '1.1.1',                          //--OMERO: 1.1.1
-    testng       : '6.8',                            //--OMERO: n/p (5.14.10)
+    testng       : '6.8',                            //--OMERO: n/p (6.8)
     unitils      : '3.3',                            //--OMERO: n/a
-    postgresJdbc : '9.3-1102-jdbc4',                 //--OMERO: 9.1-901.jdbc3
-    guava        : '13.0',                           //--OMERO: jdk5-13.0'
-    jsr305       : '1.3.7',                          //--OMERO: n/a
+    postgresJdbc : '9.4-1200-jdbc4',                 //--OMERO: 9.4-1200.jdbc4
+    guava        : '17.0',                           //--OMERO: 17.0
+    jsr305       : '1.3.9',                          //--OMERO: n/a
     getopt       : '1.0.13',                         //--OMERO: 1.0.13
     commonsCsv   : '1.1',                            //--OMERO: n/a
     hibernate    : [
