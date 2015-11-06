@@ -71,29 +71,9 @@ system property to the relevant file location within the build directory.
 
 ### Test coverage reporting
 
-    # Create database
-    ./src/test/resources/db/setup-db.sh ome508 ome508 ome508
-
-    # Initialize schema
-    ./gradlew integrationTestDbMigrate
-
-    # Load server configuration
-    OMERO_PREFIX=~/apps/OMERO.server-5.0.6-ice35-b53
-    OMERO_CONFIG=omero-csv-tools-omero508-ice34 $OMERO_PREFIX/bin/omero config load -q ./build/generated-resources/test/omero-config.omero-csv-tools.properties
-
-    # Start server
-    OMERO_CONFIG=omero-csv-tools-omero508-ice34 $OMERO_PREFIX/bin/omero admin start --foreground
-
-    # Generate coverage report
-    ./gradlew test jacocoTestReport
-
-    # Stop server
-    (CTRL+C)
-
-    # Delete database or wipe out schema
-    ./src/test/resources/db/teardown-db.sh ome508 ome508
-    # or
-    ./gradlew integrationTestDbClean
+ The JaCoCo coverage report is generated via the `./gradlew test jacocoTestReport` build targets.
+ Reports are produced with every integration tests run from `./build/generated-resources/test/integration-tests.sh`
+ into `./build/reports/jacoco/`.
 
 
 ## Publishing
