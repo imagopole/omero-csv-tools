@@ -11,7 +11,7 @@ apply plugin: 'org.asciidoctor.gradle.asciidoctor'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'artifactory'
-apply plugin: 'flyway'
+apply plugin: 'org.flywaydb.flyway'
 apply plugin: 'info-broker'
 apply plugin: 'info-jar'
 apply plugin: 'info-basic'
@@ -545,7 +545,7 @@ buildscript {
         shadow           : '1.2.2',
         artifactory      : '2.2.5',
         bintray          : '1.4',
-        flyway           : '3.1',
+        flyway           : '3.2.1',
         info             : '2.2.0'
     ]
 
