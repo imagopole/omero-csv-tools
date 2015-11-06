@@ -387,7 +387,7 @@ task generateTestResources {
                           integrationTests.resources.omeroServerConfigFileName))
         sb.append("mkdir -p ").append(integrationTests.resources.omeroServerDataDir).append("\n")
         sb.append("\$OMERO_PREFIX/bin/omero admin start \n")
-        sb.append("./gradlew test -Pprofile=").append(profile).append("\n")
+        sb.append("./gradlew test jacocoTestReport -Pprofile=").append(profile).append("\n")
         sb.append("\$OMERO_PREFIX/bin/omero admin stop \n")
         sb.append("\$OMERO_PREFIX/bin/omero config def default \n")
         sb.append(sprintf("/bin/bash $projectDir/src/test/resources/db/teardown-db.sh %s %s \n",
