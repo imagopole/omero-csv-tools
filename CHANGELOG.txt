@@ -1,6 +1,12 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.5.3
+
+- Additional build profiles (5.1.2 -> 5.1.4)
+- Build maintenance (Gradle plugins upgrades)
+
+
 ## 0.5.2
 
 - Additional 5.1.x build profiles (ice34/35)
