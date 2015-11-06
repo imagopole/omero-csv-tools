@@ -1,6 +1,12 @@
 # OMERO CSV Annotation Tool Release Notes
 
 
+## 0.6
+
+- Add OMERO 5.2 support (new 5.2.0 + ice35 default profile)
+- Remove OMERO 5.0 and 5.1 support (still available via csvtools 0.5.x)
+
+
 ## 0.5.3
 
 - Additional build profiles (5.1.2 -> 5.1.4)

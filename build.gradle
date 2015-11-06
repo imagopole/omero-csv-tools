@@ -49,7 +49,7 @@ applyProfile(profile)
 /**** Project configuration ****/
 
 group = 'org.imagopole.omero'
-version = '0.6-SNAPSHOT'
+version = '0.6'
 description = """OMERO CSV Annotation Tool"""
 
 
