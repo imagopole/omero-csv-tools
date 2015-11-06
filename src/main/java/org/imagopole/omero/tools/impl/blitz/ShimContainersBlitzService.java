@@ -14,6 +14,8 @@ import java.util.Set;
 
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.DataObject;
+import omero.gateway.model.ImageData;
 import omero.model.IObject;
 import omero.model.Image;
 import omero.model.Plate;
@@ -26,9 +28,6 @@ import org.imagopole.omero.tools.util.Check;
 import org.imagopole.omero.tools.util.ShimsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.DataObject;
-import pojos.ImageData;
 
 import com.google.common.collect.Lists;
 

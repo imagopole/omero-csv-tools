@@ -3,6 +3,8 @@
  */
 package org.imagopole.omero.tools.impl.blitz;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
 import omero.model.Dataset;
 import omero.model.DatasetAnnotationLinkI;
 import omero.model.IObject;
@@ -21,9 +23,6 @@ import org.imagopole.omero.tools.api.blitz.AnnotationLinker;
 import org.imagopole.omero.tools.api.cli.Args.AnnotatedType;
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
 import org.imagopole.omero.tools.util.Check;
-
-import pojos.AnnotationData;
-import pojos.DataObject;
 
 /**
  * Factory and implementations for <code>AnnotationLinker</code> subclasses.

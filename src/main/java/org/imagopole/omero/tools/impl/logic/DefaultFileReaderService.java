@@ -12,11 +12,8 @@ import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Multimap;
-import com.google.common.io.Files;
-
 import omero.ServerError;
+import omero.gateway.model.FileAnnotationData;
 import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
@@ -29,7 +26,9 @@ import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pojos.FileAnnotationData;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
+import com.google.common.io.Files;
 
 /**
  * Service layer to the file processing application logic.

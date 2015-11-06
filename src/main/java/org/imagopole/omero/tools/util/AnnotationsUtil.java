@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.cli.Args.ContainerType;
@@ -18,10 +21,6 @@ import org.imagopole.omero.tools.api.dto.AnnotationInfo;
 import org.imagopole.omero.tools.impl.dto.DefaultAnnotationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.AnnotationData;
-import pojos.FileAnnotationData;
-import pojos.TagAnnotationData;
 
 import com.eekboom.utils.Strings;
 import com.google.common.collect.ArrayListMultimap;

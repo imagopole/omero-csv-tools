@@ -11,6 +11,10 @@ import java.util.List;
 import omero.ServerError;
 import omero.api.IContainerPrx;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
 import omero.model.Dataset;
 import omero.model.DatasetI;
 import omero.model.ImageI;
@@ -30,11 +34,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.unitils.UnitilsTestNG;
 import org.unitils.mock.Mock;
-
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
 
 import com.google.common.collect.Lists;
 

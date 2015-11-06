@@ -13,6 +13,9 @@ import java.nio.charset.Charset;
 import javax.activation.MimeType;
 
 import omero.ServerError;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
+import omero.gateway.model.FileAnnotationData;
 import omero.model.FileAnnotationI;
 import omero.model.IObject;
 import omero.model.OriginalFile;
@@ -29,10 +32,6 @@ import org.imagopole.omero.tools.impl.blitz.AnnotationLinkers;
 import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.AnnotationData;
-import pojos.DataObject;
-import pojos.FileAnnotationData;
 
 import com.google.common.io.Files;
 

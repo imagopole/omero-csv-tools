@@ -5,18 +5,18 @@ package org.imagopole.omero.tools.impl.dto;
 
 import java.util.Collection;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
+
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.util.Check;
 import org.imagopole.omero.tools.util.PlateAcquisitionsUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.AnnotationData;
-import pojos.DataObject;
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
 
 /**
  * Simple adapter intended to wrap OMERO model pojos under a uniform data type.

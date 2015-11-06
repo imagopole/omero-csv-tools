@@ -6,6 +6,7 @@ import static org.testng.Assert.assertNull;
 import omero.ServerError;
 import omero.api.IQueryPrx;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.DataObject;
 import omero.model.Dataset;
 import omero.model.DatasetI;
 
@@ -14,8 +15,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.unitils.UnitilsTestNG;
 import org.unitils.mock.Mock;
-
-import pojos.DataObject;
 
 public class QueryBlitzServiceTest extends UnitilsTestNG {
 

@@ -6,11 +6,11 @@ package org.imagopole.omero.tools.util;
 import java.util.Collection;
 import java.util.Collections;
 
+import omero.gateway.model.PlateAcquisitionData;
+
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.PlateAcquisitionData;
 
 import com.google.common.collect.Collections2;
 

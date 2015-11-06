@@ -9,10 +9,10 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collection;
 
+import omero.gateway.model.PlateData;
+
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.testng.annotations.Test;
-
-import pojos.PlateData;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

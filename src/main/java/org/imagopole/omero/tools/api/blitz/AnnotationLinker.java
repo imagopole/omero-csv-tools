@@ -3,9 +3,9 @@
  */
 package org.imagopole.omero.tools.api.blitz;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
 import omero.model.IObject;
-import pojos.AnnotationData;
-import pojos.DataObject;
 
 /**
  * Wires links between annotated objects and their annotations.

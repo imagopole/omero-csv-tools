@@ -9,10 +9,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
-
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.Annotation;
 import omero.model.FileAnnotation;
 import omero.model.IObject;
@@ -24,10 +26,7 @@ import org.imagopole.omero.tools.util.Check;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import pojos.AnnotationData;
-import pojos.DataObject;
-import pojos.FileAnnotationData;
-import pojos.TagAnnotationData;
+import com.google.common.collect.Lists;
 
 /**
  * Service layer to the underlying metadata related OMERO gateway.

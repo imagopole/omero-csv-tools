@@ -17,6 +17,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.IObject;
 
 import org.imagopole.omero.tools.TestsUtil;
@@ -24,10 +27,6 @@ import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
-
-import pojos.AnnotationData;
-import pojos.FileAnnotationData;
-import pojos.TagAnnotationData;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;

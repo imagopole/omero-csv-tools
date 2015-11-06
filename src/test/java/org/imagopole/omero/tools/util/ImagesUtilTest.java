@@ -9,13 +9,13 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.Collection;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import omero.gateway.model.ImageData;
 
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.testng.annotations.Test;
 
-import pojos.ImageData;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 public class ImagesUtilTest {
 

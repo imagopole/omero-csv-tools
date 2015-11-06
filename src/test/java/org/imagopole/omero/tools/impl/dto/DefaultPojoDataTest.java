@@ -10,17 +10,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
+
 import org.imagopole.omero.tools.TestsUtil;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.testng.annotations.Test;
 import org.unitils.mock.Mock;
 import org.unitils.mock.core.MockObject;
-
-import pojos.AnnotationData;
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
 
 public class DefaultPojoDataTest {
 

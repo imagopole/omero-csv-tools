@@ -6,6 +6,14 @@ package org.imagopole.omero.tools;
 import java.io.File;
 import java.util.List;
 
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
+import omero.gateway.model.ProjectData;
+import omero.gateway.model.TagAnnotationData;
+
 import org.dbunit.dataset.xml.FlatXmlProducer;
 import org.dbunit.dataset.xml.XmlProducer;
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
@@ -13,14 +21,6 @@ import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.util.FunctionsUtil;
 import org.testng.collections.Lists;
 import org.unitils.reflectionassert.ReflectionComparatorMode;
-
-import pojos.DatasetData;
-import pojos.FileAnnotationData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
-import pojos.ProjectData;
-import pojos.TagAnnotationData;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;

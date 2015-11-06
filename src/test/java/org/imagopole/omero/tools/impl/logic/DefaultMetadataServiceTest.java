@@ -9,6 +9,11 @@ import java.util.Collection;
 
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
 
 import org.imagopole.omero.tools.AbstractBlitzClientTest;
 import org.imagopole.omero.tools.TestsUtil;
@@ -30,12 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 import org.unitils.dbunit.annotation.DataSet;
-
-import pojos.AnnotationData;
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;

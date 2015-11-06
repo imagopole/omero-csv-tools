@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import omero.gateway.model.AnnotationData;
+
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.impl.csv.SimpleAnnotationLine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.AnnotationData;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.ArrayListMultimap;

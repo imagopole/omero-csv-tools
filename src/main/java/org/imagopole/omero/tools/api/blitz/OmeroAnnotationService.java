@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Map;
 
 import omero.ServerError;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.Annotation;
 import omero.model.IObject;
-import pojos.AnnotationData;
-import pojos.FileAnnotationData;
-import pojos.TagAnnotationData;
 
 /**
  * Service layer to the underlying metadata related OMERO gateway.

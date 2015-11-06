@@ -18,6 +18,9 @@ import java.util.Map;
 import omero.ServerError;
 import omero.api.IMetadataPrx;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.Dataset;
 import omero.model.FileAnnotation;
 import omero.model.FileAnnotationI;
@@ -34,10 +37,6 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 import org.unitils.UnitilsTestNG;
 import org.unitils.mock.Mock;
-
-import pojos.AnnotationData;
-import pojos.FileAnnotationData;
-import pojos.TagAnnotationData;
 
 import com.google.common.collect.Maps;
 

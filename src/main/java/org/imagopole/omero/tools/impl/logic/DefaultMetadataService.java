@@ -8,6 +8,11 @@ import java.util.Collection;
 import java.util.Map;
 
 import omero.ServerError;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
 
 import org.imagopole.omero.tools.api.blitz.OmeroAnnotationService;
 import org.imagopole.omero.tools.api.blitz.OmeroContainerService;
@@ -25,12 +30,6 @@ import org.imagopole.omero.tools.util.PlateAcquisitionsUtil;
 import org.imagopole.omero.tools.util.PlatesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.AnnotationData;
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
 
 import com.google.common.collect.Collections2;
 

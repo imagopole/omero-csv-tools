@@ -1,8 +1,8 @@
 package org.imagopole.omero.tools.api.blitz;
 
 import omero.ServerError;
+import omero.gateway.model.DataObject;
 import omero.model.IObject;
-import pojos.DataObject;
 
 /**
  * Service layer to the underlying query related OMERO gateway.

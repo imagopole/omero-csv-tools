@@ -10,16 +10,16 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
+import omero.gateway.model.TagAnnotationData;
+
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.imagopole.omero.tools.impl.dto.DefaultPojoData;
-
-import pojos.AnnotationData;
-import pojos.DatasetData;
-import pojos.FileAnnotationData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
-import pojos.TagAnnotationData;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;

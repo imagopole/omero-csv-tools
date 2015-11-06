@@ -9,6 +9,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import omero.gateway.model.DataObject;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
+import omero.gateway.model.ScreenData;
+import omero.gateway.model.WellData;
 import omero.model.IObject;
 import omero.model.Plate;
 import omero.model.PlateAcquisition;
@@ -17,12 +22,6 @@ import omero.model.Well;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.DataObject;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
-import pojos.ScreenData;
-import pojos.WellData;
 
 import com.google.common.collect.Lists;
 

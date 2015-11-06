@@ -16,14 +16,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import omero.gateway.model.DatasetData;
+
 import org.imagopole.omero.tools.TestsUtil;
 import org.imagopole.omero.tools.api.csv.CsvAnnotationLine;
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
-
-import pojos.DatasetData;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Lists;

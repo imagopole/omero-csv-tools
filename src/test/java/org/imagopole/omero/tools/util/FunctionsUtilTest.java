@@ -5,14 +5,14 @@ import static org.testng.Assert.assertNull;
 
 import java.io.File;
 
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.TagAnnotationData;
+
 import org.imagopole.omero.tools.api.dto.PojoData;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.unitils.mock.Mock;
 import org.unitils.mock.core.MockObject;
-
-import pojos.FileAnnotationData;
-import pojos.TagAnnotationData;
 
 
 

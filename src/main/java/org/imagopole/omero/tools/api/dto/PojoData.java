@@ -5,8 +5,8 @@ package org.imagopole.omero.tools.api.dto;
 
 import java.util.Collection;
 
-import pojos.AnnotationData;
-import pojos.DataObject;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
 
 
 /**

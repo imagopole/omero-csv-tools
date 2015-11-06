@@ -3,11 +3,11 @@ package org.imagopole.omero.tools.api.blitz;
 import java.util.Collection;
 
 import omero.ServerError;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
 import omero.model.IObject;
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
 
 /**
  * Service layer to the underlying container related OMERO gateway.

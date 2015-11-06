@@ -4,6 +4,7 @@
 package org.imagopole.omero.tools.impl.logic;
 
 
+import static omero.gateway.model.DataObject.asPojos;
 import static org.imagopole.omero.tools.util.AnnotationsUtil.fromTagsMap;
 import static org.imagopole.omero.tools.util.AnnotationsUtil.indexByAnnotationValue;
 import static org.imagopole.omero.tools.util.MultimapsUtil.includeFromKeysWhitelist;
@@ -11,7 +12,6 @@ import static org.imagopole.omero.tools.util.MultimapsUtil.invertKeyValues;
 import static org.imagopole.omero.tools.util.MultimapsUtil.pairAndFlatten;
 import static org.imagopole.omero.tools.util.PojosUtil.indexById;
 import static org.imagopole.omero.tools.util.PojosUtil.indexByName;
-import static pojos.DataObject.asPojos;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,6 +21,12 @@ import java.util.Map;
 import java.util.Set;
 
 import omero.ServerError;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DatasetData;
+import omero.gateway.model.ImageData;
+import omero.gateway.model.PlateAcquisitionData;
+import omero.gateway.model.PlateData;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.IObject;
 
 import org.imagopole.omero.tools.api.blitz.AnnotationLinker;
@@ -45,13 +51,6 @@ import org.imagopole.omero.tools.util.PlatesUtil;
 import org.imagopole.omero.tools.util.PojosUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import pojos.AnnotationData;
-import pojos.DatasetData;
-import pojos.ImageData;
-import pojos.PlateAcquisitionData;
-import pojos.PlateData;
-import pojos.TagAnnotationData;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;

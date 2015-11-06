@@ -15,6 +15,10 @@ import javax.activation.MimeTypeParseException;
 
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.AnnotationData;
+import omero.gateway.model.DataObject;
+import omero.gateway.model.FileAnnotationData;
+import omero.gateway.model.ProjectData;
 import omero.model.FileAnnotation;
 import omero.model.IObject;
 import omero.model.OriginalFile;
@@ -43,11 +47,6 @@ import org.testng.annotations.Test;
 import org.testng.collections.Lists;
 import org.unitils.dbunit.annotation.DataSet;
 import org.unitils.io.annotation.TempDir;
-
-import pojos.AnnotationData;
-import pojos.DataObject;
-import pojos.FileAnnotationData;
-import pojos.ProjectData;
 
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;

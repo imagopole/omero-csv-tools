@@ -13,6 +13,8 @@ import java.util.Map;
 import ome.model.containers.Dataset;
 import omero.ServerError;
 import omero.api.ServiceFactoryPrx;
+import omero.gateway.model.DataObject;
+import omero.gateway.model.TagAnnotationData;
 import omero.model.Annotation;
 import omero.model.DatasetAnnotationLink;
 import omero.model.IObject;
@@ -42,9 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 import org.unitils.dbunit.annotation.DataSet;
-
-import pojos.DataObject;
-import pojos.TagAnnotationData;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
